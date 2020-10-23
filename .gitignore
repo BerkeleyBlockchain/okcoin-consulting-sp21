@@ -1,0 +1,18 @@
+.idea
+.vscode
+.eslintcache
+.env
+
+# dependencies
+node_modules
+
+# editors
+.idea
+*.iml
+
+# macos
+.DS_Store
+Thumbs.db
+
+# locks
+package-lock.json
