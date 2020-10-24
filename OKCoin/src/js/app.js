@@ -1,7 +1,8 @@
 
-import { ChainId, Token, WETH, Fetcher, Trade, Route, TokenAmount, TradeType } from '/@uniswap/sdk'
+// import { ChainId, Token, WETH, Fetcher, Trade, Route, TokenAmount, TradeType } from '/@uniswap/sdk'
+// const UNISWAP = require('@uniswap/sdk')
 
-App = {
+var App = {
 
   web3Provider: null,
   contracts: {},
@@ -13,7 +14,7 @@ App = {
       var petsRow = $('#petsRow');
       var petTemplate = $('#petTemplate');
 
-      for (i = 0; i < data.length; i ++) {
+      for (var i = 0; i < data.length; i ++) {
         petTemplate.find('.panel-title').text(data[i].name);
         petTemplate.find('img').attr('src', data[i].picture);
         petTemplate.find('.pet-breed').text(data[i].breed);
@@ -38,10 +39,10 @@ App = {
       web3 = new Web3(App.web3Provider);
     }
     web3.eth.getAccounts(function(err, accounts){
-            if (err != null) console.error("An error occurred: "+err);
-            else if (accounts.length == 0) console.log("User is not logged into metamask");
-            else console.log("User is logged in to MetaMask");
-        });
+        if (err != null) console.error("An error occurred: "+err);
+        else if (accounts.length == 0) console.log("User is not logged into metamask");
+        else console.log("User is logged in to MetaMask");
+    });
 
     return App.initContract();
 
@@ -78,7 +79,19 @@ App = {
 
   uniswapTrade: async function() {
 
-    const UNISWAP = require('@uniswap/sdk')
+    const {ParaSwap} = require("paraswap");
+    const paraswap = new ParaSwap();
+
+    // Replace this with ES6 import later
+
+    const ChainId = UNISWAP.ChainId;
+    const Token = UNISWAP.Token;
+    const WETH = UNISWAP.Fetcher;
+    const Trade = UNISWAP.Trade;
+    const Route = UNISWAP.Route;
+    const TokenAmount = UNISWAP.TokenAmount;
+    const TradeType = UNISWAP.TradeType;
+
     // console.log(`The chainId of mainnet is ${UNISWAP.ChainId.MAINNET}.`)
 
 

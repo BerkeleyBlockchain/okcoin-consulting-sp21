@@ -17,6 +17,8 @@
     "lite-server": "^2.5.4"
   },
   "dependencies": {
-    "@uniswap/sdk": "^3.0.3"
+    "@uniswap/sdk": "^3.0.3",
+    "g": "^2.0.1",
+    "paraswap": "^2.4.1"
   }
 }
