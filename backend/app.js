@@ -23,20 +23,108 @@ var app = express();
 
 app.get("/data/:token1/:token2", (req, res) => {
 
-  data(req.params.token1, req.params.token2).then(result => {
+  /*
+  Pricing(req.params.token1, req.params.token2).then(result => {
     // do some processing of result into finalData
-    res.json({outputAmount: result});
-  });
+    console.log(result)
+    res.json({uniswap: result[0], kyber: result[1]});
+  })
+  */
+
+
+  Pricing(req.params.token1, req.params.token2).then(result => {
+    // do some processing of result into finalData
+    res.json({uniswap: result[1]});
+  })
+
+
+
 
   
 });
 
-async function data(token1, token2) {
+async function Pricing(token1, token2) {
+  
+  // var uniswap_price = await Uniswap(token1, token2)
+  // var kyber_price = await Kyber(token1, token2)
 
-  const DAI = new Token(ChainId.MAINNET, '0x6b175474e89094c44da98b954eedeac495271d0f', 18)
+  prices = await Promise.all([Uniswap(token1, token2), Kyber(token1, token2)]);
+
+
+  
+
+  console.log(prices)
+
+  return prices
+}
+
+async function Kyber(token1, token2) {
+
+  const DAI = '0x6B175474E89094C44Da98b954EedeAC495271d0F'
+  const USDT = '0xdac17f958d2ee523a2206206994597c13d831ec7'
+  const USDC = '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48'
+
+  
+  var input;
+  var output;
+  
+  if (token1 == "DAI") {
+    input = DAI;
+  } else if (token1 == "USDT") {
+    input = USDT;
+  } else if (token1 == "USDC") {
+    input = USDC;
+  } 
+
+  if (token2 == "DAI") {
+    output = DAI;
+  } else if (token2 == "USDT") {
+    output = USDT;
+  } else if (token2 == "USDC") {
+    output = USDC;
+  } 
+
+
+  const XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest
+  const Http = new XMLHttpRequest();
+  
+  const url="https://api.kyber.network/buy_rate?id=" + input  + "&qty=1&id=" + output + "&qty=1";
+  
+
+  Http.onreadystatechange = async (e) => {
+
+    if (Http.readyState == 4){ 
+      var pricing_json = JSON.parse(Http.responseText);
+
+      var price_1 = await pricing_json.data[0].src_qty[0]
+      
+      
+      var price_2 = await pricing_json.data[1].src_qty[0]
+
+      console.log(price_1/price_2)
+
+      return price_1/price_2
+  
+
+     
+    }
+
+  };
+
+  Http.open("GET", url, true)
+  Http.send();
+
+
+
+};
+
+
+async function Uniswap(token1, token2) {
+
+  const DAI = new Token(ChainId.MAINNET, '0x6B175474E89094C44Da98b954EedeAC495271d0F', 18)
   const USDT = new Token(ChainId.MAINNET, '0xdac17f958d2ee523a2206206994597c13d831ec7', 18)
   const USDC = new Token(ChainId.MAINNET, '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48', 18)
-  const TUSD = new Token(ChainId.MAINNET, '0x8dd5fbce2f6a956c3022ba3663759011dd51e73e', 18)
+  
 
   var input;
   var output;
@@ -62,15 +150,17 @@ async function data(token1, token2) {
   // for example if top-level await is not an option
 
 
-  const pair = await Fetcher.fetchPairData(output, input)
+  const pair = await Fetcher.fetchPairData(input, output)
   const route = new Route([pair], input)
-
-  console.log(pair);
   
+ 
 
-
-  console.log(route.midPrice.toSignificant(6)) // 201.306
-  console.log(route.midPrice.invert().toSignificant(6)) // 0.00496756
+  if (token2 == 'DAI') {
+    return route.midPrice.toSignificant(6) / 1000000000000;
+  } else if (token1 == 'DAI') {
+    return route.midPrice.toSignificant(6) * 1000000000000;
+  }
+  
   
   return route.midPrice.toSignificant(6)
 }
