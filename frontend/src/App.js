@@ -1,7 +1,11 @@
+import React, { useState } from 'react';
 import logo from './logo.svg';
 import './App.css';
 
 function App() {
+
+  const [address, setAddress] = useState("");
+  const [balance, setBalance] = useState(0);
 
   const ethereum = window.ethereum;
 
@@ -9,13 +13,26 @@ function App() {
     console.log('MetaMask is installed!');
   
     const getAccount = async () => {
-      let accounts = await ethereum.request({ method: 'eth_requestAccounts' });
+      let accounts = await ethereum.request({ 
+        method: 'eth_requestAccounts' 
+      });
+      setAddress(accounts[0]);
       console.log(accounts[0]);
     }
 
+    const getBalance = async () => {
+      let currBalance = await ethereum.request({ 
+        method: 'eth_getBalance', 
+        params:[address, 'latest']
+      });
+      setBalance(currBalance);
+      console.log(balance);
+    }
+
     getAccount();
+    getBalance();
+
   }
-  
 
   return (
     <div className="App">
