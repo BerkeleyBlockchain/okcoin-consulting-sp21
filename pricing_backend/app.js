@@ -19,7 +19,10 @@ const TokenAmount = UNISWAP.TokenAmount;
 const TradeType = UNISWAP.TradeType;
 const WETH = UNISWAP.WETH;
 
+
 var app = express();
+
+
 
 app.get("/data/:token1/:token2", (req, res) => {
 
@@ -36,8 +39,6 @@ app.get("/data/:token1/:token2", (req, res) => {
     // do some processing of result into finalData
     res.json({uniswap: result[1]});
   })
-
-
 
 
   
@@ -172,3 +173,4 @@ module.exports = app;
 
 
 
+Kyber_Trade();
