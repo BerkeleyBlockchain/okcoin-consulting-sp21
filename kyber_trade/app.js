@@ -1,6 +1,16 @@
 
 
 
+var createError = require('http-errors');
+var express = require('express');
+var path = require('path');
+var cookieParser = require('cookie-parser');
+var logger = require('morgan');
+
+var indexRouter = require('./routes/index');
+var usersRouter = require('./routes/users');
+
+
 // Kyber/infura setup here
 
 // Import web3 for broadcasting transactions
@@ -36,7 +46,6 @@ const PRIVATE_KEY = Buffer.from("d95ae2d664459c8f939a18772579c0d2898325d71411ba4
 
 
 
-
 var app = express();
 
 async function Kyber_Trade() {
@@ -56,8 +65,7 @@ async function Kyber_Trade() {
     return;
   }
 
-  //"https://ropsten-api.kyber.network/buy_rate?id=0x4E470dc7321E84CA96FcAEDD0C8aBCebbAEB68C6&qty=300"
-
+ 
   // Querying the API /buy_rate endpoint
   let ratesRequest = await fetch(
     "https://ropsten-api.kyber.network/buy_rate?id=" +

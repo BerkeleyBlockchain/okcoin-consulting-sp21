@@ -107,14 +107,12 @@ async function Kyber(token1, token2) {
       return price_1/price_2
   
 
-     
     }
 
   };
 
   Http.open("GET", url, true)
   Http.send();
-
 
 
 };
@@ -173,4 +171,3 @@ module.exports = app;
 
 
 
-Kyber_Trade();
