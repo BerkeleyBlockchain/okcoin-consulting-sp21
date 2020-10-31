@@ -37,7 +37,7 @@ app.get("/data/:token1/:token2", (req, res) => {
 
   Pricing(req.params.token1, req.params.token2).then(result => {
     // do some processing of result into finalData
-    res.json({uniswap: result[1]});
+    res.json({uniswap: result[0]});
   })
 
 
