@@ -7,7 +7,6 @@ var App = {
   web3Provider: null,
   contracts: {},
 
-
   init: async function() {
 
     $.getJSON('../pets.json', function(data) {
@@ -38,6 +37,7 @@ var App = {
       App.web3Provider = new Web3.providers.HttpProvider('http://localhost:3000');
       web3 = new Web3(App.web3Provider);
     }
+    console.log(web3);
     web3.eth.getAccounts(function(err, accounts){
         if (err != null) console.error("An error occurred: "+err);
         else if (accounts.length == 0) console.log("User is not logged into metamask");

@@ -1,0 +1,22 @@
+{
+  "name": "uniswap_trade",
+  "version": "1.0.0",
+  "description": "",
+  "main": "uniswap.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@ethersproject/address": "^5.0.5",
+    "@ethersproject/contracts": "^5.0.5",
+    "@ethersproject/networks": "^5.0.4",
+    "@ethersproject/providers": "^5.0.14",
+    "@ethersproject/solidity": "^5.0.5",
+    "@uniswap/sdk": "^3.0.3",
+    "@uniswap/v2-periphery": "^1.1.0-beta.0",
+    "ethers": "^5.0.19"
+  }
+}
