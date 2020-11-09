@@ -14,13 +14,14 @@ var usersRouter = require('./routes/users');
 var Web3 = require("web3");
 // Import node-fetch to query the trading API
 var fetch = require("node-fetch");
+const { start } = require('repl');
 // import ethereumjs-tx to sign and serialise transactions
 var Tx = require("ethereumjs-tx").Transaction;
 
 // Connect to Infura's ropsten node
 const web3 = new Web3(
   new Web3.providers.HttpProvider("https://ropsten.infura.io/v3/b2e13b0a648e4c67b4a36951f5b1ed62")
-);
+); 
 
 // Representation of ETH as an address on Ropsten
 const ETH_TOKEN_ADDRESS = "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee";
@@ -45,8 +46,19 @@ const PRIVATE_KEY = Buffer.from("d95ae2d664459c8f939a18772579c0d2898325d71411ba4
 var app = express();
 
 async function execute_swap(input_token, output_token, input_amount) {
-  let eth_output = await Kyber_Token_for_ETH(input_token, input_amount)
-  await Kyber_ETH_for_Token(output_token, eth_output)
+
+  
+    let eth_output = await Kyber_Token_for_ETH(input_token, input_amount)
+    console.log(eth_output)
+
+
+    if (eth_output > 0) {
+      await Kyber_ETH_for_Token(output_token, eth_output)
+    }
+
+  
+    
+  
 }
 
 
@@ -93,7 +105,7 @@ async function Kyber_Token_for_ETH(token_name, QTY) {
   let enabledStatuses = await enabledStatusesRequest.json();
   // Checking to see if DAI is enabled
   let enabled = enabledStatuses.data.some(token => {
-    if (token.id == DAI_TOKEN_ADDRESS.toLowerCase()) {
+    if (token.id == token_address.toLowerCase()) {
       return token.enabled;
     }
   });
@@ -120,6 +132,8 @@ async function Kyber_Token_for_ETH(token_name, QTY) {
     let enableTokenDetails = await enableTokenDetailsRequest.json();
     // Extract the raw transaction details
     let rawTx = enableTokenDetails.data;
+    
+    
     // Create a new transaction
     let tx = new Tx(rawTx, {chain:'ropsten'});
     // Signing the transaction
@@ -145,7 +159,7 @@ async function Kyber_Token_for_ETH(token_name, QTY) {
   // Querying the API /sell_rate endpoint
   let ratesRequest = await fetch(
     "https://ropsten-api.kyber.network/sell_rate?id=" +
-      DAI_TOKEN_ADDRESS +
+      token_address +
       "&qty=" +
       QTY
   );
@@ -166,7 +180,7 @@ async function Kyber_Token_for_ETH(token_name, QTY) {
     "https://ropsten-api.kyber.network/trade_data?user_address=" +
       USER_ACCOUNT +
       "&src_id=" +
-      DAI_TOKEN_ADDRESS +
+      token_address+
       "&dst_id=" +
       ETH_TOKEN_ADDRESS +
       "&src_qty=" +
@@ -180,6 +194,7 @@ async function Kyber_Token_for_ETH(token_name, QTY) {
   let tradeDetails = await tradeDetailsRequest.json();
   // Extract the raw transaction details
   rawTx = tradeDetails.data[0];
+
   // Create a new transaction
   let tx = new Tx(rawTx, {chain:'ropsten'});
   // Signing the transaction
@@ -195,7 +210,9 @@ async function Kyber_Token_for_ETH(token_name, QTY) {
   console.log(txReceipt);
 
   // return how much Eth received, accounting for potential slippage
-  return dstQty * 0.99;
+  return dstQty;
+
+  
   
 }
 
@@ -211,7 +228,7 @@ async function Kyber_ETH_for_Token(token_name, QTY_ETH) {
   let tokens = await tokenInfoRequest.json();
   // Checking to see if KNC is supported
   let supported = tokens.data.some(token => {
-    return "KNC" == token.symbol;
+    return token_name == token.symbol;
   });
   // If not supported, return.
   if (!supported) {
@@ -269,6 +286,15 @@ async function Kyber_ETH_for_Token(token_name, QTY_ETH) {
   let tradeDetails = await tradeDetailsRequest.json();
   // Extract the raw transaction details
   let rawTx = tradeDetails.data[0];
+  
+  /*
+  let tx_count = await web3.eth.getTransactionCount(USER_ACCOUNT);
+  rawTx["nonce"] = '0x' + (tx_count + 1).toString(16);
+  */
+ 
+
+  rawTx["nonce"] = "0x" + (parseInt(rawTx["nonce"]) +1).toString(16)
+
   // Create a new transaction
   let tx = new Tx(rawTx, {chain:'ropsten'});
   // Signing the transaction
@@ -282,11 +308,22 @@ async function Kyber_ETH_for_Token(token_name, QTY_ETH) {
   // Log the transaction receipt
   console.log(txReceipt);
 
+  return
+
 }
 
 
 module.exports = app;
 
+async function main() {
 
 
-execute_swap("DAI", "KNC", 100)
+  // await execute_swap("DAI", "KNC", 100)
+  await execute_swap("KNC", "DAI", 63)
+}
+
+main()
+
+
+
+// Dai to KNC swap WORKS!
