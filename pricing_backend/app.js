@@ -1,4 +1,4 @@
-
+// import React, { useState } from 'react';
 
 var createError = require('http-errors');
 var express = require('express');
@@ -8,6 +8,8 @@ var logger = require('morgan');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
+
+const axios = require('axios');
 
 const UNISWAP = require('@uniswap/sdk')
 const ChainId = UNISWAP.ChainId;
@@ -22,7 +24,9 @@ const WETH = UNISWAP.WETH;
 
 var app = express();
 
+// let [kyber, setKyberPrice] = useState(0);
 
+// TODO: get pricing off of bancor
 
 app.get("/data/:token1/:token2", (req, res) => {
 
@@ -35,28 +39,76 @@ app.get("/data/:token1/:token2", (req, res) => {
   */
 
 
-  Pricing(req.params.token1, req.params.token2).then(result => {
+  Pricing(req.params.token1, req.params.token2)
+  .then(result => {
     // do some processing of result into finalData
-    res.json({uniswap: result[0]});
+    res.json({
+      oasis: result[0],
+      uniswap: result[1],
+      kyber: result[2],
+    });
   })
 
 
   
 });
 
-async function Pricing(token1, token2) {
+async function Pricing(token1, token2, bancor1, bancor2) {
   
   // var uniswap_price = await Uniswap(token1, token2)
   // var kyber_price = await Kyber(token1, token2)
 
-  prices = await Promise.all([Uniswap(token1, token2), Kyber(token1, token2)]);
+  prices = await Promise.all([
+    Oasis(bancor1, bancor2),
+    Uniswap(token1, token2), 
+    Kyber(token1, token2)
+  ]);
 
-
-  
-
-  console.log(prices)
+  // console.log(prices)
 
   return prices
+}
+
+async function Oasis(token1, token2) {
+  
+  var input;
+  var output;
+
+  if (token1 == "DAI") {
+    input = "dai";
+  } else if (token1 == "ETH") {
+    input = "eth";
+  } else if (token1 == "BNT") {
+    input = "bnt";
+  } else if (token1 == "USDT") {
+    input = "usdt";
+  }
+
+  if (token2 == "DAI") {
+    output = "dai";
+  } else if (token2 == "ETH") {
+    output = "eth";
+  } else if (token2 == "BNT") {
+    output = "bnt";
+  } else if (token2 == "USDT") {
+    output = "usdt";
+  }
+
+  const axios = require("axios");
+
+  var url = "https://api.oasisdex.com/v2/prices/" + input + "/" + output;
+  
+  let response = await axios.get(url)
+    .then(function (res) {
+      console.log(res.data.last);
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
+  // Http.open("GET", url, true)
+  // Http.send();
+  // return response;
+  
 }
 
 async function Kyber(token1, token2) {
@@ -94,7 +146,7 @@ async function Kyber(token1, token2) {
 
   Http.onreadystatechange = async (e) => {
 
-    if (Http.readyState == 4){ 
+    
       var pricing_json = JSON.parse(Http.responseText);
 
       var price_1 = await pricing_json.data[0].src_qty[0]
@@ -103,15 +155,15 @@ async function Kyber(token1, token2) {
       var price_2 = await pricing_json.data[1].src_qty[0]
 
       console.log(price_1/price_2)
-
+      setKyberPrice(price_1/price_2);
       return price_1/price_2
   
 
-    }
+    
 
   };
 
-  Http.open("GET", url, true)
+  Http.open("GET", url, true);
   Http.send();
 
 
