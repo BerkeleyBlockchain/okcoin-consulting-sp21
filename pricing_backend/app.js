@@ -9,6 +9,8 @@ var logger = require('morgan');
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 
+var fetch = require("node-fetch");
+
 const UNISWAP = require('@uniswap/sdk')
 const ChainId = UNISWAP.ChainId;
 const Token = UNISWAP.Token;
@@ -26,18 +28,11 @@ var app = express();
 
 app.get("/data/:token1/:token2", (req, res) => {
 
-  /*
-  Pricing(req.params.token1, req.params.token2).then(result => {
-    // do some processing of result into finalData
-    console.log(result)
-    res.json({uniswap: result[0], kyber: result[1]});
-  })
-  */
 
 
   Pricing(req.params.token1, req.params.token2).then(result => {
     // do some processing of result into finalData
-    res.json({uniswap: result[0]});
+    res.json({uniswap: parseFloat(result[0]), kyber: parseFloat(result[1])});
   })
 
 
@@ -45,16 +40,9 @@ app.get("/data/:token1/:token2", (req, res) => {
 });
 
 async function Pricing(token1, token2) {
-  
-  // var uniswap_price = await Uniswap(token1, token2)
-  // var kyber_price = await Kyber(token1, token2)
 
   prices = await Promise.all([Uniswap(token1, token2), Kyber(token1, token2)]);
 
-
-  
-
-  console.log(prices)
 
   return prices
 }
@@ -85,34 +73,27 @@ async function Kyber(token1, token2) {
     output = USDC;
   } 
 
+  let ratesRequest = await fetch(
+    "https://api.kyber.network/sell_rate?id=" +
+      input +
+      "&qty=1"
+  );
+  // Parsing the output
+  let rates = await ratesRequest.json();
+  // Getting the source quantity
+  let input_in_eth = rates.data[0].dst_qty
 
-  const XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest
-  const Http = new XMLHttpRequest();
-  
-  const url="https://api.kyber.network/buy_rate?id=" + input  + "&qty=1&id=" + output + "&qty=1";
-  
+  let ratesRequest_2 = await fetch(
+    "https://api.kyber.network/sell_rate?id=" +
+      output +
+      "&qty=1"
+  );
+  // Parsing the output
+  let rates_2 = await ratesRequest_2.json();
+  // Getting the source quantity
+  let output_in_eth = rates_2.data[0].dst_qty
 
-  Http.onreadystatechange = async (e) => {
-
-    if (Http.readyState == 4){ 
-      var pricing_json = JSON.parse(Http.responseText);
-
-      var price_1 = await pricing_json.data[0].src_qty[0]
-      
-      
-      var price_2 = await pricing_json.data[1].src_qty[0]
-
-      console.log(price_1/price_2)
-
-      return price_1/price_2
-  
-
-    }
-
-  };
-
-  Http.open("GET", url, true)
-  Http.send();
+  return output_in_eth/input_in_eth
 
 
 };
@@ -153,13 +134,6 @@ async function Uniswap(token1, token2) {
   const route = new Route([pair], input)
   
  
-
-  if (token2 == 'DAI') {
-    return route.midPrice.toSignificant(6) / 1000000000000;
-  } else if (token1 == 'DAI') {
-    return route.midPrice.toSignificant(6) * 1000000000000;
-  }
-  
   
   return route.midPrice.toSignificant(6)
 }
