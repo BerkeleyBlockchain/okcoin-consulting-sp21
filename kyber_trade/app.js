@@ -24,6 +24,12 @@ const web3 = new Web3(
 ); 
 
 // Representation of ETH as an address on Ropsten
+var token_addresses_robsten  = {
+  "ETH": "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+  "KNC": "0x7b2810576aa1cce68f2b118cef1f36467c648f92",
+  "DAI": "0xaD6D458402F60fD3Bd25163575031ACDce07538D"
+}
+
 const ETH_TOKEN_ADDRESS = "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee";
 
 // KNC contract address on Ropsten
@@ -47,49 +53,50 @@ var app = express();
 
 async function execute_swap(input_token, output_token, input_amount) {
 
+   const input_address = token_addresses_robsten[input_token]
+   const output_address = token_addresses_robsten[output_token]
+
+
+    // get trade price 
+    let ratesRequest = await fetch(
+      "https://ropsten-api.kyber.network/sell_rate?id=" +
+        input_address +
+        "&qty=" + input_amount
+    );
+    let rates = await ratesRequest.json();
+    let input_in_eth = rates.data[0].dst_qty
   
-    let eth_output = await Kyber_Token_for_ETH(input_token, input_amount)
-    console.log(eth_output)
+    let ratesRequest_2 = await fetch(
+      "https://ropsten-api.kyber.network/buy_rate?id=" +
+        output_address +
+        "&qty=1"
+    );
+
+    let rates_2 = await ratesRequest_2.json();
+    let output_in_eth = rates_2.data[0].src_qty
+  
+    let output_amount = (input_in_eth/output_in_eth)
 
 
-    if (eth_output > 0) {
-      await Kyber_ETH_for_Token(output_token, eth_output)
+  
+    let result = await Kyber_Token_for_ETH(input_address, input_amount)
+
+
+    if (result == true) {
+      await Kyber_ETH_for_Token(output_address, output_amount)
     }
 
-  
+    return
+    
+
+
     
   
 }
 
 
-async function Kyber_Token_for_ETH(token_name, QTY) {
-  /*
-  #################################
-  ### CHECK IF DAI IS SUPPORTED ###
-  #################################
-  */
+async function Kyber_Token_for_ETH(token_address, QTY) {
 
-  // Querying the API /currencies endpoint
-  let tokenInfoRequest = await fetch(
-    "https://ropsten-api.kyber.network/currencies"
-  );
-  // Parsing the output
-  let tokens = await tokenInfoRequest.json();
-  // Checking to see if DAI is supported
-  let supported = tokens.data.some(token => {
-    return token_name == token.symbol;
-  });
-  // If not supported, return.
-  if (!supported) {
-    console.log("Token is not supported");
-    return;
-  }
-
-  if (token_name == "DAI") {
-    token_address = DAI_TOKEN_ADDRESS;
-  } else if (token_name == "KNC") {
-    token_address = KNC_TOKEN_ADDRESS;
-  }
 
   /*
   ####################################
@@ -209,8 +216,7 @@ async function Kyber_Token_for_ETH(token_name, QTY) {
 
   console.log(txReceipt);
 
-  // return how much Eth received, accounting for potential slippage
-  return dstQty;
+  return true
 
   
   
@@ -219,46 +225,21 @@ async function Kyber_Token_for_ETH(token_name, QTY) {
 
 
 
-async function Kyber_ETH_for_Token(token_name, QTY_ETH) {
-  // Querying the API /currencies endpoint
-  let tokenInfoRequest = await fetch(
-    "https://ropsten-api.kyber.network/currencies"
-  );
-  // Parsing the output
-  let tokens = await tokenInfoRequest.json();
-  // Checking to see if KNC is supported
-  let supported = tokens.data.some(token => {
-    return token_name == token.symbol;
-  });
-  // If not supported, return.
-  if (!supported) {
-    console.log("Token is not supported");
-    return;
-  }
-
-  if (token_name == "DAI") {
-    token_address = DAI_TOKEN_ADDRESS;
-  } else if (token_name == "KNC") {
-    token_address = KNC_TOKEN_ADDRESS;
-  }
+async function Kyber_ETH_for_Token(token_address, QTY) {
 
  
   // Querying the API /buy_rate endpoint
   let ratesRequest = await fetch(
     "https://ropsten-api.kyber.network/buy_rate?id=" +
       token_address +
-      "&qty=" +
-      1
+      "&qty=" + QTY
   );
 
   // Parsing the output
   let rates = await ratesRequest.json();
   // Getting the source quantity
-  // srcQty is equal to how much Eth to purchase 1 token
+  // srcQty is equal to how much Eth to purchase the output token
   let srcQty = rates.data[0].src_qty;
-
-  // # of tokens we can buy is QTY_ETH/srcQty
-  let destQty = QTY_ETH/srcQty;
 
   /*
   #######################
@@ -276,9 +257,9 @@ async function Kyber_ETH_for_Token(token_name, QTY_ETH) {
       "&dst_id=" +
       token_address +
       "&src_qty=" +
-      QTY_ETH +
+      srcQty+
       "&min_dst_qty=" +
-      destQty * 0.97 +
+      QTY * 0.97 +
       "&gas_price=" +
       GAS_PRICE 
   );
@@ -287,12 +268,8 @@ async function Kyber_ETH_for_Token(token_name, QTY_ETH) {
   // Extract the raw transaction details
   let rawTx = tradeDetails.data[0];
   
-  /*
-  let tx_count = await web3.eth.getTransactionCount(USER_ACCOUNT);
-  rawTx["nonce"] = '0x' + (tx_count + 1).toString(16);
-  */
- 
-
+  // Incrementing the nonce. This is only necessary when this is the second transaction in a row
+  // as the nonce will not be set correctly by default.
   rawTx["nonce"] = "0x" + (parseInt(rawTx["nonce"]) +1).toString(16)
 
   // Create a new transaction
@@ -308,7 +285,7 @@ async function Kyber_ETH_for_Token(token_name, QTY_ETH) {
   // Log the transaction receipt
   console.log(txReceipt);
 
-  return
+  return 
 
 }
 
@@ -317,13 +294,9 @@ module.exports = app;
 
 async function main() {
 
-
-  // await execute_swap("DAI", "KNC", 100)
-  await execute_swap("KNC", "DAI", 63)
+  await execute_swap("DAI", "KNC", 100)
 }
 
 main()
 
 
-
-// Dai to KNC swap WORKS!
