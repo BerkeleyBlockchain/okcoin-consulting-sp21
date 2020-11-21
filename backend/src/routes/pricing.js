@@ -1,42 +1,43 @@
 const express = require('express');
 const router = express.Router();
+
+const EXCHANGES = require('../exchanges');
 const TOKENS = require('../shared/tokens');
 
-
-router.get('/all/:tokenFrom/:tokenTo', (req, res) => {
+/**
+ * Get midprice from all exchanges. tokenFrom and tokenTo
+ * should be valid tickers defined in shared/tokens.js
+ */
+router.get('/:tokenFrom/:tokenTo', (req, res) => {
 
   const tokenFrom = TOKENS[req.params.tokenFrom];
   const tokenTo = TOKENS[req.params.tokenTo];
 
   if (tokenFrom == undefined || tokenTo == undefined) {
-    // TODO: Create an error
+    res.json({ error : 'UNDEFINED TOKENS' });
   }
 
-  pricing(address_1, address_2).then(result => {
-    // do some processing of result into finalData
-    res.json({
-      uniswap: parseFloat(result[0]),
-      kyber: parseFloat(result[1])
-    });
+  EXCHANGES.getAllPrices(tokenFrom, tokenTo).then(result => {
+    res.json(result);
   });
 
 });
 
+/**
+ * Get lowest midprice from all exchanges. tokenFrom and
+ * tokenTo should be valid tickers defined in shared/tokens.js
+ */
 router.get('/lowest/:tokenFrom/:tokenTo', (req, res) => {
 
   const tokenFrom = TOKENS[req.params.tokenFrom];
   const tokenTo = TOKENS[req.params.tokenTo];
 
   if (tokenFrom == undefined || tokenTo == undefined) {
-    // TODO: Create an error
+    res.json({ error : 'UNDEFINED TOKENS' });
   }
 
-  pricing(address_1, address_2).then(result => {
-    // do some processing of result into finalData
-    res.json({
-      uniswap: parseFloat(result[0]),
-      kyber: parseFloat(result[1])
-    });
+  EXCHANGES.getLowestPrice(tokenFrom, tokenTo).then(result => {
+    res.json(result);
   });
 
 });

@@ -8,7 +8,7 @@ async function getPrices(tokenFrom, tokenTo) {
   // TODO
 
   return {
-    exchange: 'Kyber',
+    exchange: '0x',
     midprice: '0.0',
     inverse: '0.0'
   };

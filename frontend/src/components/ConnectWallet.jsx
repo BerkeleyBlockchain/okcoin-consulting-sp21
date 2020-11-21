@@ -1,7 +1,14 @@
 import { Button, Flex, Spacer } from '@chakra-ui/react';
 import React from 'react';
 
-function Header() {
+async function getMetamaskAccount() {
+  const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
+  const account = accounts[0];
+  console.log(account);
+}
+
+export default function ConnectWallet() {
+
   return (
     <>
       <Flex>
@@ -11,7 +18,7 @@ function Header() {
           variant="outline"
           colorScheme="teal"
           type="submit"
-          onClick={() => console.log('Connect Metamask!')}
+          onClick={getMetamaskAccount}
         >
           Connect Wallet
         </Button>
@@ -19,4 +26,3 @@ function Header() {
     </>
   );
 }
-export default Header;

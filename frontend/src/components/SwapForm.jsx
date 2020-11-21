@@ -25,7 +25,7 @@ const tokens = [
   },
 ];
 
-export default function Swap() {
+export default function SwapForm() {
   const { register, handleSubmit, watch, errors } = useForm();
   const onSubmit = (data) => console.log(data);
   const watchFromAmount = watch('fromAmount', null);

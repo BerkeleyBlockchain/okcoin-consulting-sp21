@@ -1,7 +1,7 @@
 import React from 'react';
 import { extendTheme, Text, ChakraProvider } from '@chakra-ui/react';
-import Swap from './components/Swap';
-import Header from './components/Header';
+import SwapForm from './components/SwapForm';
+import ConnectWallet from './components/ConnectWallet';
 
 function App() {
   const config = {
@@ -12,8 +12,8 @@ function App() {
   const customTheme = extendTheme({ config });
   return (
     <ChakraProvider resetCSS theme={customTheme}>
-      <Header />
-      <Swap />
+      <ConnectWallet />
+      <SwapForm />
     </ChakraProvider>
   );
 }
