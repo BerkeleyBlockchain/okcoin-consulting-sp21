@@ -1,0 +1,15 @@
+{
+  "name": "pricing-backend",
+  "version": "1.0.0",
+  "description": "DEX Aggregator Pricing Backend",
+  "main": "server.js",
+  "scripts": {
+    "start": "nodemon app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Blockchain at Berkeley",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
