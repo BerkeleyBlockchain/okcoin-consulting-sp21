@@ -1,11 +1,19 @@
-const uniswapTests = require('./testUniswap');
+const testKyber = require('./testUniswap');
+const testUniswap = require('./testUniswap');
+const testZeroX = require('./testUniswap');
 const TOKENS = require('../src/shared/tokens');
 
-/* Uniswap Tests */
-uniswapTests.getPriceTest(TOKENS.DAI, TOKENS.USDC);
+async function runTests() {
 
-/* Kyber Tests */
+    /* Uniswap Tests */
+    await testUniswap.getPriceTest(TOKENS.DAI, TOKENS.USDC);
+    await testUniswap.getPriceTest(TOKENS.DAI, TOKENS.USDT);
+    await testUniswap.getPriceTest(TOKENS.USDT, TOKENS.USDC);
 
+    /* Kyber Tests */
 
-/* 0x Tests */
+    /* 0x Tests */
 
+}
+
+runTests();

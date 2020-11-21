@@ -17,15 +17,17 @@ src
 
 ## Exchanges
 
-`index.js` should contain functions that aggregate pricing results from all the exchanges
+`index.js` should contain exports for all of the supported exchanges
 
 All js files in the exchanges directory should implement the following API:
 
 ```
-getMidprice(tokenAddressFrom, tokenAddressTo)
-    returns the midprice of the given token pair if it exists on the exchange, infinity otherwise
+getPrice(tokenFrom, tokenTo)
+    returns a json object with midprice and inverse fields for the midprice of the token pair and the inverse
+    (inverse being the midprice for OUTPUT -> INPUT)
+    input parameters are json token objects defined in shared/token.js
 
-getData(tokenAddressFrom, tokenAddressTo, amountIn, slippage) <- parameters subject to change depending on what we need
+getData(tokenFrom, tokenTo, amountIn, slippage) <- parameters subject to change depending on what we need
     returns a json object (different depending on the exchange)
     should supply enough info to the frontend necessary to carry out the trade
     supplies the parameters for the smart contract call of that exchange

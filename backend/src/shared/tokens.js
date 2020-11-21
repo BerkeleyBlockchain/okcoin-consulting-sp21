@@ -1,14 +1,26 @@
-const DAI = {
-  "ticker": "DAI",
-  "mainnet": '0x6B175474E89094C44Da98b954EedeAC495271d0F',
-}
+/* Information for supported tokens. */
 
-const USDT = {
-  "ticker": "USDT",
-  "mainnet": '0xdac17f958d2ee523a2206206994597c13d831ec7',
-}
+module.exports = {
 
-const USDC = {
-  "ticker": "USDC",
-  "mainnet": '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48',
+  DAI: {
+    ticker: "DAI",
+    mainnet: '0x6B175474E89094C44Da98b954EedeAC495271d0F',
+    ropsten: '',
+    decimals: 18
+  },
+
+  USDC: {
+    ticker: "USDC",
+    mainnet: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
+    ropsten: '',
+    decimals: 6
+  },
+
+  USDT: {
+    ticker: "USDT",
+    mainnet: '0xdAC17F958D2ee523a2206206994597C13D831ec7',
+    ropsten: '',
+    decimals: 6
+  },
+
 }
