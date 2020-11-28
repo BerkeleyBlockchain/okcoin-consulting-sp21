@@ -1,4 +1,4 @@
-var express = require('express');
+
 var Web3 = require("web3");
 var fetch = require("node-fetch");
 var Tx = require("ethereumjs-tx").Transaction;
@@ -42,8 +42,8 @@ async function getPrices(tokenFrom, tokenTo) {
   let rates_2 = await ratesRequest_2.json();
   let output_in_eth = rates_2.data[0].src_qty
   
-  let midprice = input_in_eth/output_in_eth
-  let inverse = output_in_eth/input_in_eth
+  let midprice = output_in_eth/input_in_eth
+  let inverse = input_in_eth/output_in_eth
   
   // TODO
 
@@ -61,7 +61,7 @@ async function getPrices(tokenFrom, tokenTo) {
 /**
  * Gets the data necessary to execute the given trade.
  */
-async function execute_swap(tokenFrom, tokenTo, input_amount) {
+async function executeSwap(tokenFrom, tokenTo, input_amount) {
 
   const input_address = tokenFrom.mainnet
   const output_address = tokenTo.mainnet
@@ -302,4 +302,4 @@ async function Kyber_ETH_for_Token(token_address, QTY) {
 
 
 
-module.exports = { getData, getPrices };
+module.exports = {executeSwap, getPrices };
