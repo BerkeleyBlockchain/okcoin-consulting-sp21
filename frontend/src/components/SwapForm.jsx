@@ -1,12 +1,4 @@
-import {
-  Box,
-  Button,
-  Center,
-  Flex,
-  Input,
-  Select,
-  Text,
-} from '@chakra-ui/react';
+import { Box, Button, Center, Flex, Input, Select, Text } from '@chakra-ui/react';
 import React from 'react';
 import { useForm } from 'react-hook-form';
 
@@ -26,12 +18,14 @@ const tokens = [
 ];
 
 export default function SwapForm() {
-  const { register, handleSubmit, watch, errors } = useForm();
+  const { register, handleSubmit, watch } = useForm();
+  /* eslint-disable no-console */
   const onSubmit = (data) => console.log(data);
   const watchFromAmount = watch('fromAmount', null);
   const watchToTicker = watch('toTicker', null);
   const watchToAmount = watch('toAmount', 0);
 
+  /* eslint-disable no-console */
   console.log('watch fromAmount :>> ', watchFromAmount === null);
   return (
     <>
@@ -98,6 +92,7 @@ export default function SwapForm() {
                 color="white"
                 size="lg"
                 type="submit"
+                /* eslint-disable no-console */
                 onClick={() => console.log('Swap!')}
               >
                 Swap
