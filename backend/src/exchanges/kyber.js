@@ -61,10 +61,10 @@ async function getPrices(tokenFrom, tokenTo) {
 /**
  * Gets the data necessary to execute the given trade.
  */
-async function execute_swap(input_token, output_token, input_amount) {
+async function execute_swap(tokenFrom, tokenTo, input_amount) {
 
-  const input_address = token_addresses_mainnet[input_token]
-  const output_address = token_addresses_mainnet[output_token]
+  const input_address = tokenFrom.mainnet
+  const output_address = tokenTo.mainnet
 
 
    // get trade price 
