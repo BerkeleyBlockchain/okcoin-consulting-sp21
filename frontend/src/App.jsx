@@ -1,7 +1,7 @@
+import { ChakraProvider, extendTheme } from '@chakra-ui/react';
 import React from 'react';
-import { extendTheme, Text, ChakraProvider } from '@chakra-ui/react';
-import SwapForm from './components/SwapForm';
 import ConnectWallet from './components/ConnectWallet';
+import SwapForm from './components/SwapForm';
 
 function App() {
   const config = {
