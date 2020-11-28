@@ -13,7 +13,7 @@ module.exports = {
     ticker: "USDC",
     mainnet: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
     ropsten: '0xFE724a829fdF12F7012365dB98730EEe33742ea2',
-    decimals: 2
+    decimals: 6
   },
 
   USDT: {

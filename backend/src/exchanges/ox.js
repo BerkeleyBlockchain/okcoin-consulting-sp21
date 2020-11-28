@@ -1,27 +1,40 @@
-import { ContractWrappers } from '@0x/contract-wrappers';
+
+var fetch = require("node-fetch");
+var qs = require('querystring');
 
 /**
  * Gets the midprice for the given token pair as well as the inverse midprice.
  * @param tokenFrom An input token of type defined in shared/token.js
  * @param tokenTo An output token of type defined in shared/token.js
  */
-async function getPrices(tokenFrom, tokenTo, amtFrom) {
 
-  const url = "https://kovan.api.0x.org/swap/v1/price?sellToken=" + tokenFrom 
-    + "&buyToken=" + tokenTo + "&sellAmount=" + amtFrom.toString();
+async function getPrices(tokenFrom, tokenTo) {
 
-  const prices = await fetch(url);
-  const res = await prices.json();
-  const price = res.data[0].price;
+  // TODO
+  const params = {
+    sellToken: tokenFrom.ticker,
+    buyToken: tokenTo.ticker,
+    buyAmount: 10**(tokenTo.decimals),
+  }
+
+  const response = await fetch(
+    `https://api.0x.org/swap/v1/quote?${qs.stringify(params)}`
+  );
+  const response_json = await response.json()
+  const midprice = response_json.price
+  const inverse = 1/response_json.price
 
   // price does not include slippage
   return {
     exchange: '0x',
-    midprice: price.toSignificant(6),
-    inverse: price.inverse().toSignificant(6)
+    midprice: midprice,
+    inverse: inverse
   };
 
 }
+
+
+
 
 /**
  * Gets the data necessary to execute the given trade.
