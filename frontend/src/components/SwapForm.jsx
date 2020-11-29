@@ -1,6 +1,8 @@
 import { Box, Button, Center, Flex, Input, Select, Text } from '@chakra-ui/react';
 import React from 'react';
 import { useForm } from 'react-hook-form';
+import useUniswapPrice from '../hooks/useUniswapPrice';
+import * as Tokens from '../constants/tokens';
 
 const tokens = [
   {
@@ -19,6 +21,8 @@ const tokens = [
 
 export default function SwapForm() {
   const { register, handleSubmit, watch } = useForm();
+  // eslint-disable-next-line no-unused-vars
+  const [exchange, midprice, inverse] = useUniswapPrice(Tokens.DAI, Tokens.USDC);
   /* eslint-disable no-console */
   const onSubmit = (data) => console.log(data);
   const watchFromAmount = watch('fromAmount', null);
