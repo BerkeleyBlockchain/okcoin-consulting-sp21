@@ -24,6 +24,7 @@ async function getPrices(tokenFrom, tokenTo) {
   const midprice = response_json.price
   const inverse = 1/response_json.price
 
+  // price does not include slippage
   return {
     exchange: '0x',
     midprice: midprice,
