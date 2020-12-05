@@ -11,7 +11,7 @@ var qs = require('querystring');
 var web3;
 var API_ENDPOINT;
 if (MAINNET) {
-  API_ENDPOINT = "https://api.kyber.network";
+  API_ENDPOINT = "https://api.0x.org";
   web3  = new Web3(
     new Web3.providers.HttpProvider("https://mainnet.infura.io/v3/b2e13b0a648e4c67b4a36951f5b1ed62")
   ); 
@@ -74,6 +74,7 @@ async function executeTrade(tokenFrom, tokenTo, inputAmt) {
     "transaction": resJSON.ethereumTransaction
   }
 }
+
 /**
  * Gets the data necessary to execute the given trade.
  */
