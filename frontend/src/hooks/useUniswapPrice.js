@@ -20,12 +20,13 @@ async function getPrices(tokenFrom, tokenTo) {
 }
 
 export default function usePrices(tokenFrom, tokenTo) {
-  const exchange = 'Uniswap';
+  const [exchange, setExchange] = useState(null);
   const [midPrice, setMidPrice] = useState(null);
   const [inverse, setInverse] = useState(null);
 
   useEffect(async () => {
     const res = await getPrices(tokenFrom, tokenTo);
+    setExchange(res.exchange);
     setMidPrice(res.midprice);
     setInverse(res.inverse);
   }, [tokenFrom, tokenTo]);

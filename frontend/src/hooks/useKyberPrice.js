@@ -6,23 +6,23 @@ import { useEffect, useState } from 'react';
  * @param tokenTo An output token of type defined in shared/token.js
  */
 async function getPrices(tokenFrom, tokenTo) {
-  // TODO
-  const params = {
-    sellToken: tokenFrom.ticker,
-    buyToken: tokenTo.ticker,
-    buyAmount: 10 ** tokenTo.decimals,
-  };
+  const address1 = tokenFrom.mainnet;
+  const address2 = tokenTo.mainnet;
 
-  const u = new URLSearchParams(params);
+  const ratesRequest = await fetch(`https://api.kyber.network/sell_rate?id=${address1}&qty=1`);
+  const rates = await ratesRequest.json();
+  const inputInEth = rates.data[0].dst_qty;
 
-  const response = await fetch(`https://api.0x.org/swap/v1/quote?${u.toString()}`);
-  const responseJson = await response.json();
-  const midprice = responseJson.price;
-  const inverse = 1 / responseJson.price;
+  const ratesRequest2 = await fetch(`https://api.kyber.network/buy_rate?id=${address2}&qty=1`);
+  // Parsing the output
+  const rates2 = await ratesRequest2.json();
+  const outputInEth = rates2.data[0].src_qty;
 
-  // price does not include slippage
+  const midprice = outputInEth / inputInEth;
+  const inverse = inputInEth / outputInEth;
+
   return {
-    exchange: '0x',
+    exchange: 'Kyber',
     midprice,
     inverse,
   };
