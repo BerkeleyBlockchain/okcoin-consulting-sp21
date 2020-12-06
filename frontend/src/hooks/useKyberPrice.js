@@ -41,6 +41,7 @@ export default function useKyberPrice(tokenFrom, tokenTo) {
   const [inverse, setInverse] = useState(null);
 
   useEffect(async () => {
+    console.log('GET KYBER PRICE');
     const res = await getPrices(tokenFrom, tokenTo);
     setExchange(res.exchange);
     setMidPrice(res.midprice);
