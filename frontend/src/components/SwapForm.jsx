@@ -34,30 +34,29 @@ const coins = [
 
 export default function SwapForm() {
   const { register, handleSubmit, watch, setValue } = useForm();
-  /* eslint-disable no-console */
-  const watchFromTicker = watch('fromTicker', '');
-  const watchToTicker = watch('toTicker', '');
+  const watchFromToken = watch('fromToken', '');
+  const watchToToken = watch('toToken', '');
   const watchFromAmount = watch('fromAmount', 0);
-  const [, midprice] = useKyberPrice(Tokens[watchFromTicker], Tokens[watchToTicker]);
+  const [, midprice] = useKyberPrice(Tokens[watchFromToken], Tokens[watchToToken]);
   const onSubmit = (data) => {
-    const { fromAmount, fromTicker, toTicker } = data;
-    executeSwap(Tokens[fromTicker], Tokens[toTicker], parseInt(fromAmount, 10));
+    const { fromAmount, fromToken, toToken } = data;
+    executeSwap(Tokens[fromToken], Tokens[toToken], parseInt(fromAmount, 10));
     console.log(
       '🚀 ~ file: SwapForm.jsx ~ line 46 ~ onSubmit ~ parseInt(data)',
       parseInt(fromAmount, 10)
     );
+    console.log('🚀 ~ file: SwapForm.jsx ~ line 46 ~ onSubmit ~ Tokens[toToken]', Tokens[toToken]);
     console.log(
-      '🚀 ~ file: SwapForm.jsx ~ line 46 ~ onSubmit ~ Tokens[toTicker]',
-      Tokens[toTicker]
-    );
-    console.log(
-      '🚀 ~ file: SwapForm.jsx ~ line 46 ~ onSubmit ~ Tokens[fromTicker]',
-      Tokens[fromTicker]
+      '🚀 ~ file: SwapForm.jsx ~ line 46 ~ onSubmit ~ Tokens[fromToken]',
+      Tokens[fromToken]
     );
   };
 
   useEffect(() => {
-    setValue('toAmount', Math.round(watchFromAmount / midprice));
+    if (watchFromAmount && watchFromToken && watchToToken) {
+      const n = watchFromAmount / midprice;
+      setValue('toAmount', n.toFixed(Tokens[watchFromToken]?.decimals));
+    }
   }, [midprice, watchFromAmount]);
 
   return (
@@ -70,6 +69,7 @@ export default function SwapForm() {
                 placeholder="From"
                 name="fromAmount"
                 type="number"
+                step="0.000000000000000001"
                 size="lg"
                 ref={register}
                 mr={6}
@@ -77,7 +77,7 @@ export default function SwapForm() {
               />
               <Select
                 placeholder="Select a token"
-                name="fromTicker"
+                name="fromToken"
                 size="lg"
                 variant="filled"
                 ref={register}
@@ -94,6 +94,7 @@ export default function SwapForm() {
                 placeholder="To"
                 name="toAmount"
                 type="number"
+                step="0.000000000000000001"
                 size="lg"
                 ref={register}
                 mr={6}
@@ -101,7 +102,7 @@ export default function SwapForm() {
               />
               <Select
                 placeholder="Select a token"
-                name="toTicker"
+                name="toToken"
                 size="lg"
                 variant="filled"
                 ref={register}
@@ -113,8 +114,8 @@ export default function SwapForm() {
                 ))}
               </Select>
             </Flex>
-            {watchFromTicker && watchToTicker && (
-              <Text my={3}>{`Price: ${1 / midprice} ${watchFromTicker} per ${watchToTicker}`}</Text>
+            {watchFromToken && watchToToken && (
+              <Text my={3}>{`Price: ${1 / midprice} ${watchFromToken} per ${watchToToken}`}</Text>
             )}
             <Center>
               <Button
@@ -123,8 +124,6 @@ export default function SwapForm() {
                 color="white"
                 size="lg"
                 type="submit"
-                /* eslint-disable no-console */
-                onClick={() => console.log('Swap!')}
                 mt={3}
               >
                 Swap
