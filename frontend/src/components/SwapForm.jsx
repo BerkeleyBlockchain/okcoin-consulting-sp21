@@ -82,7 +82,7 @@ export default function SwapForm() {
                 variant="filled"
                 ref={register}
               >
-                {coins?.map(({ ticker }) => (
+                {coins.map(({ ticker }) => (
                   <option key={ticker} value={ticker}>
                     {ticker}
                   </option>
@@ -106,7 +106,7 @@ export default function SwapForm() {
                 variant="filled"
                 ref={register}
               >
-                {coins?.map(({ ticker }) => (
+                {coins.map(({ ticker }) => (
                   <option key={ticker} value={ticker}>
                     {ticker}
                   </option>
