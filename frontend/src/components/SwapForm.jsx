@@ -1,9 +1,9 @@
-import {Box, Button, Center, Flex, Input, Select, Text} from '@chakra-ui/react'
-import React from 'react'
-import {useForm} from 'react-hook-form'
-import useUniswapPrice from '../hooks/useUniswapPrice'
-import * as Tokens from '../constants/tokens'
-import executeSwap from '../hooks/useKyberSwap'
+import { Box, Button, Center, Flex, Input, Select, Text } from '@chakra-ui/react';
+import React from 'react';
+import { useForm } from 'react-hook-form';
+import useUniswapPrice from '../hooks/useUniswapPrice';
+import * as Tokens from '../constants/tokens';
+import executeSwap from '../hooks/useKyberSwap';
 
 const tokens = [
   {
@@ -18,27 +18,25 @@ const tokens = [
     key: 'dai',
     ticker: 'DAI',
   },
-]
+];
 
 export default function SwapForm() {
-  const {register, handleSubmit, watch} = useForm()
+  const { register, handleSubmit, watch } = useForm();
   // eslint-disable-next-line no-unused-vars
-  const [exchange, midprice, inverse] = useUniswapPrice(Tokens.DAI, Tokens.USDC)
+  const [exchange, midprice, inverse] = useUniswapPrice(Tokens.DAI, Tokens.USDC);
   /* eslint-disable no-console */
-  const onSubmit = (data) => console.log(data)
-  const watchFromAmount = watch('fromAmount', null)
-  const watchToTicker = watch('toTicker', null)
-  const watchToAmount = watch('toAmount', 0)
+  const onSubmit = (data) => console.log(data);
+  const watchFromAmount = watch('fromAmount', null);
+  const watchToTicker = watch('toTicker', null);
+  const watchToAmount = watch('toAmount', 0);
 
   /* eslint-disable no-console */
-  console.log('watch fromAmount :>> ', watchFromAmount === null)
+  console.log('watch fromAmount :>> ', watchFromAmount === null);
   return (
     <>
       <Center mt={6}>
         <Box bg="gray.700" pt={12} px={12} pb={6} borderRadius={40}>
-          <Button onClick={() => executeSwap(Tokens.KNC, Tokens.DAI, 1)}>
-            Kyber Swap
-          </Button>
+          <Button onClick={() => executeSwap(Tokens.KNC, Tokens.DAI, 1)}>Kyber Swap</Button>
           <form onSubmit={handleSubmit(onSubmit)}>
             <Flex>
               <Input
@@ -57,7 +55,7 @@ export default function SwapForm() {
                 variant="filled"
                 ref={register}
               >
-                {tokens.map(({key, ticker}) => (
+                {tokens.map(({ key, ticker }) => (
                   <option key={key} value={ticker}>
                     {ticker}
                   </option>
@@ -110,5 +108,5 @@ export default function SwapForm() {
         </Box>
       </Center>
     </>
-  )
+  );
 }
