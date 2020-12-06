@@ -63,6 +63,8 @@ async function getPrices(tokenFrom, tokenTo, quantityIn) {
  * Gets the data necessary to execute the given trade.
  */
 export default async function executeSwap(tokenFrom, tokenTo, input_amount) {
+  console.log('🚀 ~ file: useKyberSwap.js ~ line 66 ~ executeSwap ~ input_amount', input_amount);
+
   let input_address;
   let output_address;
 
