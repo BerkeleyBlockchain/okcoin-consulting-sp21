@@ -8,13 +8,13 @@ var qs = require('querystring');
  * @param tokenTo An output token of type defined in shared/token.js
  */
 
-async function getPrices(tokenFrom, tokenTo) {
+async function getPrices(tokenFrom, tokenTo, quantityIn) {
 
   // TODO
   const params = {
     sellToken: tokenFrom.ticker,
     buyToken: tokenTo.ticker,
-    buyAmount: 10**(tokenTo.decimals),
+    sellAmount: quantityIn*(10**tokenFrom.decimals),
   }
 
   const response = await fetch(
@@ -28,7 +28,9 @@ async function getPrices(tokenFrom, tokenTo) {
   return {
     exchange: '0x',
     midprice: midprice,
-    inverse: inverse
+    inverse: inverse,
+    quantityIn: quantityIn,
+    quantityOut: quantityIn*midprice
   };
 
 }
@@ -46,3 +48,5 @@ async function getData() {
 }
 
 module.exports = { getData, getPrices };
+
+

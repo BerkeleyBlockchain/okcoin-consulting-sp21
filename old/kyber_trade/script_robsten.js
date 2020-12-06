@@ -299,7 +299,7 @@ module.exports = app;
 
 async function main() {
 
-  await execute_swap("DAI", "KNC", 100)
+  await execute_swap("KNC", "DAI", 95.5444444444444444444)
 }
 
 main()
