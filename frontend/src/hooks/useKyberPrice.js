@@ -6,6 +6,13 @@ import { useEffect, useState } from 'react';
  * @param tokenTo An output token of type defined in shared/token.js
  */
 async function getPrices(tokenFrom, tokenTo) {
+  if (!tokenFrom || !tokenTo) {
+    return {
+      exchange: 'Kyber',
+      midprice: 1,
+      inverse: 1,
+    };
+  }
   const address1 = tokenFrom.mainnet;
   const address2 = tokenTo.mainnet;
 
@@ -34,6 +41,7 @@ export default function useKyberPrice(tokenFrom, tokenTo) {
   const [inverse, setInverse] = useState(null);
 
   useEffect(async () => {
+    console.log('GET KYBER PRICE');
     const res = await getPrices(tokenFrom, tokenTo);
     setExchange(res.exchange);
     setMidPrice(res.midprice);

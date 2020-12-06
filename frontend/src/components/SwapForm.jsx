@@ -1,43 +1,69 @@
 import { Box, Button, Center, Flex, Input, Select, Text } from '@chakra-ui/react';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
-import useCheapestPrice from '../hooks/useCheapestPrice';
+import useKyberPrice from '../hooks/useKyberPrice';
 import * as Tokens from '../constants/tokens';
 import executeSwap from '../hooks/useKyberSwap';
 
-const tokens = [
+const coins = [
   {
-    key: 'eth',
-    ticker: 'ETH',
-  },
-  {
-    key: 'btc',
-    ticker: 'BTC',
-  },
-  {
-    key: 'dai',
     ticker: 'DAI',
+  },
+  {
+    ticker: 'USDC',
+  },
+  {
+    ticker: 'USDT',
+  },
+  {
+    ticker: 'TUSD',
+  },
+  {
+    ticker: 'KNC',
+  },
+  {
+    ticker: 'WETH',
+  },
+  {
+    ticker: 'CDAI',
+  },
+  {
+    ticker: 'ADAI',
   },
 ];
 
 export default function SwapForm() {
-  const { register, handleSubmit, watch } = useForm();
-  // eslint-disable-next-line no-unused-vars
-  const midprice = useCheapestPrice(Tokens.DAI, Tokens.USDC);
+  const { register, handleSubmit, watch, setValue } = useForm();
   /* eslint-disable no-console */
-  const onSubmit = (data) => console.log(data);
-  const watchFromAmount = watch('fromAmount', null);
-  const watchToTicker = watch('toTicker', null);
-  const watchToAmount = watch('toAmount', 0);
+  const watchFromTicker = watch('fromTicker', '');
+  const watchToTicker = watch('toTicker', '');
+  const watchFromAmount = watch('fromAmount', 0);
+  const [, midprice] = useKyberPrice(Tokens[watchFromTicker], Tokens[watchToTicker]);
+  const onSubmit = (data) => {
+    const { fromAmount, fromTicker, toTicker } = data;
+    executeSwap(Tokens[fromTicker], Tokens[toTicker], parseInt(fromAmount, 10));
+    console.log(
+      '🚀 ~ file: SwapForm.jsx ~ line 46 ~ onSubmit ~ parseInt(data)',
+      parseInt(fromAmount, 10)
+    );
+    console.log(
+      '🚀 ~ file: SwapForm.jsx ~ line 46 ~ onSubmit ~ Tokens[toTicker]',
+      Tokens[toTicker]
+    );
+    console.log(
+      '🚀 ~ file: SwapForm.jsx ~ line 46 ~ onSubmit ~ Tokens[fromTicker]',
+      Tokens[fromTicker]
+    );
+  };
 
-  /* eslint-disable no-console */
-  console.log('watch fromAmount :>> ', watchFromAmount === null);
+  useEffect(() => {
+    setValue('toAmount', Math.round(watchFromAmount / midprice));
+  }, [midprice, watchFromAmount]);
+
   return (
     <>
       <Center mt={6}>
         <Box bg="gray.700" pt={12} px={12} pb={6} borderRadius={40}>
-          <Button onClick={() => executeSwap(Tokens.KNC, Tokens.DAI, 1)}>Kyber Swap</Button>
-          <Text>PRICE: {midprice}</Text>
           <form onSubmit={handleSubmit(onSubmit)}>
             <Flex>
               <Input
@@ -46,8 +72,8 @@ export default function SwapForm() {
                 type="number"
                 size="lg"
                 ref={register}
-                mr={3}
-                mb={3}
+                mr={6}
+                mb={6}
               />
               <Select
                 placeholder="Select a token"
@@ -56,8 +82,8 @@ export default function SwapForm() {
                 variant="filled"
                 ref={register}
               >
-                {tokens.map(({ key, ticker }) => (
-                  <option key={key} value={ticker}>
+                {coins?.map(({ ticker }) => (
+                  <option key={ticker} value={ticker}>
                     {ticker}
                   </option>
                 ))}
@@ -70,8 +96,8 @@ export default function SwapForm() {
                 type="number"
                 size="lg"
                 ref={register}
-                mr={3}
-                mb={3}
+                mr={6}
+                mb={6}
               />
               <Select
                 placeholder="Select a token"
@@ -80,17 +106,15 @@ export default function SwapForm() {
                 variant="filled"
                 ref={register}
               >
-                {tokens.map((token) => (
-                  <option key={token.ticker} value={token.ticker}>
-                    {token.ticker}
+                {coins?.map(({ ticker }) => (
+                  <option key={ticker} value={ticker}>
+                    {ticker}
                   </option>
                 ))}
               </Select>
             </Flex>
-            {watchFromAmount && (
-              <Text>
-                Price: {watchToAmount} {watchToTicker}
-              </Text>
+            {watchFromTicker && watchToTicker && (
+              <Text my={3}>{`Price: ${1 / midprice} ${watchFromTicker} per ${watchToTicker}`}</Text>
             )}
             <Center>
               <Button
@@ -101,6 +125,7 @@ export default function SwapForm() {
                 type="submit"
                 /* eslint-disable no-console */
                 onClick={() => console.log('Swap!')}
+                mt={3}
               >
                 Swap
               </Button>
