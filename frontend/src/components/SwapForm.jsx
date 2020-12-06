@@ -1,7 +1,7 @@
 import { Box, Button, Center, Flex, Input, Select, Text } from '@chakra-ui/react';
 import React from 'react';
 import { useForm } from 'react-hook-form';
-import useUniswapPrice from '../hooks/useUniswapPrice';
+import useCheapestPrice from '../hooks/useCheapestPrice';
 import * as Tokens from '../constants/tokens';
 import executeSwap from '../hooks/useKyberSwap';
 
@@ -23,7 +23,7 @@ const tokens = [
 export default function SwapForm() {
   const { register, handleSubmit, watch } = useForm();
   // eslint-disable-next-line no-unused-vars
-  const [exchange, midprice, inverse] = useUniswapPrice(Tokens.DAI, Tokens.USDC);
+  const midprice = useCheapestPrice(Tokens.DAI, Tokens.USDC);
   /* eslint-disable no-console */
   const onSubmit = (data) => console.log(data);
   const watchFromAmount = watch('fromAmount', null);
@@ -37,6 +37,7 @@ export default function SwapForm() {
       <Center mt={6}>
         <Box bg="gray.700" pt={12} px={12} pb={6} borderRadius={40}>
           <Button onClick={() => executeSwap(Tokens.KNC, Tokens.DAI, 1)}>Kyber Swap</Button>
+          <Text>PRICE: {midprice}</Text>
           <form onSubmit={handleSubmit(onSubmit)}>
             <Flex>
               <Input
