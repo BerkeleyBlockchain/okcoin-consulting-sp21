@@ -28,7 +28,7 @@ async function getPrices(tokenFrom, tokenTo) {
   };
 }
 
-export default function usePrices(tokenFrom, tokenTo) {
+export default function useKyberPrice(tokenFrom, tokenTo) {
   const [exchange, setExchange] = useState(null);
   const [midPrice, setMidPrice] = useState(null);
   const [inverse, setInverse] = useState(null);
