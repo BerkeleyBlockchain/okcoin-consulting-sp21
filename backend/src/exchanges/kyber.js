@@ -1,7 +1,7 @@
 
 // User Parameters to set (network, gas price, ethereum address, private key)
 
-const MAINNET = false;
+const MAINNET = true;
 const GAS_PRICE = "medium";
 const USER_ACCOUNT = "0x514FE66A514a5B73F8E78B31173eE913C810425E";
 const PRIVATE_KEY = Buffer.from("d95ae2d664459c8f939a18772579c0d2898325d71411ba475d468a78c1860b1b", "hex");
@@ -42,7 +42,7 @@ if (MAINNET) {
  * @param tokenFrom An input token of type defined in shared/token.js
  * @param tokenTo An output token of type defined in shared/token.js
  */
-async function getPrices(tokenFrom, tokenTo) {
+async function getPrices(tokenFrom, tokenTo, quantityIn) {
 
   let address_1 = tokenFrom.mainnet
   let address_2 = tokenTo.mainnet
@@ -65,15 +65,18 @@ async function getPrices(tokenFrom, tokenTo) {
   let rates_2 = await ratesRequest_2.json();
   let output_in_eth = rates_2.data[0].src_qty
   
-  let midprice = output_in_eth/input_in_eth
-  let inverse = input_in_eth/output_in_eth
+  let midprice = input_in_eth/output_in_eth
+  let inverse = output_in_eth/input_in_eth
+  
   
 
 
   return {
     exchange: 'Kyber',
     midprice: midprice,
-    inverse: inverse
+    inverse: inverse,
+    quantityIn: quantityIn,
+    quantityOut: quantityIn*midprice
   };
 
 }
@@ -362,6 +365,11 @@ async function Kyber_ETH_for_Token(token_address, QTY, incrementNonce=false) {
   return 
 
 }
+
+
+
+
+// executeSwap(TOKENS.KNC, TOKENS.DAI, 100)
 
 
 

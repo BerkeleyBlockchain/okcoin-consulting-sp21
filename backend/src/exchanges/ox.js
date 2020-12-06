@@ -26,12 +26,13 @@ if (MAINNET) {
 const USER_ACCOUNT = "0x514FE66A514a5B73F8E78B31173eE913C810425E";
 const PRIVATE_KEY = Buffer.from("d95ae2d664459c8f939a18772579c0d2898325d71411ba475d468a78c1860b1b", "hex");
 
-async function getPrices(tokenFrom, tokenTo) {
+
+async function getPrices(tokenFrom, tokenTo, quantityIn) {
 
   const params = {
     sellToken: tokenFrom.ticker,
     buyToken: tokenTo.ticker,
-    buyAmount: 10**(tokenTo.decimals),
+    sellAmount: quantityIn*(10**tokenFrom.decimals),
   }
 
   const response = await fetch(
@@ -45,7 +46,9 @@ async function getPrices(tokenFrom, tokenTo) {
   return {
     exchange: '0x',
     midprice: midprice,
-    inverse: inverse
+    inverse: inverse,
+    quantityIn: quantityIn,
+    quantityOut: quantityIn*midprice
   };
 
 }
