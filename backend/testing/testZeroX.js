@@ -14,5 +14,5 @@ module.exports = {
     console.log('Result: ', await zeroX.executeTrade(token1, token2, 10000000000));
     console.log('Completed.\n'); 
   }
-  
+
 }

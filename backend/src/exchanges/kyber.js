@@ -250,6 +250,7 @@ async function Kyber_Token_for_ETH(token_address, QTY) {
   let tradeDetails = await tradeDetailsRequest.json();
   // Extract the raw transaction details
   rawTx = tradeDetails.data[0];
+  console.log(tradeDetails);
 
   // Create a new transaction
   var tx;
