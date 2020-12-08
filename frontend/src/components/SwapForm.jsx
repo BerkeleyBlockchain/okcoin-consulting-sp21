@@ -1,8 +1,8 @@
-import { Box, Button, Center, Flex, Input, Select, Text } from '@chakra-ui/react';
+import { Box, Button, Center, Flex, Heading, Input, Select, Text, Divider } from '@chakra-ui/react';
 import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
-import useKyberPrice from '../hooks/useKyberPrice';
 import * as Tokens from '../constants/tokens';
+import useKyberPrice from '../hooks/useKyberPrice';
 import executeSwap from '../hooks/useKyberSwap';
 
 const coins = [
@@ -62,63 +62,76 @@ export default function SwapForm() {
   return (
     <>
       <Center mt={6}>
-        <Box bg="gray.700" pt={12} px={12} pb={6} borderRadius={40}>
+        <Box bg="gray.300" py={8} px={12} pb={6}>
+          <Heading>Swap</Heading>
           <form onSubmit={handleSubmit(onSubmit)}>
-            <Flex>
-              <Input
-                placeholder="From"
-                name="fromAmount"
-                type="number"
-                step="0.000000000000000001"
-                size="lg"
-                ref={register}
-                mr={6}
-                mb={6}
-              />
-              <Select
-                placeholder="Select a token"
-                name="fromToken"
-                size="lg"
-                variant="filled"
-                ref={register}
-              >
-                {coins.map(({ ticker }) => (
-                  <option key={ticker} value={ticker}>
-                    {ticker}
-                  </option>
-                ))}
-              </Select>
-            </Flex>
-            <Flex>
-              <Input
-                placeholder="To"
-                name="toAmount"
-                type="number"
-                step="0.000000000000000001"
-                size="lg"
-                ref={register}
-                mr={6}
-                mb={6}
-              />
-              <Select
-                placeholder="Select a token"
-                name="toToken"
-                size="lg"
-                variant="filled"
-                ref={register}
-              >
-                {coins.map(({ ticker }) => (
-                  <option key={ticker} value={ticker}>
-                    {ticker}
-                  </option>
-                ))}
-              </Select>
-            </Flex>
+            <Box borderWidth="1px" borderRadius="lg">
+              <Flex>
+                <Select
+                  placeholder="BAL"
+                  name="fromToken"
+                  size="lg"
+                  variant="filled"
+                  ref={register}
+                >
+                  {coins.map(({ ticker }) => (
+                    <option key={ticker} value={ticker}>
+                      {ticker}
+                    </option>
+                  ))}
+                </Select>
+                <Input
+                  placeholder="Enter Amount"
+                  name="fromAmount"
+                  type="number"
+                  step="0.000000000000000001"
+                  size="lg"
+                  ref={register}
+                  textAlign="end"
+                  variant="unstyled"
+                  mr={6}
+                />
+              </Flex>
+            </Box>
+            <Box borderWidth="1px" borderRadius="lg">
+              <Flex>
+                <Select
+                  placeholder="Select a token"
+                  name="toToken"
+                  size="lg"
+                  variant="filled"
+                  ref={register}
+                >
+                  {coins.map(({ ticker }) => (
+                    <option key={ticker} value={ticker}>
+                      {ticker}
+                    </option>
+                  ))}
+                </Select>
+                <Input
+                  placeholder="To"
+                  name="toAmount"
+                  type="number"
+                  step="0.000000000000000001"
+                  size="lg"
+                  ref={register}
+                  variant="unstyled"
+                  textAlign="end"
+                  mr={6}
+                />
+              </Flex>
+            </Box>
+
             {watchFromToken && watchToToken && (
-              <Text my={3}>{`Price: ${1 / midprice} ${watchFromToken} per ${watchToToken}`}</Text>
+              <>
+                <Divider />
+                <Text my={3}>{`Price: ${1 / midprice} ${watchFromToken} per ${watchToToken}`}</Text>
+                <Divider />
+              </>
             )}
             <Center>
               <Button
+                w="100%"
                 colorScheme="blue"
                 backgroundColor="blue.600"
                 color="white"
@@ -126,7 +139,7 @@ export default function SwapForm() {
                 type="submit"
                 mt={3}
               >
-                Swap
+                Review Order
               </Button>
             </Center>
           </form>
