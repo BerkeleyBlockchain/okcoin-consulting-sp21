@@ -1,6 +1,6 @@
-import { ChakraProvider, extendTheme, Flex, Spacer } from '@chakra-ui/react';
+import { Box, ChakraProvider, extendTheme } from '@chakra-ui/react';
 import React from 'react';
-import ConnectWallet from './components/ConnectWallet';
+import NavBar from './components/NavBar';
 import SwapForm from './components/SwapForm';
 
 function App() {
@@ -12,11 +12,10 @@ function App() {
   const customTheme = extendTheme({ config });
   return (
     <ChakraProvider resetCSS theme={customTheme}>
-      <Flex>
-        <Spacer />
-        <ConnectWallet />
-      </Flex>
-      <SwapForm />
+      <Box bg="gray.200" h="100vh">
+        <NavBar />
+        <SwapForm />
+      </Box>
     </ChakraProvider>
   );
 }

@@ -1,4 +1,15 @@
-import { Box, Button, Center, Flex, Heading, Input, Select, Text, Divider } from '@chakra-ui/react';
+import {
+  Spacer,
+  Box,
+  Button,
+  Center,
+  Flex,
+  Heading,
+  Input,
+  Select,
+  Text,
+  Divider,
+} from '@chakra-ui/react';
 import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import * as Tokens from '../constants/tokens';
@@ -62,13 +73,14 @@ export default function SwapForm() {
   return (
     <>
       <Center mt={6}>
-        <Box bg="gray.300" py={8} px={12} pb={6}>
-          <Heading>Swap</Heading>
+        <Box py={12} px={12} pb={6} boxShadow="2xl" bg="white">
+          <Heading mb={6}>Swap</Heading>
           <form onSubmit={handleSubmit(onSubmit)}>
-            <Box borderWidth="1px" borderRadius="lg">
+            <Text opacity={0.7}>PAY</Text>
+            <Box borderWidth="1px" borderRadius="lg" mb={6}>
               <Flex>
                 <Select
-                  placeholder="BAL"
+                  placeholder="Select Token"
                   name="fromToken"
                   size="lg"
                   variant="filled"
@@ -93,7 +105,8 @@ export default function SwapForm() {
                 />
               </Flex>
             </Box>
-            <Box borderWidth="1px" borderRadius="lg">
+            <Text opacity={0.7}>RECEIVE</Text>
+            <Box borderWidth="1px" borderRadius="lg" mb={6}>
               <Flex>
                 <Select
                   placeholder="Select a token"
@@ -124,9 +137,20 @@ export default function SwapForm() {
 
             {watchFromToken && watchToToken && (
               <>
-                <Divider />
-                <Text my={3}>{`Price: ${1 / midprice} ${watchFromToken} per ${watchToToken}`}</Text>
-                <Divider />
+                <Divider mb={3} />
+                <Flex>
+                  <Text>Rate</Text>
+                  <Spacer />
+                  <Text>{`1 ${watchFromToken} = ${1 / midprice} ${watchToToken}`}</Text>
+                </Flex>
+                <Flex>
+                  <Text>Estimated Gas Fee</Text>
+                  <Spacer />
+                  <Text>$2.88 - 0.0001 ETH</Text>
+                </Flex>
+
+                {/* <Text my={3}>{`Price: ${1 / midprice} ${watchFromToken} per ${watchToToken}`}</Text> */}
+                <Divider mt={3} />
               </>
             )}
             <Center>
@@ -137,7 +161,7 @@ export default function SwapForm() {
                 color="white"
                 size="lg"
                 type="submit"
-                mt={3}
+                mt={6}
               >
                 Review Order
               </Button>
