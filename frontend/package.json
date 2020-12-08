@@ -15,6 +15,7 @@
     "buffer": "^6.0.3",
     "eslint": "^7.14.0",
     "ethereumjs-tx": "^2.1.2",
+    "ethers": "^5.0.23",
     "framer-motion": "^2.9.4",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",

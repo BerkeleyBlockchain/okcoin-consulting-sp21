@@ -14,6 +14,7 @@ import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import * as Tokens from '../constants/tokens';
 import useKyberPrice from '../hooks/useKyberPrice';
+// import useGas from '../hooks/useGas';
 import executeSwap from '../hooks/useKyberSwap';
 
 const coins = [
@@ -49,6 +50,9 @@ export default function SwapForm() {
   const watchToToken = watch('toToken', '');
   const watchFromAmount = watch('fromAmount', 0);
   const [, midprice] = useKyberPrice(Tokens[watchFromToken], Tokens[watchToToken]);
+  // const gas = useGas();
+  const gas = 1;
+
   const onSubmit = (data) => {
     const { fromAmount, fromToken, toToken } = data;
     executeSwap(Tokens[fromToken], Tokens[toToken], parseInt(fromAmount, 10));
@@ -65,8 +69,11 @@ export default function SwapForm() {
 
   useEffect(() => {
     if (watchFromAmount && watchFromToken && watchToToken) {
-      const n = watchFromAmount / midprice;
+      const n = watchFromAmount * midprice;
       setValue('toAmount', n.toFixed(Tokens[watchFromToken]?.decimals));
+    }
+    if (!watchFromAmount) {
+      setValue('toAmount', '');
     }
   }, [midprice, watchFromAmount]);
 
@@ -146,7 +153,7 @@ export default function SwapForm() {
                 <Flex>
                   <Text>Estimated Gas Fee</Text>
                   <Spacer />
-                  <Text>$2.88 - 0.0001 ETH</Text>
+                  <Text>{gas}</Text>
                 </Flex>
 
                 {/* <Text my={3}>{`Price: ${1 / midprice} ${watchFromToken} per ${watchToToken}`}</Text> */}
