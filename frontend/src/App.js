@@ -16,7 +16,7 @@ function App() {
       <Box bg="gray.200" h="100vh">
         <NavBar />
         <Grid h="100%" templateColumns="repeat(3, 1fr)" gap={4}>
-          <GridItem colSpan={2} bg="papayawhip">
+          <GridItem colSpan={2} bg="white">
             <ExchangesTable />
           </GridItem>
           <GridItem colSpan={1}>
