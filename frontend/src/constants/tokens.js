@@ -31,7 +31,7 @@ module.exports = {
     ticker: 'KNC',
     mainnet: '0xdd974d5c2e2928dea5f71b9825b8b646686bd200',
     ropsten: '0x7b2810576aa1cce68f2b118cef1f36467c648f92',
-    decimals: 6,
+    decimals: 18,
   },
 
   WETH: {
