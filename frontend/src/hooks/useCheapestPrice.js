@@ -1,13 +1,18 @@
 import useUniswapPrice from './useUniswapPrice';
 import useKyberPrice from './useKyberPrice';
-import use0xPrice from './use0xPrice';
+// import use0xPrice from './use0xPrice';
 
 export default function useCheapestPrice(tokenFrom, tokenTo) {
-  const [, uniMidprice] = useUniswapPrice(tokenFrom, tokenTo);
-  const [, kyberMidprice] = useKyberPrice(tokenFrom, tokenTo);
-  const [, zeroXMidprice] = use0xPrice(tokenFrom, tokenTo);
+  const [uniswap, uniMidprice] = useUniswapPrice(tokenFrom, tokenTo);
+  const [kyber, kyberMidprice] = useKyberPrice(tokenFrom, tokenTo);
+  // const [zeroX, zeroXMidprice] = use0xPrice(tokenFrom, tokenTo);
 
-  const prices = [uniMidprice, kyberMidprice, zeroXMidprice];
+  const prices = [parseFloat(uniMidprice), kyberMidprice];
+  console.log('🚀 ~ file: useCheapestPrice.js ~ line 11 ~ useCheapestPrice ~ prices', prices);
+  const exchange = [uniswap, kyber];
 
-  return Math.min(...prices);
+  const i = prices.indexOf(Math.min(...prices));
+  console.log('🚀 ~ file: useCheapestPrice.js ~ line 14 ~ useCheapestPrice ~ i', i);
+
+  return exchange[i];
 }

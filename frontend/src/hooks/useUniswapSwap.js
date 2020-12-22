@@ -73,7 +73,7 @@ export default async function executeSwap(tokenFrom, tokenTo, inputAmount) {
     amountIn,
     {
       gasPrice,
-      gasLimit: ethers.BigNumber.from(300000),
+      gasLimit: ethers.BigNumber.from(30000),
     }
   );
 
@@ -91,7 +91,7 @@ export default async function executeSwap(tokenFrom, tokenTo, inputAmount) {
     deadline,
     {
       gasPrice,
-      gasLimit: ethers.BigNumber.from(300000),
+      gasLimit: ethers.BigNumber.from(30000),
     }
   );
 

@@ -19,7 +19,6 @@ export default function useUniswapPrice(tokenFrom, tokenTo) {
       const output = new Token(ChainId.MAINNET, tokenTo.mainnet, tokenTo.decimals);
       const pair = await Fetcher.fetchPairData(input, output, provider);
       const route = new Route([pair], input);
-      console.log('🚀 ~ file: useUniswapPrice.js ~ line 17 ~ getPrices ~ route', route);
 
       setMidPrice(route.midPrice.toSignificant(6));
       setInverse(route.midPrice.invert().toSignificant(6));
