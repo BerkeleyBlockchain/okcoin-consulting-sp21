@@ -15,7 +15,7 @@ function App() {
     <ChakraProvider resetCSS theme={customTheme}>
       <Box bg="gray.200" h="100vh">
         <NavBar />
-        <Grid h="100%" templateColumns="repeat(3, 1fr)" gap={4}>
+        <Grid h="100%" templateColumns="repeat(3, 1fr)" gap={4} mt={3}>
           <GridItem colSpan={2} bg="white">
             <ExchangesTable />
           </GridItem>
