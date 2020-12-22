@@ -5,33 +5,33 @@ const TOKENS = require('../src/shared/tokens');
 
 async function runTests() {
 
-    await testUniswap.getPriceTest(TOKENS.DAI, TOKENS.USDC);
-    await testUniswap.getPriceTest(TOKENS.DAI, TOKENS.USDT);
-    await testUniswap.getPriceTest(TOKENS.USDT, TOKENS.USDC);
-    await testUniswap.getPriceTest(TOKENS.USDT, TOKENS.DAI);
-    await testUniswap.getPriceTest(TOKENS.USDC, TOKENS.USDT);
-    await testUniswap.getPriceTest(TOKENS.USDC, TOKENS.DAI);
+    // await testUniswap.getPriceTest(TOKENS.DAI, TOKENS.USDC);
+    // await testUniswap.getPriceTest(TOKENS.DAI, TOKENS.USDT);
+    // await testUniswap.getPriceTest(TOKENS.USDT, TOKENS.USDC);
+    // await testUniswap.getPriceTest(TOKENS.USDT, TOKENS.DAI);
+    // await testUniswap.getPriceTest(TOKENS.USDC, TOKENS.USDT);
+    // await testUniswap.getPriceTest(TOKENS.USDC, TOKENS.DAI);
 
     /* Kyber Tests */
-    await testKyber.getPriceTest(TOKENS.DAI, TOKENS.USDC);
-    await testKyber.getPriceTest(TOKENS.DAI, TOKENS.USDT);
-    await testKyber.getPriceTest(TOKENS.USDT, TOKENS.USDC);
-    await testKyber.getPriceTest(TOKENS.USDT, TOKENS.DAI);
-    await testKyber.getPriceTest(TOKENS.USDC, TOKENS.USDT);
-    await testKyber.getPriceTest(TOKENS.USDC, TOKENS.DAI);
+    // await testKyber.getPriceTest(TOKENS.DAI, TOKENS.USDC);
+    // await testKyber.getPriceTest(TOKENS.DAI, TOKENS.USDT);
+    // await testKyber.getPriceTest(TOKENS.USDT, TOKENS.USDC);
+    // await testKyber.getPriceTest(TOKENS.USDT, TOKENS.DAI);
+    // await testKyber.getPriceTest(TOKENS.USDC, TOKENS.USDT);
+    // await testKyber.getPriceTest(TOKENS.USDC, TOKENS.DAI);
 
     /* 0x Tests */
 
     /* 0x getPrice tests */
-    // await testZeroX.getPriceTest(TOKENS.DAI, TOKENS.USDC);
-    // await testZeroX.getPriceTest(TOKENS.DAI, TOKENS.USDT);
-    // await testZeroX.getPriceTest(TOKENS.USDT, TOKENS.USDC);
-    // await testZeroX.getPriceTest(TOKENS.USDT, TOKENS.DAI);
-    // await testZeroX.getPriceTest(TOKENS.USDC, TOKENS.USDT);
-    // await testZeroX.getPriceTest(TOKENS.USDC, TOKENS.DAI);
+    // await testZeroX.getPriceTest(TOKENS.DAI, TOKENS.USDC, 1);
+    // await testZeroX.getPriceTest(TOKENS.DAI, TOKENS.USDT, 0.1);
+    // await testZeroX.getPriceTest(TOKENS.USDT, TOKENS.USDC, 1);
+    // await testZeroX.getPriceTest(TOKENS.USDT, TOKENS.DAI, 1);
+    // await testZeroX.getPriceTest(TOKENS.USDC, TOKENS.USDT, 1);
+    // await testZeroX.getPriceTest(TOKENS.USDC, TOKENS.DAI, 1);
 
     /* 0x executeTrade tests */
-    // await testZeroX.getExchangeTest(TOKENS.DAI, TOKENS.USDC);
+    await testZeroX.getExchangeTest(TOKENS.DAI, TOKENS.USDC);
     // await testZeroX.getExchangeTest(TOKENS.DAI, TOKENS.USDT);
 
     
