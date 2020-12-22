@@ -1,4 +1,16 @@
-import { Box, Container, Image, Table, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react';
+import {
+  Box,
+  Button,
+  Center,
+  Container,
+  Image,
+  Table,
+  Tbody,
+  Td,
+  Th,
+  Thead,
+  Tr,
+} from '@chakra-ui/react';
 import React from 'react';
 import useKyberPrice from '../hooks/useKyberPrice';
 
@@ -45,6 +57,11 @@ function ExchangesTable({ fromToken, toToken }) {
           </Tr>
         </Tbody>
       </Table>
+      <Center>
+        <Button colorScheme="blue" mt={6}>
+          View More
+        </Button>
+      </Center>
     </Container>
   );
 }
