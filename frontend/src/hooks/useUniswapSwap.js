@@ -1,6 +1,6 @@
 import { ChainId, TradeType, Fetcher, Percent, Route, Token, TokenAmount, Trade } from '@uniswap/sdk';
+import { ethers } from 'ethers';
 import IUniswapV2Router02 from '@uniswap/v2-periphery/build/IUniswapV2Router02.json';
-import ethers from 'ethers';
 import erc20Abi from '../constants/erc20abi.json';
 
 export default async function executeSwap(tokenFrom, tokenTo, inputAmount) {
