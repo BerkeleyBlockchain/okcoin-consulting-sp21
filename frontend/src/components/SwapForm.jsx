@@ -90,6 +90,11 @@ export default function SwapForm() {
     }
   }, [midprice, watchFromAmount]);
 
+  useEffect(() => {
+    setFromToken(watchFromToken);
+    setToToken(watchToToken);
+  }, [watchFromToken, watchToToken]);
+
   return (
     <>
       <Center mt={6}>

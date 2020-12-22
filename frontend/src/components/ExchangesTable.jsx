@@ -13,7 +13,9 @@ import {
 } from '@chakra-ui/react';
 import React from 'react';
 
-function ExchangesTable() {
+function ExchangesTable({ fromToken, toToken }) {
+  console.log('🚀 ~ file: ExchangesTable.jsx ~ line 17 ~ ExchangesTable ~ toToken', toToken);
+  console.log('🚀 ~ file: ExchangesTable.jsx ~ line 17 ~ ExchangesTable ~ fromToken', fromToken);
   return (
     <Container maxW="xl">
       <Table variant="simple" colorScheme="teal">

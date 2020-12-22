@@ -9,6 +9,8 @@ function App() {
     useSystemColorMode: false,
     initialColorMode: 'light',
   };
+  const [fromToken, setFromToken] = React.useState('');
+  const [toToken, setToToken] = React.useState('');
 
   const customTheme = extendTheme({ config });
   return (
@@ -17,10 +19,10 @@ function App() {
         <NavBar />
         <Grid h="100%" templateColumns="repeat(3, 1fr)" gap={4} mt={3}>
           <GridItem colSpan={2} bg="white">
-            <ExchangesTable />
+            <ExchangesTable fromToken={fromToken} toToken={toToken} />
           </GridItem>
           <GridItem colSpan={1}>
-            <SwapForm />
+            <SwapForm setFromToken={setFromToken} setToToken={setToToken} />
           </GridItem>
         </Grid>
       </Box>

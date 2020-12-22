@@ -6,8 +6,8 @@ import { useEffect, useState } from 'react';
  * @param tokenTo An output token of type defined in shared/token.js
  */
 export default function useKyberPrice(tokenFrom, tokenTo) {
-  const [midPrice, setMidPrice] = useState(1);
-  const [inverse, setInverse] = useState(1);
+  const [midPrice, setMidPrice] = useState(0);
+  const [inverse, setInverse] = useState(0);
 
   useEffect(() => {
     const getPrices = async () => {
