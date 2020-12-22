@@ -1,3 +1,4 @@
+/* eslint-disable */
 import {
   ChainId,
   TradeType,
@@ -13,6 +14,7 @@ import IUniswapV2Router02 from '../constants/IUniswapV2Router02.json';
 import erc20Abi from '../constants/erc20abi.json';
 
 export default async function executeSwap(tokenFrom, tokenTo, inputAmount) {
+  console.log('EXECUTING UNISWAP');
   // Get Ethereum provider
   const provider = new ethers.providers.InfuraProvider('mainnet', {
     projectId: process.env.REACT_APP_INFURA_PROJECT_ID,

@@ -47,7 +47,7 @@ const coins = [
 ];
 
 export default function SwapForm() {
-  const { register, handleSubmit, watch, setValue } = useForm();
+  const { register, handleSubmit, watch, setValue, errors } = useForm();
   const watchFromToken = watch('fromToken', '');
   const watchToToken = watch('toToken', '');
   const watchFromAmount = watch('fromAmount', 0);
@@ -115,7 +115,7 @@ export default function SwapForm() {
                   type="number"
                   step="0.000000000000000001"
                   size="lg"
-                  ref={register}
+                  ref={register({ required: true })}
                   textAlign="end"
                   variant="unstyled"
                   mr={6}
@@ -183,6 +183,7 @@ export default function SwapForm() {
                 Review Order
               </Button>
             </Center>
+            <Text color="tomato">{errors.fromAmount && 'From Amount is required'}</Text>
           </form>
         </Box>
       </Center>
