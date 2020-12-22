@@ -12,8 +12,10 @@ import {
   Tr,
 } from '@chakra-ui/react';
 import React from 'react';
+import useKyberPrice from '../hooks/useKyberPrice';
 
 function ExchangesTable({ fromToken, toToken }) {
+  const [, midPrice] = useKyberPrice(fromToken, toToken);
   console.log('🚀 ~ file: ExchangesTable.jsx ~ line 17 ~ ExchangesTable ~ toToken', toToken);
   console.log('🚀 ~ file: ExchangesTable.jsx ~ line 17 ~ ExchangesTable ~ fromToken', fromToken);
   return (
@@ -33,7 +35,7 @@ function ExchangesTable({ fromToken, toToken }) {
                 Kyber
               </Box>
             </Td>
-            <Td isNumeric>25.4</Td>
+            <Td isNumeric>{midPrice}</Td>
           </Tr>
           <Tr>
             <Td>
