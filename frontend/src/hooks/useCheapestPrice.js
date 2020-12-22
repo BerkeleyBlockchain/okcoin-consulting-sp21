@@ -11,7 +11,7 @@ export default function useCheapestPrice(tokenFrom, tokenTo) {
   console.log('🚀 ~ file: useCheapestPrice.js ~ line 11 ~ useCheapestPrice ~ prices', prices);
   const exchange = [uniswap, kyber];
 
-  const i = prices.indexOf(Math.min(...prices));
+  const i = prices.indexOf(Math.max(...prices));
   console.log('🚀 ~ file: useCheapestPrice.js ~ line 14 ~ useCheapestPrice ~ i', i);
 
   return exchange[i];

@@ -14,6 +14,7 @@ import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import * as Tokens from '../constants/tokens';
 import useUniswapPrice from '../hooks/useUniswapPrice';
+import useKyberPrice from '../hooks/useKyberPrice';
 import useGas from '../hooks/useGas';
 import uniswapSwap from '../hooks/useUniswapSwap';
 import kyberSwap from '../hooks/useKyberSwap';
@@ -51,9 +52,11 @@ export default function SwapForm() {
   const watchFromToken = watch('fromToken', '');
   const watchToToken = watch('toToken', '');
   const watchFromAmount = watch('fromAmount', 0);
-  const [, midprice] = useUniswapPrice(Tokens[watchFromToken], Tokens[watchToToken]);
+  const [, uniswapMidprice] = useUniswapPrice(Tokens[watchFromToken], Tokens[watchToToken]);
+  const [, kyberMidprice] = useKyberPrice(Tokens[watchFromToken], Tokens[watchToToken]);
   const gas = useGas();
   const exchange = useCheapestPrice(Tokens[watchFromToken], Tokens[watchToToken]);
+  const midprice = exchange === 'Uniswap' ? uniswapMidprice : kyberMidprice;
   console.log('🚀 ~ file: SwapForm.jsx ~ line 56 ~ SwapForm ~ exchange', exchange);
 
   const onSubmit = (data) => {
@@ -158,7 +161,7 @@ export default function SwapForm() {
                 <Flex>
                   <Text>Rate</Text>
                   <Spacer />
-                  <Text>{`1 ${watchFromToken} = ${1 / midprice} ${watchToToken}`}</Text>
+                  <Text>{`1 ${watchFromToken} = ${midprice} ${watchToToken}`}</Text>
                 </Flex>
                 <Flex>
                   <Text>Gas price (gwei)</Text>

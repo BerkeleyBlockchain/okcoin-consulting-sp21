@@ -26,8 +26,8 @@ export default function useKyberPrice(tokenFrom, tokenTo) {
       const rates2 = await ratesRequest2.json();
       const outputInEth = rates2.data[0].src_qty;
 
-      setMidPrice(outputInEth / inputInEth);
-      setInverse(inputInEth / outputInEth);
+      setMidPrice(inputInEth / outputInEth);
+      setInverse(outputInEth / inputInEth);
     };
     getPrices();
   }, [tokenFrom, tokenTo]);
