@@ -15,10 +15,7 @@ import React from 'react';
 import useKyberPrice from '../hooks/useKyberPrice';
 
 function ExchangesTable({ fromToken, toToken }) {
-<<<<<<< HEAD
   const [, midPrice] = useKyberPrice(fromToken, toToken);
-=======
->>>>>>> 905ba3f (setup token global state for table)
   console.log('🚀 ~ file: ExchangesTable.jsx ~ line 17 ~ ExchangesTable ~ toToken', toToken);
   console.log('🚀 ~ file: ExchangesTable.jsx ~ line 17 ~ ExchangesTable ~ fromToken', fromToken);
   return (
