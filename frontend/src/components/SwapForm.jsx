@@ -13,9 +13,9 @@ import {
 import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import * as Tokens from '../constants/tokens';
-import useKyberPrice from '../hooks/useKyberPrice';
+import useUniswapPrice from '../hooks/useUniswapPrice';
 // import useGas from '../hooks/useGas';
-import executeSwap from '../hooks/useKyberSwap';
+import executeSwap from '../hooks/useUniswapSwap';
 
 const coins = [
   {
@@ -49,13 +49,13 @@ export default function SwapForm() {
   const watchFromToken = watch('fromToken', '');
   const watchToToken = watch('toToken', '');
   const watchFromAmount = watch('fromAmount', 0);
-  const [, midprice] = useKyberPrice(Tokens[watchFromToken], Tokens[watchToToken]);
+  const [, midprice] = useUniswapPrice(Tokens[watchFromToken], Tokens[watchToToken]);
   // const gas = useGas();
   const gas = 1;
 
   const onSubmit = (data) => {
     const { fromAmount, fromToken, toToken } = data;
-    executeSwap(Tokens[fromToken], Tokens[toToken], parseInt(fromAmount, 10));
+    executeSwap(Tokens[fromToken], Tokens[toToken], fromAmount);
     console.log(
       '🚀 ~ file: SwapForm.jsx ~ line 46 ~ onSubmit ~ parseInt(data)',
       parseInt(fromAmount, 10)
