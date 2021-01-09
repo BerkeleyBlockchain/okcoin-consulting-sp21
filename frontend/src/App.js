@@ -1,24 +1,21 @@
-import { ChakraProvider, extendTheme, Flex, Spacer } from '@chakra-ui/react';
+import { Box, ChakraProvider, extendTheme } from '@chakra-ui/react';
 import React from 'react';
-import ConnectWallet from './components/ConnectWallet';
+import NavBar from './components/NavBar';
 import SwapForm from './components/SwapForm';
-import ColorModeSwitcher from './components/ColorModeSwitcher';
 
 function App() {
   const config = {
     useSystemColorMode: false,
-    initialColorMode: 'dark',
+    initialColorMode: 'light',
   };
 
   const customTheme = extendTheme({ config });
   return (
     <ChakraProvider resetCSS theme={customTheme}>
-      <Flex>
-        <ColorModeSwitcher />
-        <Spacer />
-        <ConnectWallet />
-      </Flex>
-      <SwapForm />
+      <Box bg="gray.200" h="100vh">
+        <NavBar />
+        <SwapForm />
+      </Box>
     </ChakraProvider>
   );
 }

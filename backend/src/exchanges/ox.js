@@ -29,7 +29,6 @@ if (MAINNET) {
 const USER_ACCOUNT = "0x514FE66A514a5B73F8E78B31173eE913C810425E";
 const PRIVATE_KEY = Buffer.from("d95ae2d664459c8f939a18772579c0d2898325d71411ba475d468a78c1860b1b", "hex");
 
-
 async function getPrices(tokenFrom, tokenTo, quantityIn) {
 
   const params = {
@@ -168,45 +167,51 @@ async function executeSwap(tokenTo, tokenFrom, input_amount) {
     console.log(txReceipt);
 }
 
-executeSwap(TOKENS.DAI, TOKENS.USDC, 5)
+// executeSwap(TOKENS.DAI, TOKENS.USDC, 5)
 
 /*
 
 async function signTransaction(transactionHash) {
   // seller will sign the transaction 
+  // const commmon = new Common({ chain: 'kovan' });
+  console.log(transactionHash);
   var Tx = require("ethereumjs-tx").Transaction;
+  let txParams = {
+    nonce: '0x00',
+    gasPrice: '0x09184e72a000',
+    gasLimit: '0x2710',
+    to: USER_ACCOUNT,
+    value: '0x00',
+    data: transactionHash,
+  };
+  let tx = new Tx(txParams, {chain: 'kovan'});
+  console.log(tx.toJSON());
+  let signedTx = tx.sign(PRIVATE_KEY);
+  console.log(signedTx);
+  // console.log(signature);
+  // return signature;
 }
 
 async function executeTrade(tokenFrom, tokenTo, sellAmt) {
 
   let transactionJSON = await getTransaction(tokenFrom, tokenTo, sellAmt);
-  // let transaction = {
-  //   "data": "0x8bc8efb300000000000000000000000000000000000000000000000000000000000000600000000000000000000000000000000000000000000000000000000002faf080000000000000000000000000000000000000000000000000000000000000034000000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000020000000000000000000000000cb744534a44083acd8c3b0b0b2d6e06faa50b9aa0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000a258b39954cef5cb142fd567a46cddb31a67012400000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000642461c49b3800000000000000000000000000000000000000000000000000006f05b59d3b2000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000005eaa6a5100000000000000000000000000000000000000000000000000000171a5a2cdbc00000000000000000000000000000000000000000000000000000000000001c00000000000000000000000000000000000000000000000000000000000000220000000000000000000000000000000000000000000000000000000000000028000000000000000000000000000000000000000000000000000000000000002800000000000000000000000000000000000000000000000000000000000000024f47261b0000000000000000000000000c02aaa39b223fe8d0a0e5c4f27ead9083c756cc2000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000024f47261b00000000000000000000000009f8f72aa9304c8b593d555f12ef6589cc3a579a20000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001000000000000000000000000000000000000000000000000000000000000002000000000000000000000000000000000000000000000000000000000000000421c071bfac0372362a2535661d1b9f4e59c157a4905c01c223fd1fb1ed24d9425040a42cdeba5078f508373c1305d26dbce52ac25402703f96c3af407e9fdbc4cc703000000000000000000000000000000000000000000000000000000000000",
-  //   "salt": "30007552728728725935139338344112382286974839535123538074006558836619765084422",
-  //   "signerAddress": USER_ACCOUNT,
-  //   "gasPrice": "12000000000",
-  //   "expirationTimeSeconds": "1587650683",
-  //   "domain": {
-  //       "chainId": 1,
-  //       "verifyingContract": "0x61935cbdd02287b511119ddb11aeb42f1593b7ef"
-  //   }
-  // }
-
-  console.log(transactionJSON);
 
   if (transactionJSON.code) {
     // throw exception and exit this function
     return;
   }
+  
+  let transaction = await transactionJSON.transaction;
+  let hash = await transactionJSON.hash;
+  // console.log(transaction);
 
-  let transaction = await transaction.json().transaction;
+  // TODO: call function to sign the transaction hash here
+  let sign = await signTransaction(hash);
 
-  // TODO: call functio n to sign the transaction hash here
-
-  let signature = "000";
+  let signature = "0x00000";
 
   let params = {
-    "signature": signature,
+    signature: signature,
     zeroExTransaction: transaction,
   }
 
@@ -240,8 +245,8 @@ async function getTransaction(tokenFrom, tokenTo, sellAmount) {
   // TODO: add slippage percentage.
   let request = {
     takerAddress: USER_ACCOUNT,
-    sellToken: tokenFrom,
-    buyToken: tokenTo,
+    sellToken: tokenFrom.ticker,
+    buyToken: tokenTo.ticker,
     sellAmount: sellAmount,
   };
 
@@ -250,8 +255,6 @@ async function getTransaction(tokenFrom, tokenTo, sellAmount) {
   );
 
   let resJSON = await result.json();
-
-  // console.log(resJSON);
 
   // request failed, HTTP status != 200
   if (result.code) {
