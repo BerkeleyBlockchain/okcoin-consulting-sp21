@@ -5,20 +5,20 @@ const TOKENS = require('../src/shared/tokens');
 
 async function runTests() {
 
-    await testUniswap.getPriceTest(TOKENS.DAI, TOKENS.USDC);
-    await testUniswap.getPriceTest(TOKENS.DAI, TOKENS.USDT);
-    await testUniswap.getPriceTest(TOKENS.USDT, TOKENS.USDC);
-    await testUniswap.getPriceTest(TOKENS.USDT, TOKENS.DAI);
-    await testUniswap.getPriceTest(TOKENS.USDC, TOKENS.USDT);
-    await testUniswap.getPriceTest(TOKENS.USDC, TOKENS.DAI);
+    await testUniswap.getPriceTest(TOKENS.DAI, TOKENS.USDC, 1);
+    await testUniswap.getPriceTest(TOKENS.DAI, TOKENS.USDT, 1);
+    await testUniswap.getPriceTest(TOKENS.USDT, TOKENS.USDC, 1);
+    await testUniswap.getPriceTest(TOKENS.USDT, TOKENS.DAI, 1);
+    await testUniswap.getPriceTest(TOKENS.USDC, TOKENS.USDT, 1);
+    await testUniswap.getPriceTest(TOKENS.USDC, TOKENS.DAI, 1);
 
     /* Kyber Tests */
-    await testKyber.getPriceTest(TOKENS.DAI, TOKENS.USDC);
-    await testKyber.getPriceTest(TOKENS.DAI, TOKENS.USDT);
-    await testKyber.getPriceTest(TOKENS.USDT, TOKENS.USDC);
-    await testKyber.getPriceTest(TOKENS.USDT, TOKENS.DAI);
-    await testKyber.getPriceTest(TOKENS.USDC, TOKENS.USDT);
-    await testKyber.getPriceTest(TOKENS.USDC, TOKENS.DAI);
+    await testKyber.getPriceTest(TOKENS.DAI, TOKENS.USDC, 1);
+    await testKyber.getPriceTest(TOKENS.DAI, TOKENS.USDT, 1);
+    await testKyber.getPriceTest(TOKENS.USDT, TOKENS.USDC, 1);
+    await testKyber.getPriceTest(TOKENS.USDT, TOKENS.DAI, 1);
+    await testKyber.getPriceTest(TOKENS.USDC, TOKENS.USDT, 1);
+    await testKyber.getPriceTest(TOKENS.USDC, TOKENS.DAI, 1);
 
     /* 0x Tests */
 

@@ -6,6 +6,7 @@ module.exports = {
     ticker: "DAI",
     mainnet: '0x6B175474E89094C44Da98b954EedeAC495271d0F',
     ropsten: '0xaD6D458402F60fD3Bd25163575031ACDce07538D',
+    kovan: '0x4f96fe3b7a6cf9725f59d353f723c1bdb64ca6aa',
     decimals: 18
   },
 
@@ -13,6 +14,7 @@ module.exports = {
     ticker: "USDC",
     mainnet: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
     ropsten: '0xFE724a829fdF12F7012365dB98730EEe33742ea2',
+    kovan: '0x75b0622cec14130172eae9cf166b92e5c112faff',
     decimals: 6
   },
 
