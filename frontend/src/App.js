@@ -13,16 +13,17 @@ function App() {
   };
   const [fromToken, setFromToken] = React.useState('');
   const [toToken, setToToken] = React.useState('');
+  const [tabIndex, setTabIndex] = React.useState(0);
 
   const customTheme = extendTheme({ config });
   return (
     <ChakraProvider resetCSS theme={customTheme}>
       <ErrorBoundary FallbackComponent={FullPageErrorFallback}>
         <Box bg="gray.200" h="100vh">
-          <NavBar />
+          <NavBar setTabIndex={setTabIndex} />
           <Grid h="100%" templateColumns="repeat(3, 1fr)" gap={4} mt={3}>
             <GridItem colSpan={2} bg="white">
-              <ExchangesTable fromToken={fromToken} toToken={toToken} />
+              {tabIndex === 0 ? <ExchangesTable fromToken={fromToken} toToken={toToken} /> : null}
             </GridItem>
             <GridItem colSpan={1}>
               <SwapForm setFromToken={setFromToken} setToToken={setToToken} />
