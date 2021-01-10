@@ -3,11 +3,12 @@ import React from 'react';
 
 export default function MyWallet() {
   return (
-    <Container maxW="xl">
-      <SimpleGrid columns={2} spacing={10}>
-        <Box bg="tomato" height="80px" />
-        <Box bg="tomato" height="80px" />
+    <Container maxW="4xl">
+      <SimpleGrid columns={2} spacing={5} mb={5}>
+        <Box bg="tomato" height="200px" />
+        <Box bg="tomato" height="200px" />
       </SimpleGrid>
+      <Box bg="tomato" height="400px" />
     </Container>
   );
 }

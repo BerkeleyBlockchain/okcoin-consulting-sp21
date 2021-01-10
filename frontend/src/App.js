@@ -23,9 +23,9 @@ function App() {
         <Box bg="gray.200" h="100vh">
           <NavBar setTabIndex={setTabIndex} />
           <Grid h="100%" templateColumns="repeat(3, 1fr)" gap={4} mt={3}>
-            <GridItem colSpan={2} bg="white">
+            <GridItem colSpan={2} bg="white" p={6}>
               {tabIndex === 0 ? <ExchangesTable fromToken={fromToken} toToken={toToken} /> : null}
-              {tabIndex === 3 ? <MyWallet /> : null}
+              {tabIndex === 2 ? <MyWallet /> : null}
             </GridItem>
             <GridItem colSpan={1}>
               <SwapForm setFromToken={setFromToken} setToToken={setToToken} />
