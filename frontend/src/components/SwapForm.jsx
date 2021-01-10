@@ -97,11 +97,16 @@ export default function SwapForm({ setFromToken, setToToken }) {
 
   return (
     <>
-      <Center mt={6}>
+      <Center>
         <Box py={12} px={12} pb={6} boxShadow="2xl" bg="white">
           <Heading mb={6}>Swap</Heading>
           <form onSubmit={handleSubmit(onSubmit)}>
-            <Text opacity={0.7}>PAY</Text>
+            <Flex>
+              <Text opacity={0.7}>PAY</Text>
+              <Spacer />
+              <Text opacity={0.7}>Enter Amount</Text>
+            </Flex>
+
             <Box borderWidth="1px" borderRadius="lg" mb={6}>
               <Flex>
                 <Select
@@ -118,7 +123,6 @@ export default function SwapForm({ setFromToken, setToToken }) {
                   ))}
                 </Select>
                 <Input
-                  placeholder="Enter Amount"
                   name="fromAmount"
                   type="number"
                   step="0.000000000000000001"
@@ -147,7 +151,6 @@ export default function SwapForm({ setFromToken, setToToken }) {
                   ))}
                 </Select>
                 <Input
-                  placeholder="To"
                   name="toAmount"
                   type="number"
                   step="0.000000000000000001"
