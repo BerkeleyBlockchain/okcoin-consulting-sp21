@@ -47,7 +47,7 @@ const coins = [
   },
 ];
 
-export default function SwapForm() {
+export default function SwapForm({ setFromToken, setToToken }) {
   const { register, handleSubmit, watch, setValue, errors } = useForm();
   const watchFromToken = watch('fromToken', '');
   const watchToToken = watch('toToken', '');
