@@ -11,6 +11,7 @@ import MyWallet from './components/MyWallet';
 import NavBar from './components/NavBar';
 import SwapForm from './components/SwapForm';
 import FullPageErrorFallback from './components/FullPageErrorFallback';
+import MyWallet from './components/MyWallet';
 
 function App() {
   const config = {
