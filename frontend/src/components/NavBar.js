@@ -5,9 +5,9 @@ export default function NavBar({ setTabIndex }) {
   return (
     <Tabs onChange={(index) => setTabIndex(index)}>
       <TabList>
-        <Tab>One</Tab>
-        <Tab>Two</Tab>
-        <Tab>Three</Tab>
+        <Tab>Exchanges</Tab>
+        <Tab>Price Graphs</Tab>
+        <Tab>My Wallet</Tab>
       </TabList>
     </Tabs>
   );
