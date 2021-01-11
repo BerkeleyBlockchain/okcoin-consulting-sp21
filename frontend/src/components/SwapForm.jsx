@@ -59,9 +59,12 @@ export default function SwapForm() {
   const [, zeroXMidprice] = use0xPrice(Tokens[watchFromToken], Tokens[watchToToken]);
   const gas = useGas();
   const exchange = useCheapestPrice(Tokens[watchFromToken], Tokens[watchToToken]);
-  const midprice = { Uniswap: uniswapMidprice, Kyber: kyberMidprice, '0x': zeroXMidprice }[
-    exchange
-  ];
+  const midprice = {
+    Uniswap: uniswapMidprice,
+    Kyber: kyberMidprice,
+    '0x': zeroXMidprice,
+  }[exchange];
+
   console.log('🚀 ~ file: SwapForm.jsx ~ line 56 ~ SwapForm ~ exchange', exchange);
 
   const onSubmit = (data) => {
@@ -155,7 +158,7 @@ export default function SwapForm() {
                   ))}
                 </Select>
                 <Input
-                  isReadOnly="true"
+                  isReadOnly
                   placeholder="To"
                   name="toAmount"
                   type="number"
