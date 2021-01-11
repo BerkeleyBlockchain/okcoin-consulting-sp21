@@ -97,7 +97,7 @@ export default function SwapForm({ setFromToken, setToToken }) {
 
   return (
     <>
-      <Center>
+      <Center h="80vh">
         <Box py={12} px={12} pb={6} boxShadow="2xl" bg="white">
           <Heading mb={6}>Swap</Heading>
           <form onSubmit={handleSubmit(onSubmit)}>
