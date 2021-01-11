@@ -1,28 +1,32 @@
-/* eslint-disable */
-import { Box, ChakraProvider, extendTheme } from '@chakra-ui/react';
-import React, { Component } from 'react';
-import getWeb3 from './hooks/getWeb3';
+import { ChakraProvider, Container, extendTheme, Grid, GridItem } from '@chakra-ui/react';
+import React from 'react';
+import { ErrorBoundary } from 'react-error-boundary';
+import ExchangesTable from './components/ExchangesTable';
+import FullPageErrorFallback from './components/FullPageErrorFallback';
+import MyWallet from './components/MyWallet';
 import NavBar from './components/NavBar';
 import SwapForm from './components/SwapForm';
+import getWeb3 from './hooks/getWeb3';
 
 function App() {
   const [web3, setWeb3] = React.useState(null);
   const [account, setAccount] = React.useState(null);
+  const [tabIndex, setTabIndex] = React.useState(0);
 
   React.useEffect(async () => {
     try {
       // Get network provider and web3 instance.
-      const web3 = await getWeb3();
+      const web3Instance = await getWeb3();
 
       // Use web3 to get the user's account
-      const account = await web3.eth.getAccounts()[0];
+      const userAccount = await web3Instance.eth.getAccounts()[0];
 
       // Set web3 and account address values
-      setWeb3(web3);
-      setAccount(account);
+      setWeb3(web3Instance);
+      setAccount(userAccount);
 
-      console.log(web3);
-      console.log(account);
+      console.log('🚀 ~ file: App.js ~ line 10 ~ App ~ web3', web3);
+      console.log('🚀 ~ file: App.js ~ line 12 ~ App ~ account', account);
     } catch (error) {
       // Catch any errors for any of the above operations.
       alert(`Failed to load web3, accounts, or contract. Check console for details.`);
@@ -34,19 +38,29 @@ function App() {
     // Run if Web3 wallet is not connected
     return <div>Loading Web3, accounts, and contract...</div>;
   }
+
   const config = {
     useSystemColorMode: false,
     initialColorMode: 'light',
   };
 
   const customTheme = extendTheme({ config });
-
   return (
     <ChakraProvider resetCSS theme={customTheme}>
-      <Box bg="gray.200" h="100vh">
-        <NavBar />
-        <SwapForm web3={web3} />
-      </Box>
+      <ErrorBoundary FallbackComponent={FullPageErrorFallback}>
+        <NavBar setTabIndex={setTabIndex} />
+        <Container maxW="10xl">
+          <Grid h="100%" templateColumns="repeat(3, 1fr)" gap={4} mt={3}>
+            <GridItem colSpan={2} bg="white" p={6}>
+              {tabIndex === 0 ? <ExchangesTable /> : null}
+              {tabIndex === 2 ? <MyWallet /> : null}
+            </GridItem>
+            <GridItem colSpan={1}>
+              <SwapForm />
+            </GridItem>
+          </Grid>
+        </Container>
+      </ErrorBoundary>
     </ChakraProvider>
   );
 }
