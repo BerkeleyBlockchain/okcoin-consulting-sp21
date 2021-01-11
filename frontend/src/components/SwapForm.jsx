@@ -47,7 +47,7 @@ const coins = [
   },
 ];
 
-export default function SwapForm() {
+export default function SwapForm({ setFromToken, setToToken }) {
   const { register, handleSubmit, watch, setValue, errors } = useForm();
   const watchFromToken = watch('fromToken', '');
   const watchToToken = watch('toToken', '');
@@ -90,13 +90,23 @@ export default function SwapForm() {
     }
   }, [midprice, watchFromAmount]);
 
+  useEffect(() => {
+    setFromToken(watchFromToken);
+    setToToken(watchToToken);
+  }, [watchFromToken, watchToToken]);
+
   return (
     <>
-      <Center mt={6}>
+      <Center h="80vh">
         <Box py={12} px={12} pb={6} boxShadow="2xl" bg="white">
           <Heading mb={6}>Swap</Heading>
           <form onSubmit={handleSubmit(onSubmit)}>
-            <Text opacity={0.7}>PAY</Text>
+            <Flex>
+              <Text opacity={0.7}>PAY</Text>
+              <Spacer />
+              <Text opacity={0.7}>Enter Amount</Text>
+            </Flex>
+
             <Box borderWidth="1px" borderRadius="lg" mb={6}>
               <Flex>
                 <Select
@@ -113,7 +123,6 @@ export default function SwapForm() {
                   ))}
                 </Select>
                 <Input
-                  placeholder="Enter Amount"
                   name="fromAmount"
                   type="number"
                   step="0.000000000000000001"
@@ -142,7 +151,6 @@ export default function SwapForm() {
                   ))}
                 </Select>
                 <Input
-                  placeholder="To"
                   name="toAmount"
                   type="number"
                   step="0.000000000000000001"
