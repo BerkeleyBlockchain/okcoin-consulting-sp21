@@ -66,39 +66,39 @@ export default async function executeSwap(tokenFrom, tokenTo, inputAmount) {
   // Construct erc20 contract
   const erc20Contract = new ethers.Contract(inputToken.address, erc20Abi, account);
 
-  // // Get gas price from Infura
-  // const gasPrice = await provider.getGasPrice();
+  // Get gas price from Infura
+  const gasPrice = await provider.getGasPrice();
 
-  // // Approve erc20 token amount
-  // const txApprove = await erc20Contract.approve(
-  //   process.env.REACT_APP_UNISWAP_ROUTER_CONTRACT,
-  //   amountIn,
-  //   {
-  //     gasPrice,
-  //     gasLimit: ethers.BigNumber.from(30000),
-  //   }
-  // );
+  // Approve erc20 token amount
+  const txApprove = await erc20Contract.approve(
+    process.env.REACT_APP_UNISWAP_ROUTER_CONTRACT,
+    amountIn,
+    {
+      gasPrice,
+      gasLimit: ethers.BigNumber.from(30000),
+    }
+  );
 
-  // console.log(`Approval transaction hash: ${txApprove.hash}`);
+  console.log(`Approval transaction hash: ${txApprove.hash}`);
 
-  // const approvalReceipt = await txApprove.wait();
-  // console.log(`Approval transaction was mined in block ${approvalReceipt.blockNumber}`);
+  const approvalReceipt = await txApprove.wait();
+  console.log(`Approval transaction was mined in block ${approvalReceipt.blockNumber}`);
 
-  // // Swap the tokens
-  // const txSwap = await uniswap.swapExactTokensForTokensSupportingFeeOnTransferTokens(
-  //   amountIn,
-  //   amountOutMin,
-  //   path,
-  //   to,
-  //   deadline,
-  //   {
-  //     gasPrice,
-  //     gasLimit: ethers.BigNumber.from(30000),
-  //   }
-  // );
+  // Swap the tokens
+  const txSwap = await uniswap.swapExactTokensForTokensSupportingFeeOnTransferTokens(
+    amountIn,
+    amountOutMin,
+    path,
+    to,
+    deadline,
+    {
+      gasPrice,
+      gasLimit: ethers.BigNumber.from(30000),
+    }
+  );
 
-  // console.log(`Swap transaction hash: ${txSwap.hash}`);
+  console.log(`Swap transaction hash: ${txSwap.hash}`);
 
-  // const swapReceipt = await txSwap.wait();
-  // console.log(`Swap transaction was mined in block ${swapReceipt.blockNumber}`);
+  const swapReceipt = await txSwap.wait();
+  console.log(`Swap transaction was mined in block ${swapReceipt.blockNumber}`);
 }

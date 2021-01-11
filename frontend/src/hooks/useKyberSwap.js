@@ -30,36 +30,6 @@ if (MAINNET) {
 }
 
 /**
- * Gets the midprice for the given token pair as well as the inverse midprice.
- * @param tokenFrom An input token of type defined in shared/token.js
- * @param tokenTo An output token of type defined in shared/token.js
- */
-async function getPrices(tokenFrom, tokenTo, quantityIn) {
-  const address_1 = tokenFrom.mainnet;
-  const address_2 = tokenTo.mainnet;
-
-  const ratesRequest = await fetch(`${API_ENDPOINT}/sell_rate?id=${address_1}&qty=1`);
-  const rates = await ratesRequest.json();
-  const input_in_eth = rates.data[0].dst_qty;
-
-  const ratesRequest_2 = await fetch(`${API_ENDPOINT}/buy_rate?id=${address_2}&qty=1`);
-  // Parsing the output
-  const rates_2 = await ratesRequest_2.json();
-  const output_in_eth = rates_2.data[0].src_qty;
-
-  const midprice = input_in_eth / output_in_eth;
-  const inverse = output_in_eth / input_in_eth;
-
-  return {
-    exchange: 'Kyber',
-    midprice,
-    inverse,
-    quantityIn,
-    quantityOut: quantityIn * midprice,
-  };
-}
-
-/**
  * Gets the data necessary to execute the given trade.
  */
 export default async function executeSwap(tokenFrom, tokenTo, input_amount) {
@@ -271,14 +241,3 @@ async function Kyber_ETH_for_Token(token_address, QTY, incrementNonce = false) {
   // Log the transaction receipt
   console.log(txReceipt);
 }
-
-// executeSwap(TOKENS.KNC, TOKENS.DAI, 100)
-
-// export default function useKyberSwap(tokenFrom, tokenTo, amount) {
-//   useEffect(async () => {
-//     console.log('RUN');
-//     // executeSwap(tokenFrom, tokenTo, amount);
-//   }, [tokenFrom, tokenTo]);
-
-//   return [];
-// }
