@@ -48,7 +48,7 @@ export default function MyWallet() {
             <CoinCard />
           </HStack>
         </Box>
-        <Box borderColor="grey.200" borderWidth={1} borderRadius={8} padding={6}>
+        <Box borderColor="grey.200" borderWidth={1} borderRadius={8} p={6}>
           <Text textAlign="center">Top Available Tokens</Text>
           <VictoryPie
             data={chartData}
