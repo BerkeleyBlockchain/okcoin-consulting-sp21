@@ -15,9 +15,13 @@ import { useForm } from 'react-hook-form';
 import * as Tokens from '../constants/tokens';
 import useUniswapPrice from '../hooks/useUniswapPrice';
 import useKyberPrice from '../hooks/useKyberPrice';
+import use0xPrice from '../hooks/use0xPrice';
 import useGas from '../hooks/useGas';
 import uniswapSwap from '../hooks/useUniswapSwap';
+// eslint-disable-next-line no-unused-vars
 import kyberSwap from '../hooks/useKyberSwap';
+// eslint-disable-next-line no-unused-vars
+import zeroXSwap from '../hooks/use0xSwap';
 import useCheapestPrice from '../hooks/useCheapestPrice';
 
 const coins = [
@@ -47,16 +51,24 @@ const coins = [
   },
 ];
 
-export default function SwapForm() {
+export default function SwapForm({ web3 }) {
   const { register, handleSubmit, watch, setValue, errors } = useForm();
   const watchFromToken = watch('fromToken', '');
   const watchToToken = watch('toToken', '');
   const watchFromAmount = watch('fromAmount', 0);
   const [, uniswapMidprice] = useUniswapPrice(Tokens[watchFromToken], Tokens[watchToToken]);
   const [, kyberMidprice] = useKyberPrice(Tokens[watchFromToken], Tokens[watchToToken]);
+  const [, zeroXMidprice] = use0xPrice(Tokens[watchFromToken], Tokens[watchToToken]);
   const gas = useGas();
-  const exchange = useCheapestPrice(Tokens[watchFromToken], Tokens[watchToToken]);
-  const midprice = exchange === 'Uniswap' ? uniswapMidprice : kyberMidprice;
+  let exchange = useCheapestPrice(Tokens[watchFromToken], Tokens[watchToToken]);
+  exchange = 'Uniswap'; // HARD CODE EXCHANGE TO USE UNISWAP
+  let midprice = {
+    Uniswap: uniswapMidprice,
+    Kyber: kyberMidprice,
+    '0x': zeroXMidprice,
+  }[exchange];
+  midprice = uniswapMidprice; // HARD CODE MIDPRICE TO USE UNISWAP
+
   console.log('🚀 ~ file: SwapForm.jsx ~ line 56 ~ SwapForm ~ exchange', exchange);
 
   const onSubmit = (data) => {
@@ -64,11 +76,14 @@ export default function SwapForm() {
     if (!exchange) {
       return;
     }
+    // HARD CODE TO USE UNISWAP SWAP
     if (exchange === 'Uniswap') {
-      uniswapSwap(Tokens[fromToken], Tokens[toToken], fromAmount);
-    } else if (exchange === 'Kyber') {
-      kyberSwap(Tokens[fromToken], Tokens[toToken], fromAmount);
-    }
+      uniswapSwap(Tokens[fromToken], Tokens[toToken], fromAmount, web3);
+    } // else if (exchange === 'Kyber') {
+    //   kyberSwap(Tokens[fromToken], Tokens[toToken], fromAmount, web3);
+    // } else if (exchange === '0x') {
+    //   zeroXSwap([fromToken], Tokens[toToken], fromAmount, web3);
+    // }
     console.log(
       '🚀 ~ file: SwapForm.jsx ~ line 46 ~ onSubmit ~ parseInt(data)',
       parseInt(fromAmount, 10)
@@ -93,13 +108,16 @@ export default function SwapForm() {
   return (
     <>
       <Center mt={6}>
-        <Box py={12} px={12} pb={6} boxShadow="2xl" bg="white">
-          <Heading mb={6}>Swap</Heading>
+        <Box py={12} px={12} pb={6} boxShadow="lg" bg="white">
+          <Heading mb={10}>Swap</Heading>
           <form onSubmit={handleSubmit(onSubmit)}>
-            <Text opacity={0.7}>PAY</Text>
+            <Text opacity={0.7} mb={2} ml={0.5}>
+              PAY
+            </Text>
             <Box borderWidth="1px" borderRadius="lg" mb={6}>
               <Flex>
                 <Select
+                  h="52px"
                   placeholder="Select Token"
                   name="fromToken"
                   size="lg"
@@ -125,10 +143,13 @@ export default function SwapForm() {
                 />
               </Flex>
             </Box>
-            <Text opacity={0.7}>RECEIVE</Text>
+            <Text opacity={0.7} mb={2} ml={0.5}>
+              RECEIVE
+            </Text>
             <Box borderWidth="1px" borderRadius="lg" mb={6}>
               <Flex>
                 <Select
+                  h="52px"
                   placeholder="Select a token"
                   name="toToken"
                   size="lg"
@@ -142,6 +163,7 @@ export default function SwapForm() {
                   ))}
                 </Select>
                 <Input
+                  isReadOnly
                   placeholder="To"
                   name="toAmount"
                   type="number"
@@ -176,14 +198,16 @@ export default function SwapForm() {
             <Center>
               <Button
                 w="100%"
-                colorScheme="blue"
-                backgroundColor="blue.600"
+                h="60px"
+                _hover={{ backgroundColor: '#194BB6' }}
+                backgroundColor="#205FEC"
                 color="white"
                 size="lg"
                 type="submit"
                 mt={6}
+                mb={10}
               >
-                Review Order
+                Swap Tokens
               </Button>
             </Center>
             <Text color="tomato">{errors.fromAmount && 'From Amount is required'}</Text>

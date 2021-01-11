@@ -13,12 +13,11 @@ import { ethers } from 'ethers';
 import IUniswapV2Router02 from '../constants/IUniswapV2Router02.json';
 import erc20Abi from '../constants/erc20abi.json';
 
-export default async function executeSwap(tokenFrom, tokenTo, inputAmount) {
+export default async function executeSwap(tokenFrom, tokenTo, inputAmount, web3) {
+
+  const provider = new ethers.providers.Web3Provider(web3.currentProvider);
+
   console.log('EXECUTING UNISWAP');
-  // Get Ethereum provider
-  const provider = new ethers.providers.InfuraProvider('mainnet', {
-    projectId: process.env.REACT_APP_INFURA_PROJECT_ID,
-  });
 
   // Get pricing information from the SDK
   const inputToken = new Token(ChainId.MAINNET, tokenFrom.mainnet, tokenFrom.decimals);
@@ -53,8 +52,7 @@ export default async function executeSwap(tokenFrom, tokenTo, inputAmount) {
   const deadline = Math.floor(Date.now() / 1000) + 60 * 20; // 20 minutes from the current Unix time
 
   // Wallet information
-  const signer = new ethers.Wallet(process.env.REACT_APP_WALLET_PRIVATE_KEY);
-  const account = signer.connect(provider);
+  const account = provider.getSigner();
 
   // Construct uniswap router contract
   const uniswap = new ethers.Contract(
@@ -66,39 +64,39 @@ export default async function executeSwap(tokenFrom, tokenTo, inputAmount) {
   // Construct erc20 contract
   const erc20Contract = new ethers.Contract(inputToken.address, erc20Abi, account);
 
-  // // Get gas price from Infura
-  // const gasPrice = await provider.getGasPrice();
+  // Get gas price from Infura
+  const gasPrice = await provider.getGasPrice();
 
-  // // Approve erc20 token amount
-  // const txApprove = await erc20Contract.approve(
-  //   process.env.REACT_APP_UNISWAP_ROUTER_CONTRACT,
-  //   amountIn,
-  //   {
-  //     gasPrice,
-  //     gasLimit: ethers.BigNumber.from(30000),
-  //   }
-  // );
+  // Approve erc20 token amount
+  const txApprove = await erc20Contract.approve(
+    process.env.REACT_APP_UNISWAP_ROUTER_CONTRACT,
+    amountIn,
+    {
+      gasPrice,
+      gasLimit: ethers.BigNumber.from(30000),
+    }
+  );
 
-  // console.log(`Approval transaction hash: ${txApprove.hash}`);
+  console.log(`Approval transaction hash: ${txApprove.hash}`);
 
-  // const approvalReceipt = await txApprove.wait();
-  // console.log(`Approval transaction was mined in block ${approvalReceipt.blockNumber}`);
+  const approvalReceipt = await txApprove.wait();
+  console.log(`Approval transaction was mined in block ${approvalReceipt.blockNumber}`);
 
-  // // Swap the tokens
-  // const txSwap = await uniswap.swapExactTokensForTokensSupportingFeeOnTransferTokens(
-  //   amountIn,
-  //   amountOutMin,
-  //   path,
-  //   to,
-  //   deadline,
-  //   {
-  //     gasPrice,
-  //     gasLimit: ethers.BigNumber.from(30000),
-  //   }
-  // );
+  // Swap the tokens
+  const txSwap = await uniswap.swapExactTokensForTokensSupportingFeeOnTransferTokens(
+    amountIn,
+    amountOutMin,
+    path,
+    to,
+    deadline,
+    {
+      gasPrice,
+      gasLimit: ethers.BigNumber.from(30000),
+    }
+  );
 
-  // console.log(`Swap transaction hash: ${txSwap.hash}`);
+  console.log(`Swap transaction hash: ${txSwap.hash}`);
 
-  // const swapReceipt = await txSwap.wait();
-  // console.log(`Swap transaction was mined in block ${swapReceipt.blockNumber}`);
+  const swapReceipt = await txSwap.wait();
+  console.log(`Swap transaction was mined in block ${swapReceipt.blockNumber}`);
 }
