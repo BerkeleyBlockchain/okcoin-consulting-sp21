@@ -16,22 +16,14 @@ class App extends Component {
       // Get network provider and web3 instance.
       const web3 = await getWeb3();
 
-      // Use web3 to get the user's accounts.
+      // Use web3 to get the user's account
       const account = await web3.eth.getAccounts()[0];
 
-      // Get the contract instance.
-      // const networkId = await web3.eth.net.getId();
-      // const deployedNetwork = SimpleStorageContract.networks[networkId];
-      // const instance = new web3.eth.Contract(
-      //   SimpleStorageContract.abi,
-      //   deployedNetwork && deployedNetwork.address,
-      // );
-
-      // Set web3 and account values
+      // Set web3 and account address values
       this.setState({ web3, account });
 
       console.log(this.state.web3);
-      console.log(this.state.accounts);
+      console.log(this.state.account);
     } catch (error) {
       // Catch any errors for any of the above operations.
       alert(`Failed to load web3, accounts, or contract. Check console for details.`);
@@ -41,17 +33,13 @@ class App extends Component {
 
   render() {
     if (!this.state.web3) {
-      /* Run if Web3 wallet is not connected */
+      // Run if Web3 wallet is not connected
       return <div>Loading Web3, accounts, and contract...</div>;
     }
 
     const config = {
       useSystemColorMode: false,
       initialColorMode: 'light',
-      fonts: {
-        heading: 'Open Sans',
-        body: 'Raleway'
-      }
     };
 
     const customTheme = extendTheme({ config });
@@ -60,7 +48,7 @@ class App extends Component {
       <ChakraProvider resetCSS theme={customTheme}>
         <Box bg="gray.200" h="100vh">
           <NavBar />
-          <SwapForm />
+          <SwapForm web3={this.state.web3} />
         </Box>
       </ChakraProvider>
     );

@@ -13,12 +13,11 @@ import { ethers } from 'ethers';
 import IUniswapV2Router02 from '../constants/IUniswapV2Router02.json';
 import erc20Abi from '../constants/erc20abi.json';
 
-export default async function executeSwap(tokenFrom, tokenTo, inputAmount) {
+export default async function executeSwap(tokenFrom, tokenTo, inputAmount, web3) {
+
+  const provider = new ethers.providers.Web3Provider(web3.currentProvider);
+
   console.log('EXECUTING UNISWAP');
-  // Get Ethereum provider
-  const provider = new ethers.providers.InfuraProvider('mainnet', {
-    projectId: process.env.REACT_APP_INFURA_PROJECT_ID,
-  });
 
   // Get pricing information from the SDK
   const inputToken = new Token(ChainId.MAINNET, tokenFrom.mainnet, tokenFrom.decimals);
@@ -53,8 +52,7 @@ export default async function executeSwap(tokenFrom, tokenTo, inputAmount) {
   const deadline = Math.floor(Date.now() / 1000) + 60 * 20; // 20 minutes from the current Unix time
 
   // Wallet information
-  const signer = new ethers.Wallet(process.env.REACT_APP_WALLET_PRIVATE_KEY);
-  const account = signer.connect(provider);
+  const account = provider.getSigner();
 
   // Construct uniswap router contract
   const uniswap = new ethers.Contract(

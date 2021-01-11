@@ -18,7 +18,9 @@ import useKyberPrice from '../hooks/useKyberPrice';
 import use0xPrice from '../hooks/use0xPrice';
 import useGas from '../hooks/useGas';
 import uniswapSwap from '../hooks/useUniswapSwap';
+// eslint-disable-next-line no-unused-vars
 import kyberSwap from '../hooks/useKyberSwap';
+// eslint-disable-next-line no-unused-vars
 import zeroXSwap from '../hooks/use0xSwap';
 import useCheapestPrice from '../hooks/useCheapestPrice';
 
@@ -49,7 +51,7 @@ const coins = [
   },
 ];
 
-export default function SwapForm() {
+export default function SwapForm({ web3 }) {
   const { register, handleSubmit, watch, setValue, errors } = useForm();
   const watchFromToken = watch('fromToken', '');
   const watchToToken = watch('toToken', '');
@@ -58,12 +60,14 @@ export default function SwapForm() {
   const [, kyberMidprice] = useKyberPrice(Tokens[watchFromToken], Tokens[watchToToken]);
   const [, zeroXMidprice] = use0xPrice(Tokens[watchFromToken], Tokens[watchToToken]);
   const gas = useGas();
-  const exchange = useCheapestPrice(Tokens[watchFromToken], Tokens[watchToToken]);
-  const midprice = {
+  let exchange = useCheapestPrice(Tokens[watchFromToken], Tokens[watchToToken]);
+  exchange = 'Uniswap'; // HARD CODE EXCHANGE TO USE UNISWAP
+  let midprice = {
     Uniswap: uniswapMidprice,
     Kyber: kyberMidprice,
     '0x': zeroXMidprice,
   }[exchange];
+  midprice = uniswapMidprice; // HARD CODE MIDPRICE TO USE UNISWAP
 
   console.log('🚀 ~ file: SwapForm.jsx ~ line 56 ~ SwapForm ~ exchange', exchange);
 
@@ -72,13 +76,14 @@ export default function SwapForm() {
     if (!exchange) {
       return;
     }
+    // HARD CODE TO USE UNISWAP SWAP
     if (exchange === 'Uniswap') {
-      uniswapSwap(Tokens[fromToken], Tokens[toToken], fromAmount);
-    } else if (exchange === 'Kyber') {
-      kyberSwap(Tokens[fromToken], Tokens[toToken], fromAmount);
-    } else if (exchange === '0x') {
-      zeroXSwap([fromToken], Tokens[toToken], fromAmount);
-    }
+      uniswapSwap(Tokens[fromToken], Tokens[toToken], fromAmount, web3);
+    } // else if (exchange === 'Kyber') {
+    //   kyberSwap(Tokens[fromToken], Tokens[toToken], fromAmount, web3);
+    // } else if (exchange === '0x') {
+    //   zeroXSwap([fromToken], Tokens[toToken], fromAmount, web3);
+    // }
     console.log(
       '🚀 ~ file: SwapForm.jsx ~ line 46 ~ onSubmit ~ parseInt(data)',
       parseInt(fromAmount, 10)
