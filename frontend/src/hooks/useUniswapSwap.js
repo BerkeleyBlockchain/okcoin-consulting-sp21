@@ -13,15 +13,16 @@ import { ethers } from 'ethers';
 import IUniswapV2Router02 from '../constants/IUniswapV2Router02.json';
 import erc20Abi from '../constants/erc20abi.json';
 
+const UNISWAP_ROUTER_CONTRACT = '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D'; // Mainnet contract
+
 export default async function executeSwap(tokenFrom, tokenTo, inputAmount, web3) {
 
   const provider = new ethers.providers.Web3Provider(web3.currentProvider);
 
-  console.log('EXECUTING UNISWAP');
-
   // Get pricing information from the SDK
   const inputToken = new Token(ChainId.MAINNET, tokenFrom.mainnet, tokenFrom.decimals);
   const outputToken = new Token(ChainId.MAINNET, tokenTo.mainnet, tokenTo.decimals);
+  
   console.log(
     '🚀 ~ file: useUniswapSwap.js ~ line 37 ~ executeSwap ~ inputToken.decimals',
     inputToken.decimals
@@ -43,12 +44,14 @@ export default async function executeSwap(tokenFrom, tokenTo, inputAmount, web3)
   );
 
   // Get other trade parameters
+  const accounts = await web3.eth.getAccounts();
+  const userAddress = accounts[0];
   const slippageTolerance = new Percent('300', '10000'); // 300 bips, or 3%
   const amountOutMin = ethers.BigNumber.from(
     trade.minimumAmountOut(slippageTolerance).raw.toString()
   ); // needs to be converted to e.g. hex
   const path = [inputToken.address, outputToken.address];
-  const to = process.env.REACT_APP_WALLET_ADDRESS;
+  const to = userAddress;
   const deadline = Math.floor(Date.now() / 1000) + 60 * 20; // 20 minutes from the current Unix time
 
   // Wallet information
@@ -56,7 +59,7 @@ export default async function executeSwap(tokenFrom, tokenTo, inputAmount, web3)
 
   // Construct uniswap router contract
   const uniswap = new ethers.Contract(
-    process.env.REACT_APP_UNISWAP_ROUTER_CONTRACT, // Mainnet contract
+    UNISWAP_ROUTER_CONTRACT,
     IUniswapV2Router02.abi,
     account
   );
@@ -69,11 +72,11 @@ export default async function executeSwap(tokenFrom, tokenTo, inputAmount, web3)
 
   // Approve erc20 token amount
   const txApprove = await erc20Contract.approve(
-    process.env.REACT_APP_UNISWAP_ROUTER_CONTRACT,
+    UNISWAP_ROUTER_CONTRACT,
     amountIn,
     {
       gasPrice,
-      gasLimit: ethers.BigNumber.from(30000),
+      gasLimit: ethers.BigNumber.from(40000),
     }
   );
 
@@ -91,7 +94,7 @@ export default async function executeSwap(tokenFrom, tokenTo, inputAmount, web3)
     deadline,
     {
       gasPrice,
-      gasLimit: ethers.BigNumber.from(30000),
+      gasLimit: ethers.BigNumber.from(200000),
     }
   );
 
