@@ -27,8 +27,8 @@ export default function use0xPrice(tokenFrom, tokenTo) {
         const response = await fetch(`https://api.0x.org/swap/v1/quote?${u.toString()}`);
         const responseJson = await response.json();
 
-        setMidprice(responseJson.price);
-        setInverse(1 / responseJson.price);
+        setMidprice(1 / responseJson.price);
+        setInverse(responseJson.price);
       } catch (e) {
         setMidprice(0);
         setInverse(0);
