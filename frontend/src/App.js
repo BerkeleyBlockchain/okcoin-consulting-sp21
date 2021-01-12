@@ -1,4 +1,5 @@
 import { ChakraProvider, Container, extendTheme, Grid, GridItem } from '@chakra-ui/react';
+import { Provider } from 'jotai';
 import React, { useEffect, useState } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import ExchangesTable from './components/ExchangesTable';
@@ -47,22 +48,24 @@ function App() {
   const customTheme = extendTheme({ config });
 
   return (
-    <ChakraProvider resetCSS theme={customTheme}>
-      <ErrorBoundary FallbackComponent={FullPageErrorFallback}>
-        <NavBar setTabIndex={setTabIndex} />
-        <Container maxW="8xl">
-          <Grid templateColumns="repeat(3, 1fr)" gap={4}>
-            <GridItem colSpan={2} p={6}>
-              {tabIndex === 0 ? <ExchangesTable /> : null}
-              {tabIndex === 2 ? <MyWallet /> : null}
-            </GridItem>
-            <GridItem colSpan={1}>
-              <SwapForm web3={web3} />
-            </GridItem>
-          </Grid>
-        </Container>
-      </ErrorBoundary>
-    </ChakraProvider>
+    <Provider>
+      <ChakraProvider resetCSS theme={customTheme}>
+        <ErrorBoundary FallbackComponent={FullPageErrorFallback}>
+          <NavBar setTabIndex={setTabIndex} />
+          <Container maxW="8xl">
+            <Grid templateColumns="repeat(3, 1fr)" gap={4}>
+              <GridItem colSpan={2} p={6}>
+                {tabIndex === 0 ? <ExchangesTable /> : null}
+                {tabIndex === 2 ? <MyWallet /> : null}
+              </GridItem>
+              <GridItem colSpan={1}>
+                <SwapForm web3={web3} />
+              </GridItem>
+            </Grid>
+          </Container>
+        </ErrorBoundary>
+      </ChakraProvider>
+    </Provider>
   );
 }
 

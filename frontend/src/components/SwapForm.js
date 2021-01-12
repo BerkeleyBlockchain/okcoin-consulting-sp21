@@ -10,12 +10,16 @@ import {
   Spacer,
   Text,
 } from '@chakra-ui/react';
+import { useAtom } from 'jotai';
 import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import * as Tokens from '../constants/tokens';
-import useCheapestPrice from '../hooks/useCheapestPrice';
+import use0xPrice from '../hooks/use0xPrice';
 import useGas from '../hooks/useGas';
+import useKyberPrice from '../hooks/useKyberPrice';
+import useUniswapPrice from '../hooks/useUniswapPrice';
 import uniswapSwap from '../hooks/useUniswapSwap';
+import { midpricesAtom } from '../utils/atoms';
 
 const coins = [
   {
@@ -44,18 +48,29 @@ const coins = [
   },
 ];
 
+function useCheapestPrice({ uniswap, kyber, zeroX }) {
+  const prices = [parseFloat(uniswap), parseFloat(kyber), parseFloat(zeroX)];
+  const exchange = ['uniswap', 'kyber', 'zeroX'];
+  const i = prices.indexOf(Math.max(...prices));
+
+  return { midprice: prices[i], exchange: exchange[i] };
+}
+
 export default function SwapForm({ web3 }) {
   const { register, handleSubmit, watch, setValue, errors } = useForm();
   const watchFromToken = watch('fromToken', '');
   const watchToToken = watch('toToken', '');
   const watchFromAmount = watch('fromAmount', 0);
   const gas = useGas();
-  // eslint-disable-next-line prefer-const
-  let { price, exchange } = useCheapestPrice(Tokens[watchFromToken], Tokens[watchToToken]);
-  exchange = 'Uniswap'; // HARD CODE EXCHANGE TO USE UNISWAP
-  const midprice = price; // HARD CODE MIDPRICE TO USE UNISWAP
+  const [, kyberMidprice] = useKyberPrice(Tokens[watchFromToken], Tokens[watchToToken]);
+  const [, uniswapMidprice] = useUniswapPrice(Tokens[watchFromToken], Tokens[watchToToken]);
+  const [, zeroXMidprice] = use0xPrice(Tokens[watchFromToken], Tokens[watchToToken]);
+  const [midprices, setMidprices] = useAtom(midpricesAtom);
 
-  console.log('🚀 ~ file: SwapForm.jsx ~ line 56 ~ SwapForm ~ exchange', exchange);
+  // eslint-disable-next-line prefer-const
+  let { midprice, exchange } = useCheapestPrice(midprices);
+
+  exchange = 'Uniswap'; // HARD CODE EXCHANGE TO USE UNISWAP
 
   const onSubmit = (data) => {
     const { fromAmount, fromToken, toToken } = data;
@@ -78,12 +93,19 @@ export default function SwapForm({ web3 }) {
   };
 
   useEffect(() => {
+    setMidprices({ kyber: kyberMidprice, uniswap: uniswapMidprice, zeroX: zeroXMidprice });
+  }, [kyberMidprice, uniswapMidprice, zeroXMidprice]);
+
+  useEffect(() => {
     if (watchFromAmount && watchFromToken && watchToToken) {
       const n = watchFromAmount * midprice;
-      setValue('toAmount', n.toFixed(Tokens[watchFromToken]?.decimals));
+      setValue('toAmount', n.toFixed(Tokens[watchFromToken].decimals));
     }
     if (!watchFromAmount) {
       setValue('toAmount', '');
+    }
+    if (!watchFromToken || !watchToToken) {
+      setMidprices({ uniswap: 0, kyber: 0, zeroX: 0 });
     }
   }, [midprice, watchFromAmount, watchFromToken, watchToToken]);
 

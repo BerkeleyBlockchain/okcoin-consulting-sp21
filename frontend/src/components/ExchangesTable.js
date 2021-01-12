@@ -1,11 +1,11 @@
 import { Box, Container, Image, Table, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react';
 import React from 'react';
-import useKyberPrice from '../hooks/useKyberPrice';
+import { useAtom } from 'jotai';
+import { midpricesAtom } from '../utils/atoms';
 
-function ExchangesTable({ fromToken, toToken }) {
-  const [, midPrice] = useKyberPrice(fromToken, toToken);
-  console.log('🚀 ~ file: ExchangesTable.jsx ~ line 17 ~ ExchangesTable ~ toToken', toToken);
-  console.log('🚀 ~ file: ExchangesTable.jsx ~ line 17 ~ ExchangesTable ~ fromToken', fromToken);
+function ExchangesTable() {
+  const [midprices] = useAtom(midpricesAtom);
+
   return (
     <Container maxW="xl">
       <Table variant="simple" colorScheme="teal">
@@ -23,7 +23,7 @@ function ExchangesTable({ fromToken, toToken }) {
                 Kyber
               </Box>
             </Td>
-            <Td isNumeric>{midPrice}</Td>
+            <Td isNumeric>{midprices.kyber}</Td>
           </Tr>
           <Tr>
             <Td>
@@ -32,7 +32,7 @@ function ExchangesTable({ fromToken, toToken }) {
                 Uniswap
               </Box>
             </Td>
-            <Td isNumeric>30.48</Td>
+            <Td isNumeric>{midprices.uniswap}</Td>
           </Tr>
           <Tr>
             <Td>
@@ -41,7 +41,7 @@ function ExchangesTable({ fromToken, toToken }) {
                 0x
               </Box>
             </Td>
-            <Td isNumeric>0.91444</Td>
+            <Td isNumeric>{midprices.zeroX}</Td>
           </Tr>
         </Tbody>
       </Table>
