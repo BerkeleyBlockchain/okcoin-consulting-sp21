@@ -19,7 +19,7 @@ import useGas from '../hooks/useGas';
 import useKyberPrice from '../hooks/useKyberPrice';
 import useUniswapPrice from '../hooks/useUniswapPrice';
 import uniswapSwap from '../hooks/useUniswapSwap';
-import { midpricesAtom } from '../utils/atoms';
+import { midpricesAtom, web3Atom } from '../utils/atoms';
 
 const coins = [
   {
@@ -56,7 +56,7 @@ function useCheapestPrice({ uniswap, kyber, zeroX }) {
   return { midprice: prices[i], exchange: exchange[i] };
 }
 
-export default function SwapForm({ web3 }) {
+export default function SwapForm() {
   const { register, handleSubmit, watch, setValue, errors } = useForm();
   const watchFromToken = watch('fromToken', '');
   const watchToToken = watch('toToken', '');
@@ -66,6 +66,7 @@ export default function SwapForm({ web3 }) {
   const [, uniswapMidprice] = useUniswapPrice(Tokens[watchFromToken], Tokens[watchToToken]);
   const [, zeroXMidprice] = use0xPrice(Tokens[watchFromToken], Tokens[watchToToken]);
   const [midprices, setMidprices] = useAtom(midpricesAtom);
+  const web3 = useAtom(web3Atom);
 
   // eslint-disable-next-line prefer-const
   let { midprice, exchange } = useCheapestPrice(midprices);

@@ -1,5 +1,5 @@
 import { ChakraProvider, Container, extendTheme, Grid, GridItem } from '@chakra-ui/react';
-import { Provider } from 'jotai';
+import { useAtom } from 'jotai';
 import React, { useEffect, useState } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import ExchangesTable from './components/ExchangesTable';
@@ -7,12 +7,13 @@ import FullPageErrorFallback from './components/FullPageErrorFallback';
 import MyWallet from './components/MyWallet';
 import NavBar from './components/NavBar';
 import SwapForm from './components/SwapForm';
+import { tabIndexAtom, web3Atom } from './utils/atoms';
 import getWeb3 from './utils/getWeb3';
 
 function App() {
-  const [web3, setWeb3] = useState(null);
+  const [web3, setWeb3] = useAtom(web3Atom);
   const [account, setAccount] = useState(null);
-  const [tabIndex, setTabIndex] = useState(0);
+  const [tabIndex] = useAtom(tabIndexAtom);
 
   useEffect(async () => {
     try {
@@ -25,15 +26,14 @@ function App() {
       // Set web3 and account address values
       setWeb3(web3Instance);
       setAccount(userAccount[0]);
-
-      console.log('🚀 ~ file: App.js ~ line 10 ~ App ~ web3', web3);
-      console.log('🚀 ~ file: App.js ~ line 12 ~ App ~ account', account);
     } catch (error) {
       // Catch any errors for any of the above operations.
       alert(`Failed to load web3, accounts, or contract. Check console for details.`);
       console.error(error);
     }
   }, []);
+  console.log('🚀 ~ file: App.js ~ line 10 ~ App ~ web3', web3);
+  console.log('🚀 ~ file: App.js ~ line 12 ~ App ~ account', account);
 
   if (!web3) {
     // Run if Web3 wallet is not connected
@@ -48,24 +48,22 @@ function App() {
   const customTheme = extendTheme({ config });
 
   return (
-    <Provider>
-      <ChakraProvider resetCSS theme={customTheme}>
-        <ErrorBoundary FallbackComponent={FullPageErrorFallback}>
-          <NavBar setTabIndex={setTabIndex} />
-          <Container maxW="8xl">
-            <Grid templateColumns="repeat(3, 1fr)" gap={4}>
-              <GridItem colSpan={2} p={6}>
-                {tabIndex === 0 ? <ExchangesTable /> : null}
-                {tabIndex === 2 ? <MyWallet /> : null}
-              </GridItem>
-              <GridItem colSpan={1}>
-                <SwapForm web3={web3} />
-              </GridItem>
-            </Grid>
-          </Container>
-        </ErrorBoundary>
-      </ChakraProvider>
-    </Provider>
+    <ChakraProvider resetCSS theme={customTheme}>
+      <ErrorBoundary FallbackComponent={FullPageErrorFallback}>
+        <NavBar />
+        <Container maxW="8xl">
+          <Grid templateColumns="repeat(3, 1fr)" gap={4}>
+            <GridItem colSpan={2} p={6}>
+              {tabIndex === 0 ? <ExchangesTable /> : null}
+              {tabIndex === 2 ? <MyWallet /> : null}
+            </GridItem>
+            <GridItem colSpan={1}>
+              <SwapForm />
+            </GridItem>
+          </Grid>
+        </Container>
+      </ErrorBoundary>
+    </ChakraProvider>
   );
 }
 
