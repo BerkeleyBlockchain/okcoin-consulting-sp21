@@ -1,28 +1,21 @@
 import {
-  Spacer,
   Box,
   Button,
   Center,
+  Divider,
   Flex,
   Heading,
   Input,
   Select,
+  Spacer,
   Text,
-  Divider,
 } from '@chakra-ui/react';
 import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import * as Tokens from '../constants/tokens';
-import useUniswapPrice from '../hooks/useUniswapPrice';
-import useKyberPrice from '../hooks/useKyberPrice';
-import use0xPrice from '../hooks/use0xPrice';
+import useCheapestPrice from '../hooks/useCheapestPrice';
 import useGas from '../hooks/useGas';
 import uniswapSwap from '../hooks/useUniswapSwap';
-// eslint-disable-next-line no-unused-vars
-import kyberSwap from '../hooks/useKyberSwap';
-// eslint-disable-next-line no-unused-vars
-import zeroXSwap from '../hooks/use0xSwap';
-import useCheapestPrice from '../hooks/useCheapestPrice';
 
 const coins = [
   {
@@ -56,18 +49,11 @@ export default function SwapForm({ web3 }) {
   const watchFromToken = watch('fromToken', '');
   const watchToToken = watch('toToken', '');
   const watchFromAmount = watch('fromAmount', 0);
-  const [, uniswapMidprice] = useUniswapPrice(Tokens[watchFromToken], Tokens[watchToToken]);
-  const [, kyberMidprice] = useKyberPrice(Tokens[watchFromToken], Tokens[watchToToken]);
-  const [, zeroXMidprice] = use0xPrice(Tokens[watchFromToken], Tokens[watchToToken]);
   const gas = useGas();
-  let exchange = useCheapestPrice(Tokens[watchFromToken], Tokens[watchToToken]);
+  // eslint-disable-next-line prefer-const
+  let { price, exchange } = useCheapestPrice(Tokens[watchFromToken], Tokens[watchToToken]);
   exchange = 'Uniswap'; // HARD CODE EXCHANGE TO USE UNISWAP
-  let midprice = {
-    Uniswap: uniswapMidprice,
-    Kyber: kyberMidprice,
-    '0x': zeroXMidprice,
-  }[exchange];
-  midprice = uniswapMidprice; // HARD CODE MIDPRICE TO USE UNISWAP
+  const midprice = price; // HARD CODE MIDPRICE TO USE UNISWAP
 
   console.log('🚀 ~ file: SwapForm.jsx ~ line 56 ~ SwapForm ~ exchange', exchange);
 
@@ -84,10 +70,6 @@ export default function SwapForm({ web3 }) {
     // } else if (exchange === '0x') {
     //   zeroXSwap([fromToken], Tokens[toToken], fromAmount, web3);
     // }
-    console.log(
-      '🚀 ~ file: SwapForm.jsx ~ line 46 ~ onSubmit ~ parseInt(data)',
-      parseInt(fromAmount, 10)
-    );
     console.log('🚀 ~ file: SwapForm.jsx ~ line 46 ~ onSubmit ~ Tokens[toToken]', Tokens[toToken]);
     console.log(
       '🚀 ~ file: SwapForm.jsx ~ line 46 ~ onSubmit ~ Tokens[fromToken]',
@@ -103,7 +85,7 @@ export default function SwapForm({ web3 }) {
     if (!watchFromAmount) {
       setValue('toAmount', '');
     }
-  }, [midprice, watchFromAmount]);
+  }, [midprice, watchFromAmount, watchFromToken, watchToToken]);
 
   return (
     <Center mt={6}>
@@ -176,7 +158,7 @@ export default function SwapForm({ web3 }) {
             </Flex>
           </Box>
 
-          {watchFromToken && watchToToken && (
+          {watchFromToken && watchToToken ? (
             <>
               <Divider mb={3} />
               <Flex>
@@ -190,10 +172,9 @@ export default function SwapForm({ web3 }) {
                 <Text>{gas}</Text>
               </Flex>
 
-              {/* <Text my={3}>{`Price: ${1 / midprice} ${watchFromToken} per ${watchToToken}`}</Text> */}
               <Divider mt={3} />
             </>
-          )}
+          ) : null}
           <Center>
             <Button
               w="100%"
