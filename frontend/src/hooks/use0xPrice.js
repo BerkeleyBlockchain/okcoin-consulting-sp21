@@ -7,7 +7,7 @@ import { useEffect, useState } from 'react';
  */
 
 export default function use0xPrice(tokenFrom, tokenTo) {
-  const [midprice, setMidPrice] = useState(1);
+  const [midprice, setMidprice] = useState(1);
   const [inverse, setInverse] = useState(1);
 
   useEffect(() => {
@@ -15,19 +15,24 @@ export default function use0xPrice(tokenFrom, tokenTo) {
       if (!tokenFrom || !tokenTo) {
         return;
       }
+      console.log('Getting 0x price');
+      try {
+        const params = {
+          sellToken: tokenFrom.ticker,
+          buyToken: tokenTo.ticker,
+          buyAmount: 10 ** tokenTo.decimals,
+        };
 
-      const params = {
-        sellToken: tokenFrom.ticker,
-        buyToken: tokenTo.ticker,
-        buyAmount: 10 ** tokenTo.decimals,
-      };
+        const u = new URLSearchParams(params);
+        const response = await fetch(`https://api.0x.org/swap/v1/quote?${u.toString()}`);
+        const responseJson = await response.json();
 
-      const u = new URLSearchParams(params);
-      const response = await fetch(`https://api.0x.org/swap/v1/quote?${u.toString()}`);
-      const responseJson = await response.json();
-
-      setMidPrice(responseJson.price);
-      setInverse(1 / responseJson.price);
+        setMidprice(responseJson.price);
+        setInverse(1 / responseJson.price);
+      } catch (e) {
+        setMidprice(0);
+        setInverse(0);
+      }
     };
     getPrices();
   }, [tokenFrom, tokenTo]);

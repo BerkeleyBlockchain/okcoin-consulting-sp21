@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react';
  * @param tokenTo An output token of type defined in shared/token.js
  */
 export default function useKyberPrice(tokenFrom, tokenTo) {
-  const [midprice, setMidPrice] = useState(1);
+  const [midprice, setMidprice] = useState(1);
   const [inverse, setInverse] = useState(1);
 
   useEffect(() => {
@@ -14,6 +14,7 @@ export default function useKyberPrice(tokenFrom, tokenTo) {
       if (!tokenFrom || !tokenTo) {
         return;
       }
+      console.log('Getting Kyber price');
       const address1 = tokenFrom.mainnet;
       const address2 = tokenTo.mainnet;
 
@@ -26,7 +27,7 @@ export default function useKyberPrice(tokenFrom, tokenTo) {
       const rates2 = await ratesRequest2.json();
       const outputInEth = rates2.data[0].src_qty;
 
-      setMidPrice(inputInEth / outputInEth);
+      setMidprice(inputInEth / outputInEth);
       setInverse(outputInEth / inputInEth);
     };
     getPrices();

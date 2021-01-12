@@ -62,17 +62,15 @@ export default function SwapForm({ web3 }) {
   const watchToToken = watch('toToken', '');
   const watchFromAmount = watch('fromAmount', 0);
   const gas = useGas();
-  const [, kyberMidPrice] = useKyberPrice(Tokens[watchFromToken], Tokens[watchToToken]);
-  const [, uniswapMidPrice] = useUniswapPrice(Tokens[watchFromToken], Tokens[watchToToken]);
-  const [, zeroXMidPrice] = use0xPrice(Tokens[watchFromToken], Tokens[watchToToken]);
+  const [, kyberMidprice] = useKyberPrice(Tokens[watchFromToken], Tokens[watchToToken]);
+  const [, uniswapMidprice] = useUniswapPrice(Tokens[watchFromToken], Tokens[watchToToken]);
+  const [, zeroXMidprice] = use0xPrice(Tokens[watchFromToken], Tokens[watchToToken]);
   const [midprices, setMidprices] = useAtom(midpricesAtom);
 
   // eslint-disable-next-line prefer-const
   let { midprice, exchange } = useCheapestPrice(midprices);
 
   exchange = 'Uniswap'; // HARD CODE EXCHANGE TO USE UNISWAP
-
-  console.log('🚀 ~ file: SwapForm.jsx ~ line 56 ~ SwapForm ~ exchange', exchange);
 
   const onSubmit = (data) => {
     const { fromAmount, fromToken, toToken } = data;
@@ -95,8 +93,8 @@ export default function SwapForm({ web3 }) {
   };
 
   useEffect(() => {
-    setMidprices({ kyber: kyberMidPrice, uniswap: uniswapMidPrice, zeroX: zeroXMidPrice });
-  }, [kyberMidPrice, uniswapMidPrice, zeroXMidPrice]);
+    setMidprices({ kyber: kyberMidprice, uniswap: uniswapMidprice, zeroX: zeroXMidprice });
+  }, [kyberMidprice, uniswapMidprice, zeroXMidprice]);
 
   useEffect(() => {
     if (watchFromAmount && watchFromToken && watchToToken) {
