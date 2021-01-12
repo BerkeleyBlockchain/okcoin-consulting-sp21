@@ -1,6 +1,6 @@
-import useUniswapPrice from './useUniswapPrice';
-import useKyberPrice from './useKyberPrice';
 import use0xPrice from './use0xPrice';
+import useKyberPrice from './useKyberPrice';
+import useUniswapPrice from './useUniswapPrice';
 
 export default function useCheapestPrice(tokenFrom, tokenTo) {
   const [uniswap, uniMidprice] = useUniswapPrice(tokenFrom, tokenTo);
