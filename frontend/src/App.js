@@ -19,11 +19,11 @@ function App() {
       const web3Instance = await getWeb3();
 
       // Use web3 to get the user's account
-      const userAccount = await web3Instance.eth.getAccounts()[0];
+      const userAccount = await web3Instance.eth.getAccounts();
 
       // Set web3 and account address values
       setWeb3(web3Instance);
-      setAccount(userAccount);
+      setAccount(userAccount[0]);
 
       console.log('🚀 ~ file: App.js ~ line 10 ~ App ~ web3', web3);
       console.log('🚀 ~ file: App.js ~ line 12 ~ App ~ account', account);
