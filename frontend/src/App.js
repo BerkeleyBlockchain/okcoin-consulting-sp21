@@ -6,7 +6,7 @@ import FullPageErrorFallback from './components/FullPageErrorFallback';
 import MyWallet from './components/MyWallet';
 import NavBar from './components/NavBar';
 import SwapForm from './components/SwapForm';
-import getWeb3 from './hooks/getWeb3';
+import getWeb3 from './utils/getWeb3';
 
 function App() {
   const [web3, setWeb3] = useState(null);
