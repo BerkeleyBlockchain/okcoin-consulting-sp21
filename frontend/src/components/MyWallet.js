@@ -84,7 +84,7 @@ export default function MyWallet() {
           <Tbody>
             {tableData.map(({ sender, signer, value, date }) => {
               return (
-                <Tr>
+                <Tr key={date}>
                   <Td>{sender}</Td>
                   <Td>{signer}</Td>
                   <Td isNumeric>${value}</Td>
