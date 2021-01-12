@@ -1,5 +1,5 @@
 import { ChakraProvider, Container, extendTheme, Grid, GridItem } from '@chakra-ui/react';
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import ExchangesTable from './components/ExchangesTable';
 import FullPageErrorFallback from './components/FullPageErrorFallback';
