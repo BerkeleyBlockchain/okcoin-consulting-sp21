@@ -6,7 +6,7 @@ Setting up and running the DEX aggregator interface
 
 ```
 git clone https://github.com/BerkeleyBlockchain/okcoin-consulting.git
-cd frontend
+cd okcoin-consulting
 npm install
 ```
 

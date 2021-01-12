@@ -1,10 +1,11 @@
 .idea
 .vscode
 .eslintcache
-.env
 
 # dependencies
-node_modules
+/node_modules
+/.pnp
+.pnp.js
 
 # editors
 .idea
@@ -16,3 +17,14 @@ Thumbs.db
 
 # locks
 package-lock.json
+
+# misc
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
