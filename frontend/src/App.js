@@ -1,4 +1,4 @@
-import { ChakraProvider, Container, extendTheme, Grid, GridItem } from '@chakra-ui/react';
+import { Grid, GridItem } from '@chakra-ui/react';
 import { useAtom } from 'jotai';
 import React, { useEffect, useState } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
@@ -40,30 +40,19 @@ function App() {
     return <div>Loading Web3, accounts, and contract...</div>;
   }
 
-  const config = {
-    useSystemColorMode: false,
-    initialColorMode: 'light',
-  };
-
-  const customTheme = extendTheme({ config });
-
   return (
-    <ChakraProvider resetCSS theme={customTheme}>
-      <ErrorBoundary FallbackComponent={FullPageErrorFallback}>
-        <NavBar />
-        <Container maxW="8xl">
-          <Grid templateColumns="repeat(3, 1fr)" gap={4}>
-            <GridItem colSpan={2} p={6}>
-              {tabIndex === 0 ? <ExchangesTable /> : null}
-              {tabIndex === 2 ? <MyWallet /> : null}
-            </GridItem>
-            <GridItem colSpan={1}>
-              <SwapForm />
-            </GridItem>
-          </Grid>
-        </Container>
-      </ErrorBoundary>
-    </ChakraProvider>
+    <ErrorBoundary FallbackComponent={FullPageErrorFallback}>
+      <NavBar />
+      <Grid templateColumns="repeat(3, 1fr)" gap={4}>
+        <GridItem colSpan={2} p={6}>
+          {tabIndex === 0 ? <ExchangesTable /> : null}
+          {tabIndex === 2 ? <MyWallet /> : null}
+        </GridItem>
+        <GridItem colSpan={1}>
+          <SwapForm />
+        </GridItem>
+      </Grid>
+    </ErrorBoundary>
   );
 }
 
