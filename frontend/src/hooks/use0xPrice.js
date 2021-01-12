@@ -7,7 +7,7 @@ import { useEffect, useState } from 'react';
  */
 
 export default function use0xPrice(tokenFrom, tokenTo) {
-  const [midPrice, setMidPrice] = useState(1);
+  const [midprice, setMidPrice] = useState(1);
   const [inverse, setInverse] = useState(1);
 
   useEffect(() => {
@@ -32,5 +32,5 @@ export default function use0xPrice(tokenFrom, tokenTo) {
     getPrices();
   }, [tokenFrom, tokenTo]);
 
-  return ['0x', midPrice, inverse];
+  return ['0x', midprice, inverse];
 }

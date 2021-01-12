@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { ethers } from 'ethers';
 
 export default function useUniswapPrice(tokenFrom, tokenTo) {
-  const [midPrice, setMidPrice] = useState(1);
+  const [midprice, setMidPrice] = useState(1);
   const [inverse, setInverse] = useState(1);
 
   useEffect(async () => {
@@ -20,11 +20,11 @@ export default function useUniswapPrice(tokenFrom, tokenTo) {
       const pair = await Fetcher.fetchPairData(input, output, provider);
       const route = new Route([pair], input);
 
-      setMidPrice(route.midPrice.toSignificant(6));
-      setInverse(route.midPrice.invert().toSignificant(6));
+      setMidPrice(route.midprice.toSignificant(6));
+      setInverse(route.midprice.invert().toSignificant(6));
     };
     getPrices();
   }, [tokenFrom, tokenTo]);
 
-  return ['Uniswap', midPrice, inverse];
+  return ['Uniswap', midprice, inverse];
 }

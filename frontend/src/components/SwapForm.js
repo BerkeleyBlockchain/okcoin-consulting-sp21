@@ -19,7 +19,7 @@ import useGas from '../hooks/useGas';
 import useKyberPrice from '../hooks/useKyberPrice';
 import useUniswapPrice from '../hooks/useUniswapPrice';
 import uniswapSwap from '../hooks/useUniswapSwap';
-import { midPricesAtom } from '../utils/atoms';
+import { midpricesAtom } from '../utils/atoms';
 
 const coins = [
   {
@@ -50,10 +50,10 @@ const coins = [
 
 function useCheapestPrice({ uniswap, kyber, zeroX }) {
   const prices = [parseFloat(uniswap), parseFloat(kyber), parseFloat(zeroX)];
-  const exchange = [uniswap, kyber, zeroX];
+  const exchange = ['uniswap', 'kyber', 'zeroX'];
   const i = prices.indexOf(Math.max(...prices));
 
-  return { price: prices[i], exchange: exchange[i] };
+  return { midprice: prices[i], exchange: exchange[i] };
 }
 
 export default function SwapForm({ web3 }) {
@@ -62,22 +62,17 @@ export default function SwapForm({ web3 }) {
   const watchToToken = watch('toToken', '');
   const watchFromAmount = watch('fromAmount', 0);
   const gas = useGas();
-  // eslint-disable-next-line prefer-const
   const [, kyberMidPrice] = useKyberPrice(Tokens[watchFromToken], Tokens[watchToToken]);
   const [, uniswapMidPrice] = useUniswapPrice(Tokens[watchFromToken], Tokens[watchToToken]);
   const [, zeroXMidPrice] = use0xPrice(Tokens[watchFromToken], Tokens[watchToToken]);
-  const [midPrices, setMidprices] = useAtom(midPricesAtom);
+  const [midprices, setMidprices] = useAtom(midpricesAtom);
 
   // eslint-disable-next-line prefer-const
-  let { price, exchange } = useCheapestPrice(midPrices);
+  let { midprice, exchange } = useCheapestPrice(midprices);
 
   exchange = 'Uniswap'; // HARD CODE EXCHANGE TO USE UNISWAP
-  const midprice = price; // HARD CODE MIDPRICE TO USE UNISWAP
 
   console.log('🚀 ~ file: SwapForm.jsx ~ line 56 ~ SwapForm ~ exchange', exchange);
-  useEffect(() => {
-    setMidprices({ kyber: kyberMidPrice, uniswap: uniswapMidPrice, zeroX: zeroXMidPrice });
-  }, [kyberMidPrice, uniswapMidPrice, zeroXMidPrice]);
 
   const onSubmit = (data) => {
     const { fromAmount, fromToken, toToken } = data;
@@ -100,12 +95,19 @@ export default function SwapForm({ web3 }) {
   };
 
   useEffect(() => {
+    setMidprices({ kyber: kyberMidPrice, uniswap: uniswapMidPrice, zeroX: zeroXMidPrice });
+  }, [kyberMidPrice, uniswapMidPrice, zeroXMidPrice]);
+
+  useEffect(() => {
     if (watchFromAmount && watchFromToken && watchToToken) {
       const n = watchFromAmount * midprice;
-      setValue('toAmount', n.toFixed(Tokens[watchFromToken]?.decimals));
+      setValue('toAmount', n.toFixed(Tokens[watchFromToken].decimals));
     }
     if (!watchFromAmount) {
       setValue('toAmount', '');
+    }
+    if (!watchFromToken || !watchToToken) {
+      setMidprices({ uniswap: 0, kyber: 0, zeroX: 0 });
     }
   }, [midprice, watchFromAmount, watchFromToken, watchToToken]);
 

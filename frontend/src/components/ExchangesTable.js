@@ -1,10 +1,10 @@
 import { Box, Container, Image, Table, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react';
 import React from 'react';
 import { useAtom } from 'jotai';
-import { midPricesAtom } from '../utils/atoms';
+import { midpricesAtom } from '../utils/atoms';
 
 function ExchangesTable() {
-  const [midPrices] = useAtom(midPricesAtom);
+  const [midprices] = useAtom(midpricesAtom);
 
   return (
     <Container maxW="xl">
@@ -23,7 +23,7 @@ function ExchangesTable() {
                 Kyber
               </Box>
             </Td>
-            <Td isNumeric>{midPrices.kyber}</Td>
+            <Td isNumeric>{midprices.kyber}</Td>
           </Tr>
           <Tr>
             <Td>
@@ -32,7 +32,7 @@ function ExchangesTable() {
                 Uniswap
               </Box>
             </Td>
-            <Td isNumeric>{midPrices.uniswap}</Td>
+            <Td isNumeric>{midprices.uniswap}</Td>
           </Tr>
           <Tr>
             <Td>
@@ -41,7 +41,7 @@ function ExchangesTable() {
                 0x
               </Box>
             </Td>
-            <Td isNumeric>{midPrices.zeroX}</Td>
+            <Td isNumeric>{midprices.zeroX}</Td>
           </Tr>
         </Tbody>
       </Table>
