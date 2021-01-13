@@ -20,11 +20,13 @@ import useGas from '../hooks/useGas';
 import useKyberPrice from '../hooks/useKyberPrice';
 import useUniswapPrice from '../hooks/useUniswapPrice';
 import uniswapSwap from '../hooks/useUniswapSwap';
+import kyberSwap from '../hooks/useKyberSwap';
+import zeroXSwap from '../hooks/use0xSwap';
 import { midpricesAtom } from '../utils/atoms';
 
 function useCheapestPrice({ uniswap, kyber, zeroX }) {
   const prices = [parseFloat(uniswap), parseFloat(kyber), parseFloat(zeroX)];
-  const exchange = ['uniswap', 'kyber', 'zeroX'];
+  const exchange = ['Uniswap', 'Kyber', '0x'];
   const i = prices.indexOf(Math.max(...prices));
 
   return { midprice: prices[i], exchange: exchange[i] };
@@ -62,8 +64,7 @@ export default function SwapForm({ web3 }) {
 
   // eslint-disable-next-line prefer-const
   let { midprice, exchange } = useCheapestPrice(midprices);
-
-  exchange = 'Uniswap'; // HARD CODE EXCHANGE TO USE UNISWAP
+  exchange = '0x';
 
   const onSubmit = (data) => {
     const { fromAmount, fromToken, toToken } = data;
@@ -71,7 +72,7 @@ export default function SwapForm({ web3 }) {
       return;
     }
     setIsLoading(true);
-    // HARD CODE TO USE UNISWAP SWAP
+
     if (exchange === 'Uniswap') {
       uniswapSwap(Tokens[fromToken], Tokens[toToken], fromAmount, web3)
         .then(() => {
@@ -83,11 +84,30 @@ export default function SwapForm({ web3 }) {
           setIsLoading(false);
           toast(toasts.error);
         });
-    } // else if (exchange === 'Kyber') {
-    //   kyberSwap(Tokens[fromToken], Tokens[toToken], fromAmount, web3);
-    // } else if (exchange === '0x') {
-    //   zeroXSwap([fromToken], Tokens[toToken], fromAmount, web3);
-    // }
+    } else if (exchange === 'Kyber') {
+      kyberSwap(Tokens[fromToken], Tokens[toToken], fromAmount, web3)
+        .then(() => {
+          setIsLoading(false);
+          toast(toasts.success);
+        })
+        .catch((error) => {
+          console.log('Error: ', error);
+          setIsLoading(false);
+          toast(toasts.error);
+        });
+    } else if (exchange === '0x') {
+      zeroXSwap(Tokens[fromToken], Tokens[toToken], fromAmount, web3)
+        .then(() => {
+          setIsLoading(false);
+          toast(toasts.success);
+        })
+        .catch((error) => {
+          console.log('Error: ', error);
+          setIsLoading(false);
+          toast(toasts.error);
+        });
+    }
+
     console.log('🚀 ~ file: SwapForm.jsx ~ line 46 ~ onSubmit ~ Tokens[toToken]', Tokens[toToken]);
     console.log(
       '🚀 ~ file: SwapForm.jsx ~ line 46 ~ onSubmit ~ Tokens[fromToken]',
