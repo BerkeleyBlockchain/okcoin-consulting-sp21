@@ -31,7 +31,6 @@ function useCheapestPrice({ uniswap, kyber, zeroX }) {
 
 export default function SwapForm({ web3 }) {
   const { register, handleSubmit, watch, setValue, errors } = useForm();
-  console.log('🚀 ~ file: SwapForm.js ~ line 61 ~ SwapForm ~ errors', errors);
   const watchFromToken = watch('fromToken', '');
   const watchToToken = watch('toToken', '');
   const watchFromAmount = watch('fromAmount', 0);
@@ -40,14 +39,14 @@ export default function SwapForm({ web3 }) {
   const [, uniswapMidprice] = useUniswapPrice(Tokens[watchFromToken], Tokens[watchToToken]);
   const [, zeroXMidprice] = use0xPrice(Tokens[watchFromToken], Tokens[watchToToken]);
   const [midprices, setMidprices] = useAtom(midpricesAtom);
-  const [isLoading, setIsLoading] = React.useState(false);
+  const [isLoading, setIsLoading] = React.useState();
 
   // eslint-disable-next-line prefer-const
   let { midprice, exchange } = useCheapestPrice(midprices);
 
   exchange = 'Uniswap'; // HARD CODE EXCHANGE TO USE UNISWAP
 
-  const onSubmit = async (data) => {
+  const onSubmit = (data) => {
     const { fromAmount, fromToken, toToken } = data;
     if (!exchange) {
       return;
@@ -55,9 +54,13 @@ export default function SwapForm({ web3 }) {
     setIsLoading(true);
     // HARD CODE TO USE UNISWAP SWAP
     if (exchange === 'Uniswap') {
-      await uniswapSwap(Tokens[fromToken], Tokens[toToken], fromAmount, web3).catch(
-        setIsLoading(false)
-      );
+      uniswapSwap(Tokens[fromToken], Tokens[toToken], fromAmount, web3)
+        .then(() => {
+          setIsLoading(false);
+        })
+        .catch(() => {
+          setIsLoading(false);
+        });
     } // else if (exchange === 'Kyber') {
     //   kyberSwap(Tokens[fromToken], Tokens[toToken], fromAmount, web3);
     // } else if (exchange === '0x') {
@@ -68,7 +71,6 @@ export default function SwapForm({ web3 }) {
       '🚀 ~ file: SwapForm.jsx ~ line 46 ~ onSubmit ~ Tokens[fromToken]',
       Tokens[fromToken]
     );
-    setIsLoading(false);
   };
 
   useEffect(() => {
