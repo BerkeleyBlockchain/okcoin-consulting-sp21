@@ -121,7 +121,7 @@ export default function SwapForm() {
           <Flex>
             <Select
               h="52px"
-              placeholder="Select Token"
+              placeholder="Select"
               name="fromToken"
               size="lg"
               variant="filled"
@@ -153,7 +153,7 @@ export default function SwapForm() {
           <Flex>
             <Select
               h="52px"
-              placeholder="Select a token"
+              placeholder="Select"
               name="toToken"
               size="lg"
               variant="filled"

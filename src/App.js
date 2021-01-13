@@ -1,4 +1,4 @@
-import { Grid, GridItem } from '@chakra-ui/react';
+import { Box, Container, Grid, GridItem } from '@chakra-ui/react';
 import { useAtom } from 'jotai';
 import React, { useEffect, useState } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
@@ -42,16 +42,26 @@ function App() {
 
   return (
     <ErrorBoundary FallbackComponent={FullPageErrorFallback}>
-      <NavBar />
-      <Grid templateColumns="repeat(3, 1fr)" gap={4}>
-        <GridItem colSpan={2} p={6}>
-          {tabIndex === 0 ? <ExchangesTable /> : null}
-          {tabIndex === 2 ? <MyWallet /> : null}
-        </GridItem>
-        <GridItem colSpan={1}>
-          <SwapForm />
-        </GridItem>
-      </Grid>
+      <Box bgColor="#F7F9FC" minWidth={tabIndex === 1 ? '1550px' : '1000px'}>
+        <Grid templateColumns="repeat(7, 1fr)">
+          <GridItem shadow="lg" minHeight="100vh" colSpan={4} ml={8} bgColor="white">
+            <Box shadow="md" mb={4}>
+              <NavBar />
+            </Box>
+            <Box p={4}>
+              {tabIndex === 0 ? <ExchangesTable /> : null}
+              {tabIndex === 1 ? <MyWallet /> : null}
+            </Box>
+          </GridItem>
+          <GridItem colSpan={3}>
+            <Container minWidth={500}>
+              <Box bgColor="white" mt="100px">
+                <SwapForm />
+              </Box>
+            </Container>
+          </GridItem>
+        </Grid>
+      </Box>
     </ErrorBoundary>
   );
 }

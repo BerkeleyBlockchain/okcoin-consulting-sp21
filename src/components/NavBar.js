@@ -6,11 +6,14 @@ import { tabIndexAtom } from '../utils/atoms';
 export default function NavBar() {
   const [, setTabIndex] = useAtom(tabIndexAtom);
   return (
-    <Tabs onChange={(index) => setTabIndex(index)}>
+    <Tabs size="lg" onChange={(index) => setTabIndex(index)}>
       <TabList>
-        <Tab>Exchanges</Tab>
-        <Tab>Price Graphs</Tab>
-        <Tab>My Wallet</Tab>
+        <Tab ml={10} pt={4} pb={4}>
+          Exchanges
+        </Tab>
+        <Tab ml={4} mr={10} pt={4} pb={4}>
+          My Wallet
+        </Tab>
       </TabList>
     </Tabs>
   );
