@@ -54,4 +54,18 @@ module.exports = {
     ropsten: null,
     decimals: 18,
   },
+
+  LINK: {
+    ticker: 'LINK',
+    mainnet: '0x514910771af9ca656af840dff83e8264ecf986ca',
+    ropsten: null,
+    decimals: 18,
+  },
+
+  MKR: {
+    ticker: 'MKR',
+    mainnet: '0x9f8f72aa9304c8b593d555f12ef6589cc3a579a2',
+    ropsten: null,
+    decimals: 18,
+  },
 };

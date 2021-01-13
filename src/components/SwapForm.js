@@ -46,6 +46,12 @@ const coins = [
   {
     ticker: 'BAT',
   },
+  {
+    ticker: 'LINK',
+  },
+  {
+    ticker: 'MKR',
+  },
 ];
 
 function useCheapestPrice({ uniswap, kyber, zeroX }) {
@@ -105,7 +111,7 @@ export default function SwapForm({ web3 }) {
     if (!watchFromAmount) {
       setValue('toAmount', '');
     }
-    if (!watchFromToken || !watchToToken) {
+    if (!watchFromToken || !watchToToken || watchFromToken === watchToToken) {
       setMidprices({ uniswap: 0, kyber: 0, zeroX: 0 });
     }
   }, [midprice, watchFromAmount, watchFromToken, watchToToken]);
