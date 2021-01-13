@@ -11,7 +11,6 @@ export default function useUniswapPrice(tokenFrom, tokenTo) {
       if (!tokenFrom || !tokenTo) {
         return;
       }
-      console.log('Getting Uniswap price');
       try {
         const provider = new ethers.providers.InfuraProvider('mainnet', {
           projectId: process.env.REACT_APP_INFURA_PROJECT_ID,

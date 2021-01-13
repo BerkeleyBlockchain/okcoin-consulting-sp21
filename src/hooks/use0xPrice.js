@@ -15,7 +15,6 @@ export default function use0xPrice(tokenFrom, tokenTo) {
       if (!tokenFrom || !tokenTo) {
         return;
       }
-      console.log('Getting 0x price');
       try {
         const params = {
           sellToken: tokenFrom.ticker,
