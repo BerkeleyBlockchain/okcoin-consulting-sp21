@@ -21,39 +21,6 @@ import useUniswapPrice from '../hooks/useUniswapPrice';
 import uniswapSwap from '../hooks/useUniswapSwap';
 import { midpricesAtom } from '../utils/atoms';
 
-const coins = [
-  {
-    ticker: 'DAI',
-  },
-  {
-    ticker: 'USDC',
-  },
-  {
-    ticker: 'USDT',
-  },
-  {
-    ticker: 'TUSD',
-  },
-  {
-    ticker: 'KNC',
-  },
-  {
-    ticker: 'WETH',
-  },
-  {
-    ticker: 'COMP',
-  },
-  {
-    ticker: 'BAT',
-  },
-  {
-    ticker: 'LINK',
-  },
-  {
-    ticker: 'MKR',
-  },
-];
-
 function useCheapestPrice({ uniswap, kyber, zeroX }) {
   const prices = [parseFloat(uniswap), parseFloat(kyber), parseFloat(zeroX)];
   const exchange = ['uniswap', 'kyber', 'zeroX'];
@@ -133,9 +100,9 @@ export default function SwapForm({ web3 }) {
               variant="filled"
               ref={register}
             >
-              {coins.map(({ ticker }) => (
-                <option key={ticker} value={ticker}>
-                  {ticker}
+              {Object.keys(Tokens).map((t) => (
+                <option key={Tokens[t].ticker} value={Tokens[t].ticker}>
+                  {Tokens[t].ticker}
                 </option>
               ))}
             </Select>
@@ -167,9 +134,9 @@ export default function SwapForm({ web3 }) {
                 validate: (value) => value !== watchFromToken,
               })}
             >
-              {coins.map(({ ticker }) => (
-                <option key={ticker} value={ticker}>
-                  {ticker}
+              {Object.keys(Tokens).map((t) => (
+                <option key={Tokens[t].ticker} value={Tokens[t].ticker}>
+                  {Tokens[t].ticker}
                 </option>
               ))}
             </Select>
