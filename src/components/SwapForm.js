@@ -41,10 +41,10 @@ const coins = [
     ticker: 'WETH',
   },
   {
-    ticker: 'CDAI',
+    ticker: 'COMP',
   },
   {
-    ticker: 'ADAI',
+    ticker: 'BAT',
   },
 ];
 
