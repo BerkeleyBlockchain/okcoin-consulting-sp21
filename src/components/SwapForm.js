@@ -58,6 +58,7 @@ function useCheapestPrice({ uniswap, kyber, zeroX }) {
 
 export default function SwapForm({ web3 }) {
   const { register, handleSubmit, watch, setValue, errors } = useForm();
+  console.log('🚀 ~ file: SwapForm.js ~ line 61 ~ SwapForm ~ errors', errors);
   const watchFromToken = watch('fromToken', '');
   const watchToToken = watch('toToken', '');
   const watchFromAmount = watch('fromAmount', 0);
@@ -156,7 +157,9 @@ export default function SwapForm({ web3 }) {
               name="toToken"
               size="lg"
               variant="filled"
-              ref={register}
+              ref={register({
+                validate: (value) => value !== watchFromToken,
+              })}
             >
               {coins.map(({ ticker }) => (
                 <option key={ticker} value={ticker}>
@@ -207,11 +210,13 @@ export default function SwapForm({ web3 }) {
             type="submit"
             mt={6}
             mb={10}
+            disabled={Object.keys(errors).length !== 0}
           >
             Swap Tokens
           </Button>
         </Center>
-        <Text color="tomato">{errors.fromAmount && 'From Amount is required'}</Text>
+        <Text color="tomato">{errors.fromAmount ? 'From Amount is required' : null}</Text>
+        <Text color="tomato">{errors.toToken ? 'Cannot swap the same tokens' : null}</Text>
       </form>
     </Box>
   );
