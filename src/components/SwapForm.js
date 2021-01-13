@@ -40,20 +40,24 @@ export default function SwapForm({ web3 }) {
   const [, uniswapMidprice] = useUniswapPrice(Tokens[watchFromToken], Tokens[watchToToken]);
   const [, zeroXMidprice] = use0xPrice(Tokens[watchFromToken], Tokens[watchToToken]);
   const [midprices, setMidprices] = useAtom(midpricesAtom);
+  const [isLoading, setIsLoading] = React.useState(false);
 
   // eslint-disable-next-line prefer-const
   let { midprice, exchange } = useCheapestPrice(midprices);
 
   exchange = 'Uniswap'; // HARD CODE EXCHANGE TO USE UNISWAP
 
-  const onSubmit = (data) => {
+  const onSubmit = async (data) => {
     const { fromAmount, fromToken, toToken } = data;
     if (!exchange) {
       return;
     }
+    setIsLoading(true);
     // HARD CODE TO USE UNISWAP SWAP
     if (exchange === 'Uniswap') {
-      uniswapSwap(Tokens[fromToken], Tokens[toToken], fromAmount, web3);
+      await uniswapSwap(Tokens[fromToken], Tokens[toToken], fromAmount, web3).catch(
+        setIsLoading(false)
+      );
     } // else if (exchange === 'Kyber') {
     //   kyberSwap(Tokens[fromToken], Tokens[toToken], fromAmount, web3);
     // } else if (exchange === '0x') {
@@ -64,6 +68,7 @@ export default function SwapForm({ web3 }) {
       '🚀 ~ file: SwapForm.jsx ~ line 46 ~ onSubmit ~ Tokens[fromToken]',
       Tokens[fromToken]
     );
+    setIsLoading(false);
   };
 
   useEffect(() => {
@@ -99,6 +104,7 @@ export default function SwapForm({ web3 }) {
               size="lg"
               variant="filled"
               ref={register}
+              isReadOnly={isLoading}
             >
               {Object.keys(Tokens).map((t) => (
                 <option key={Tokens[t].ticker} value={Tokens[t].ticker}>
@@ -116,6 +122,7 @@ export default function SwapForm({ web3 }) {
               textAlign="end"
               variant="unstyled"
               mr={6}
+              isReadOnly={isLoading}
             />
           </Flex>
         </Box>
@@ -133,6 +140,7 @@ export default function SwapForm({ web3 }) {
               ref={register({
                 validate: (value) => value !== watchFromToken,
               })}
+              isReadOnly={isLoading}
             >
               {Object.keys(Tokens).map((t) => (
                 <option key={Tokens[t].ticker} value={Tokens[t].ticker}>
@@ -184,6 +192,8 @@ export default function SwapForm({ web3 }) {
             mt={6}
             mb={10}
             disabled={Object.keys(errors).length !== 0}
+            loadingText="Executing Swap"
+            isLoading={isLoading}
           >
             Swap Tokens
           </Button>

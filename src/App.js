@@ -9,6 +9,7 @@ import NavBar from './components/NavBar';
 import SwapForm from './components/SwapForm';
 import { tabIndexAtom } from './utils/atoms';
 import getWeb3 from './utils/getWeb3';
+import FullPageSpinner from './components/FullPageSpinner';
 
 function App() {
   const [web3, setWeb3] = useState(null);
@@ -37,7 +38,7 @@ function App() {
 
   if (!web3) {
     // Run if Web3 wallet is not connected
-    return <div>Loading Web3, accounts, and contract...</div>;
+    return <FullPageSpinner />;
   }
 
   return (
