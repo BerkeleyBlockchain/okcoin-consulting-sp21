@@ -7,11 +7,11 @@ import FullPageErrorFallback from './components/FullPageErrorFallback';
 import MyWallet from './components/MyWallet';
 import NavBar from './components/NavBar';
 import SwapForm from './components/SwapForm';
-import { tabIndexAtom, web3Atom } from './utils/atoms';
+import { tabIndexAtom } from './utils/atoms';
 import getWeb3 from './utils/getWeb3';
 
 function App() {
-  const [web3, setWeb3] = useAtom(web3Atom);
+  const [web3, setWeb3] = useState(null);
   const [account, setAccount] = useState(null);
   const [tabIndex] = useAtom(tabIndexAtom);
 
@@ -56,7 +56,7 @@ function App() {
           <GridItem colSpan={3}>
             <Container minWidth={500}>
               <Box bgColor="white" mt="100px">
-                <SwapForm />
+                <SwapForm web3={web3} />
               </Box>
             </Container>
           </GridItem>
