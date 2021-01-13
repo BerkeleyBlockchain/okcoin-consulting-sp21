@@ -34,23 +34,30 @@ module.exports = {
     decimals: 18,
   },
 
-  WETH: {
-    ticker: 'WETH',
-    mainnet: '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2',
+  COMP: {
+    ticker: 'COMP',
+    mainnet: '0xc00e94cb662c3520282e6f5717214004a7f26888',
     ropsten: null,
     decimals: 18,
   },
 
-  CDAI: {
-    ticker: 'CDAI',
-    mainnet: '0x5d3a536e4d6dbd6114cc1ead35777bab948e3643',
+  BAT: {
+    ticker: 'BAT',
+    mainnet: '0x0d8775f648430679a709e98d2b0cb6250d2887ef',
     ropsten: null,
-    decimals: 8,
+    decimals: 18,
   },
 
-  ADAI: {
-    ticker: 'ADAI',
-    mainnet: '0xfC1E690f61EFd961294b3e1Ce3313fBD8aa4f85d',
+  LINK: {
+    ticker: 'LINK',
+    mainnet: '0x514910771af9ca656af840dff83e8264ecf986ca',
+    ropsten: null,
+    decimals: 18,
+  },
+
+  MKR: {
+    ticker: 'MKR',
+    mainnet: '0x9f8f72aa9304c8b593d555f12ef6589cc3a579a2',
     ropsten: null,
     decimals: 18,
   },

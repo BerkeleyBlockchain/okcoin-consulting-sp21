@@ -9,6 +9,7 @@ import {
   Select,
   Spacer,
   Text,
+  useToast,
 } from '@chakra-ui/react';
 import { useAtom } from 'jotai';
 import React, { useEffect } from 'react';
@@ -21,33 +22,6 @@ import useUniswapPrice from '../hooks/useUniswapPrice';
 import uniswapSwap from '../hooks/useUniswapSwap';
 import { midpricesAtom } from '../utils/atoms';
 
-const coins = [
-  {
-    ticker: 'DAI',
-  },
-  {
-    ticker: 'USDC',
-  },
-  {
-    ticker: 'USDT',
-  },
-  {
-    ticker: 'TUSD',
-  },
-  {
-    ticker: 'KNC',
-  },
-  {
-    ticker: 'WETH',
-  },
-  {
-    ticker: 'CDAI',
-  },
-  {
-    ticker: 'ADAI',
-  },
-];
-
 function useCheapestPrice({ uniswap, kyber, zeroX }) {
   const prices = [parseFloat(uniswap), parseFloat(kyber), parseFloat(zeroX)];
   const exchange = ['uniswap', 'kyber', 'zeroX'];
@@ -55,6 +29,23 @@ function useCheapestPrice({ uniswap, kyber, zeroX }) {
 
   return { midprice: prices[i], exchange: exchange[i] };
 }
+
+const toasts = {
+  success: {
+    title: 'Swap Success',
+    description: 'Your swap was successfully executed',
+    status: 'success',
+    duration: 9000,
+    isClosable: true,
+  },
+  error: {
+    title: 'Swap Error',
+    description: 'There was an error while executing your swap, check the console',
+    status: 'error',
+    duration: 9000,
+    isClosable: true,
+  },
+};
 
 export default function SwapForm({ web3 }) {
   const { register, handleSubmit, watch, setValue, errors } = useForm();
@@ -66,6 +57,8 @@ export default function SwapForm({ web3 }) {
   const [, uniswapMidprice] = useUniswapPrice(Tokens[watchFromToken], Tokens[watchToToken]);
   const [, zeroXMidprice] = use0xPrice(Tokens[watchFromToken], Tokens[watchToToken]);
   const [midprices, setMidprices] = useAtom(midpricesAtom);
+  const [isLoading, setIsLoading] = React.useState();
+  const toast = useToast();
 
   // eslint-disable-next-line prefer-const
   let { midprice, exchange } = useCheapestPrice(midprices);
@@ -77,9 +70,19 @@ export default function SwapForm({ web3 }) {
     if (!exchange) {
       return;
     }
+    setIsLoading(true);
     // HARD CODE TO USE UNISWAP SWAP
     if (exchange === 'Uniswap') {
-      uniswapSwap(Tokens[fromToken], Tokens[toToken], fromAmount, web3);
+      uniswapSwap(Tokens[fromToken], Tokens[toToken], fromAmount, web3)
+        .then(() => {
+          setIsLoading(false);
+          toast(toasts.success);
+        })
+        .catch((error) => {
+          console.log('Error: ', error);
+          setIsLoading(false);
+          toast(toasts.error);
+        });
     } // else if (exchange === 'Kyber') {
     //   kyberSwap(Tokens[fromToken], Tokens[toToken], fromAmount, web3);
     // } else if (exchange === '0x') {
@@ -104,7 +107,7 @@ export default function SwapForm({ web3 }) {
     if (!watchFromAmount) {
       setValue('toAmount', '');
     }
-    if (!watchFromToken || !watchToToken) {
+    if (!watchFromToken || !watchToToken || watchFromToken === watchToToken) {
       setMidprices({ uniswap: 0, kyber: 0, zeroX: 0 });
     }
   }, [midprice, watchFromAmount, watchFromToken, watchToToken]);
@@ -125,10 +128,11 @@ export default function SwapForm({ web3 }) {
               size="lg"
               variant="filled"
               ref={register}
+              isReadOnly={isLoading}
             >
-              {coins.map(({ ticker }) => (
-                <option key={ticker} value={ticker}>
-                  {ticker}
+              {Object.keys(Tokens).map((t) => (
+                <option key={Tokens[t].ticker} value={Tokens[t].ticker}>
+                  {Tokens[t].ticker}
                 </option>
               ))}
             </Select>
@@ -142,6 +146,7 @@ export default function SwapForm({ web3 }) {
               textAlign="end"
               variant="unstyled"
               mr={6}
+              isReadOnly={isLoading}
             />
           </Flex>
         </Box>
@@ -156,11 +161,14 @@ export default function SwapForm({ web3 }) {
               name="toToken"
               size="lg"
               variant="filled"
-              ref={register}
+              ref={register({
+                validate: (value) => value !== watchFromToken,
+              })}
+              isReadOnly={isLoading}
             >
-              {coins.map(({ ticker }) => (
-                <option key={ticker} value={ticker}>
-                  {ticker}
+              {Object.keys(Tokens).map((t) => (
+                <option key={Tokens[t].ticker} value={Tokens[t].ticker}>
+                  {Tokens[t].ticker}
                 </option>
               ))}
             </Select>
@@ -207,11 +215,15 @@ export default function SwapForm({ web3 }) {
             type="submit"
             mt={6}
             mb={10}
+            disabled={Object.keys(errors).length !== 0}
+            loadingText="Executing Swap"
+            isLoading={isLoading}
           >
             Swap Tokens
           </Button>
         </Center>
-        <Text color="tomato">{errors.fromAmount && 'From Amount is required'}</Text>
+        <Text color="tomato">{errors.fromAmount ? 'From Amount is required' : null}</Text>
+        <Text color="tomato">{errors.toToken ? 'Cannot swap the same tokens' : null}</Text>
       </form>
     </Box>
   );

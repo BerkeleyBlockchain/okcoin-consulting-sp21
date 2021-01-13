@@ -14,7 +14,6 @@ export default function useKyberPrice(tokenFrom, tokenTo) {
       if (!tokenFrom || !tokenTo) {
         return;
       }
-      console.log('Getting Kyber price');
       const address1 = tokenFrom.mainnet;
       const address2 = tokenTo.mainnet;
 
