@@ -9,6 +9,7 @@ import {
   Select,
   Spacer,
   Text,
+  useToast,
 } from '@chakra-ui/react';
 import { useAtom } from 'jotai';
 import React, { useEffect } from 'react';
@@ -29,6 +30,23 @@ function useCheapestPrice({ uniswap, kyber, zeroX }) {
   return { midprice: prices[i], exchange: exchange[i] };
 }
 
+const toasts = {
+  success: {
+    title: 'Swap Success',
+    description: 'Your swap was successfully executed',
+    status: 'success',
+    duration: 9000,
+    isClosable: true,
+  },
+  error: {
+    title: 'Swap Error',
+    description: 'There was an error while executing your swap, check the console',
+    status: 'error',
+    duration: 9000,
+    isClosable: true,
+  },
+};
+
 export default function SwapForm({ web3 }) {
   const { register, handleSubmit, watch, setValue, errors } = useForm();
   const watchFromToken = watch('fromToken', '');
@@ -40,6 +58,7 @@ export default function SwapForm({ web3 }) {
   const [, zeroXMidprice] = use0xPrice(Tokens[watchFromToken], Tokens[watchToToken]);
   const [midprices, setMidprices] = useAtom(midpricesAtom);
   const [isLoading, setIsLoading] = React.useState();
+  const toast = useToast();
 
   // eslint-disable-next-line prefer-const
   let { midprice, exchange } = useCheapestPrice(midprices);
@@ -57,9 +76,12 @@ export default function SwapForm({ web3 }) {
       uniswapSwap(Tokens[fromToken], Tokens[toToken], fromAmount, web3)
         .then(() => {
           setIsLoading(false);
+          toast(toasts.success);
         })
-        .catch(() => {
+        .catch((error) => {
+          console.log('Error: ', error);
           setIsLoading(false);
+          toast(toasts.error);
         });
     } // else if (exchange === 'Kyber') {
     //   kyberSwap(Tokens[fromToken], Tokens[toToken], fromAmount, web3);
