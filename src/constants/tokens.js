@@ -34,13 +34,6 @@ module.exports = {
     decimals: 18,
   },
 
-  WETH: {
-    ticker: 'WETH',
-    mainnet: '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2',
-    ropsten: null,
-    decimals: 18,
-  },
-
   COMP: {
     ticker: 'COMP',
     mainnet: '0xc00e94cb662c3520282e6f5717214004a7f26888',
