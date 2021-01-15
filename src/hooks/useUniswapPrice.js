@@ -6,7 +6,7 @@ export default function useUniswapPrice(tokenFrom, tokenTo) {
   const [midprice, setMidprice] = useState(1);
   const [inverse, setInverse] = useState(1);
 
-  useEffect(async () => {
+  useEffect(() => {
     const getPrices = async () => {
       if (!tokenFrom || !tokenTo) {
         return;
