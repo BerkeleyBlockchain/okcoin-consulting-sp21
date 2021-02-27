@@ -2,8 +2,12 @@ import { ChakraProvider, extendTheme } from '@chakra-ui/react';
 import { Provider } from 'jotai';
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { QueryClient, QueryClientProvider } from 'react-query';
+import { ReactQueryDevtools } from 'react-query/devtools';
 import { BrowserRouter } from 'react-router-dom';
 import App from './App';
+
+const queryClient = new QueryClient();
 
 const config = {
   useSystemColorMode: false,
@@ -17,7 +21,10 @@ ReactDOM.render(
     <Provider>
       <BrowserRouter>
         <ChakraProvider resetCSS theme={customTheme}>
-          <App />
+          <QueryClientProvider client={queryClient}>
+            <App />
+            <ReactQueryDevtools initialIsOpen={false} />
+          </QueryClientProvider>
         </ChakraProvider>
       </BrowserRouter>
     </Provider>

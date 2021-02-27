@@ -17,8 +17,8 @@ import { useForm } from 'react-hook-form';
 import * as Tokens from '../constants/tokens';
 import use0xPrice from '../hooks/use0xPrice';
 import useGas from '../hooks/useGas';
-import useKyberPrice from '../hooks/useKyberPrice';
-import useUniswapPrice from '../hooks/useUniswapPrice';
+// import useKyberPrice from '../hooks/useKyberPrice';
+// import useUniswapPrice from '../hooks/useUniswapPrice';
 import uniswapSwap from '../hooks/useUniswapSwap';
 import kyberSwap from '../hooks/useKyberSwap';
 import zeroXSwap from '../hooks/use0xSwap';
@@ -57,8 +57,10 @@ export default function SwapForm({ web3, userAuthenticated, pressConnectWallet }
   const watchFromAmount = watch('fromAmount', 0);
 
   const gas = useGas();
-  const [, kyberMidprice] = useKyberPrice(Tokens[watchFromToken], Tokens[watchToToken]);
-  const [, uniswapMidprice] = useUniswapPrice(Tokens[watchFromToken], Tokens[watchToToken]);
+  // const [, kyberMidprice] = useKyberPrice(Tokens[watchFromToken], Tokens[watchToToken]);
+  // const [, uniswapMidprice] = useUniswapPrice(Tokens[watchFromToken], Tokens[watchToToken]);
+  const kyberMidprice = 1000;
+  const uniswapMidprice = 1000;
   const [, zeroXMidprice] = use0xPrice(Tokens[watchFromToken], Tokens[watchToToken]);
 
   const [midprices, setMidprices] = useAtom(midpricesAtom);
