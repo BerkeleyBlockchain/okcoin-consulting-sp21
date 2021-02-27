@@ -19,8 +19,8 @@ import * as Tokens from '../constants/tokens';
 import * as Toasts from '../constants/toasts';
 import use0xPrice from '../hooks/use0xPrice';
 import useGas from '../hooks/useGas';
-// import useKyberPrice from '../hooks/useKyberPrice';
-// import useUniswapPrice from '../hooks/useUniswapPrice';
+import useKyberPrice from '../hooks/useKyberPrice';
+import useUniswapPrice from '../hooks/useUniswapPrice';
 import uniswapSwap from '../hooks/useUniswapSwap';
 import kyberSwap from '../hooks/useKyberSwap';
 import zeroXSwap from '../hooks/use0xSwap';
@@ -41,10 +41,8 @@ export default function SwapForm({ web3 }) {
   const watchFromAmount = watch('fromAmount', 0);
 
   const gas = useGas();
-  // const [, kyberMidprice] = useKyberPrice(Tokens[watchFromToken], Tokens[watchToToken]);
-  // const [, uniswapMidprice] = useUniswapPrice(Tokens[watchFromToken], Tokens[watchToToken]);
-  const kyberMidprice = 1000;
-  const uniswapMidprice = 1000;
+  const [, kyberMidprice] = useKyberPrice(Tokens[watchFromToken], Tokens[watchToToken]);
+  const [, uniswapMidprice] = useUniswapPrice(Tokens[watchFromToken], Tokens[watchToToken]);
   const { data: zeroXPrices } = use0xPrice(Tokens[watchFromToken], Tokens[watchToToken]);
   const [midprices, setMidprices] = useAtom(midpricesAtom);
   const [isLoading, setIsLoading] = React.useState();
