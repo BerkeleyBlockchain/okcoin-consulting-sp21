@@ -13,6 +13,7 @@
     "@ethersproject/providers": "^5.0.15",
     "@ethersproject/solidity": "^5.0.6",
     "@uniswap/sdk": "^3.0.3",
+    "axios": "^0.21.1",
     "buffer": "^6.0.3",
     "eslint": "^7.14.0",
     "ethereumjs-tx": "^2.1.2",

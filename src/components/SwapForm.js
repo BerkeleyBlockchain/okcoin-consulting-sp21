@@ -1,3 +1,4 @@
+/* eslint-disable no-shadow */
 import {
   Box,
   Button,
@@ -61,8 +62,7 @@ export default function SwapForm({ web3, userAuthenticated, pressConnectWallet }
   // const [, uniswapMidprice] = useUniswapPrice(Tokens[watchFromToken], Tokens[watchToToken]);
   const kyberMidprice = 1000;
   const uniswapMidprice = 1000;
-  const [, zeroXMidprice] = use0xPrice(Tokens[watchFromToken], Tokens[watchToToken]);
-
+  const { data: zeroXPrices } = use0xPrice(Tokens[watchFromToken], Tokens[watchToToken]);
   const [midprices, setMidprices] = useAtom(midpricesAtom);
   const [isLoading, setIsLoading] = React.useState();
   const toast = useToast();
@@ -121,8 +121,8 @@ export default function SwapForm({ web3, userAuthenticated, pressConnectWallet }
   };
 
   useEffect(() => {
-    setMidprices({ kyber: kyberMidprice, uniswap: uniswapMidprice, zeroX: zeroXMidprice });
-  }, [kyberMidprice, uniswapMidprice, zeroXMidprice]);
+    setMidprices({ kyber: kyberMidprice, uniswap: uniswapMidprice, zeroX: zeroXPrices?.midprice });
+  }, [kyberMidprice, uniswapMidprice, zeroXPrices]);
 
   useEffect(() => {
     if (watchFromAmount && watchFromToken && watchToToken) {
