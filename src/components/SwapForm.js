@@ -41,8 +41,10 @@ export default function SwapForm({ web3 }) {
   const watchFromAmount = watch('fromAmount', 0);
 
   const gas = useGas();
-  const [, kyberMidprice] = useKyberPrice(Tokens[watchFromToken], Tokens[watchToToken]);
-  const [, uniswapMidprice] = useUniswapPrice(Tokens[watchFromToken], Tokens[watchToToken]);
+  // const [, kyberMidprice] = useKyberPrice(Tokens[watchFromToken], Tokens[watchToToken]);
+  // const [, uniswapMidprice] = useUniswapPrice(Tokens[watchFromToken], Tokens[watchToToken]);
+  const kyberMidprice = 1000;
+  const uniswapMidprice = 1000;
   const { data: zeroXPrices } = use0xPrice(Tokens[watchFromToken], Tokens[watchToToken]);
   const [midprices, setMidprices] = useAtom(midpricesAtom);
   const [isLoading, setIsLoading] = React.useState();
