@@ -34,12 +34,11 @@ function useCheapestPrice({ uniswap, kyber, zeroX }) {
   return { midprice: prices[i], exchange: exchange[i] };
 }
 
-export default function SwapForm({ web3 }) {
+export default function SwapForm({ web3, userAuthenticated, pressConnectWallet }) {
   const { register, handleSubmit, watch, setValue, errors } = useForm();
   const watchFromToken = watch('fromToken', '');
   const watchToToken = watch('toToken', '');
   const watchFromAmount = watch('fromAmount', 0);
-
   const gas = useGas();
   const [, kyberMidprice] = useKyberPrice(Tokens[watchFromToken], Tokens[watchToToken]);
   const [, uniswapMidprice] = useUniswapPrice(Tokens[watchFromToken], Tokens[watchToToken]);
