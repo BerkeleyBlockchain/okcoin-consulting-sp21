@@ -1,11 +1,20 @@
-import { Box, Image, Table, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react';
+import { Table, Tbody, Th, Thead, Tr } from '@chakra-ui/react';
 import { useAtom } from 'jotai';
-import React from 'react';
+import { useEffect, useState, React } from 'react';
 import { midpricesAtom } from '../utils/atoms';
+import ExchangesColumn from './ExchangesColumn';
 
 function ExchangesTable() {
   // if the midprice is 0 then the price is not found
+  /* eslint-disable no-unused-vars */
+  /* eslint-disable prettier/prettier */
+  /* eslint-disable react/self-closing-comp */
   const [midprices] = useAtom(midpricesAtom);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    setLoading(false);
+  });
 
   return (
     <Table variant="simple" colorScheme="teal">
@@ -16,33 +25,17 @@ function ExchangesTable() {
         </Tr>
       </Thead>
       <Tbody>
-        <Tr>
-          <Td>
-            <Box d="flex" alignItems="center">
-              <Image maxW="32px" src="/static/kyber.png" alt="kyber-logo" mr={2} />
-              Kyber
-            </Box>
-          </Td>
-          <Td isNumeric>{midprices.kyber}</Td>
-        </Tr>
-        <Tr>
-          <Td>
-            <Box d="flex" alignItems="center">
-              <Image maxW="32px" src="/static/uniswap.png" alt="uniswap-logo" mr={2} />
-              Uniswap
-            </Box>
-          </Td>
-          <Td isNumeric>{midprices.uniswap}</Td>
-        </Tr>
-        <Tr>
-          <Td>
-            <Box d="flex" alignItems="center">
-              <Image maxW="20px" src="/static/0x.jpg" alt="0x-logo" mr={2} />
-              0x
-            </Box>
-          </Td>
-          <Td isNumeric>{midprices.zeroX}</Td>
-        </Tr>
+        {loading ? (
+          <div> Loading </div>
+        ) : (
+          Object.keys(midprices).map((exchange, index) =>
+            midprices.exchange !== 0 ? (
+              <ExchangesColumn exchangeName={exchange} midprice={midprices.exchange} photo={`/static/${exchange}.png`} alt={`${exchange}-logo`}/>
+            ) : (
+              <div></div>
+            )
+          )
+        )}
       </Tbody>
     </Table>
   );
