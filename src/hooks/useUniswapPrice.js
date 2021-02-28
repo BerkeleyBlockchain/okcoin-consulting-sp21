@@ -21,11 +21,12 @@ export default function useUniswapPrice(tokenFrom, tokenTo) {
         const pair = await Fetcher.fetchPairData(input, output, provider);
         const route = new Route([pair], input);
 
-        setMidprice(route.midPrice.toSignificant(6));
-        setInverse(route.midPrice.invert().toSignificant(6));
+        setMidprice(parseFloat(route.midPrice.toSignificant(6)));
+        setInverse(parseFloat(route.midPrice.invert().toSignificant(6)));
       } catch (e) {
         setMidprice(0);
         setInverse(0);
+        console.error('UNISWAP PRICE NOT FOUND');
       }
     };
     getPrices();

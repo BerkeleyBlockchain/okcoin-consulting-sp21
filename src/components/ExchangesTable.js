@@ -4,6 +4,7 @@ import React from 'react';
 import { midpricesAtom } from '../utils/atoms';
 
 function ExchangesTable() {
+  // if the midprice is 0 then the price is not found
   const [midprices] = useAtom(midpricesAtom);
 
   return (
