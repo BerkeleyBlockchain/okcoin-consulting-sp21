@@ -1,3 +1,4 @@
+/* eslint-disable no-shadow */
 import {
   Box,
   Button,
@@ -15,6 +16,7 @@ import { useAtom } from 'jotai';
 import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import * as Tokens from '../constants/tokens';
+import * as Toasts from '../constants/toasts';
 import use0xPrice from '../hooks/use0xPrice';
 import useGas from '../hooks/useGas';
 import useKyberPrice from '../hooks/useKyberPrice';
@@ -32,35 +34,15 @@ function useCheapestPrice({ uniswap, kyber, zeroX }) {
   return { midprice: prices[i], exchange: exchange[i] };
 }
 
-const toasts = {
-  success: {
-    title: 'Swap Success',
-    description: 'Your swap was successfully executed',
-    status: 'success',
-    duration: 9000,
-    isClosable: true,
-  },
-  error: {
-    title: 'Swap Error',
-    description: 'There was an error while executing your swap, check the console',
-    status: 'error',
-    duration: 9000,
-    isClosable: true,
-  },
-};
-
 export default function SwapForm({ web3, userAuthenticated, pressConnectWallet }) {
-  // watch fromToken
   const { register, handleSubmit, watch, setValue, errors } = useForm();
   const watchFromToken = watch('fromToken', '');
   const watchToToken = watch('toToken', '');
   const watchFromAmount = watch('fromAmount', 0);
-
   const gas = useGas();
   const [, kyberMidprice] = useKyberPrice(Tokens[watchFromToken], Tokens[watchToToken]);
   const [, uniswapMidprice] = useUniswapPrice(Tokens[watchFromToken], Tokens[watchToToken]);
-  const [, zeroXMidprice] = use0xPrice(Tokens[watchFromToken], Tokens[watchToToken]);
-
+  const { data: zeroXPrices } = use0xPrice(Tokens[watchFromToken], Tokens[watchToToken]);
   const [midprices, setMidprices] = useAtom(midpricesAtom);
   const [isLoading, setIsLoading] = React.useState();
   const toast = useToast();
@@ -80,34 +62,34 @@ export default function SwapForm({ web3, userAuthenticated, pressConnectWallet }
       uniswapSwap(Tokens[fromToken], Tokens[toToken], fromAmount, web3)
         .then(() => {
           setIsLoading(false);
-          toast(toasts.success);
+          toast(Toasts.success);
         })
         .catch((error) => {
           console.log('Error: ', error);
           setIsLoading(false);
-          toast(toasts.error);
+          toast(Toasts.error);
         });
     } else if (exchange === 'Kyber') {
       kyberSwap(Tokens[fromToken], Tokens[toToken], fromAmount, web3)
         .then(() => {
           setIsLoading(false);
-          toast(toasts.success);
+          toast(Toasts.success);
         })
         .catch((error) => {
           console.log('Error: ', error);
           setIsLoading(false);
-          toast(toasts.error);
+          toast(Toasts.error);
         });
     } else if (exchange === '0x') {
       zeroXSwap(Tokens[fromToken], Tokens[toToken], fromAmount, web3)
         .then(() => {
           setIsLoading(false);
-          toast(toasts.success);
+          toast(Toasts.success);
         })
         .catch((error) => {
           console.log('Error: ', error);
           setIsLoading(false);
-          toast(toasts.error);
+          toast(Toasts.error);
         });
     }
 
@@ -118,10 +100,12 @@ export default function SwapForm({ web3, userAuthenticated, pressConnectWallet }
     );
   };
 
+  // Used to set global midprices
   useEffect(() => {
-    setMidprices({ kyber: kyberMidprice, uniswap: uniswapMidprice, zeroX: zeroXMidprice });
-  }, [kyberMidprice, uniswapMidprice, zeroXMidprice]);
+    setMidprices({ kyber: kyberMidprice, uniswap: uniswapMidprice, zeroX: zeroXPrices?.midprice });
+  }, [kyberMidprice, uniswapMidprice, zeroXPrices]);
 
+  // Used to calculate exchange amount and clear form/global midprices
   useEffect(() => {
     if (watchFromAmount && watchFromToken && watchToToken) {
       const n = watchFromAmount * midprice;
