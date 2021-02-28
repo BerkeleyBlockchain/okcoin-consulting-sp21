@@ -5,7 +5,9 @@ import ReactDOM from 'react-dom';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
 import { BrowserRouter } from 'react-router-dom';
+import { ErrorBoundary } from 'react-error-boundary';
 import App from './App';
+import FullPageErrorFallback from './components/FullPageErrorFallback';
 
 const queryClient = new QueryClient();
 
@@ -22,7 +24,9 @@ ReactDOM.render(
       <BrowserRouter>
         <ChakraProvider resetCSS theme={customTheme}>
           <QueryClientProvider client={queryClient}>
-            <App />
+            <ErrorBoundary FallbackComponent={FullPageErrorFallback}>
+              <App />
+            </ErrorBoundary>
             <ReactQueryDevtools initialIsOpen={false} />
           </QueryClientProvider>
         </ChakraProvider>
