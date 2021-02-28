@@ -5,7 +5,7 @@ import DashboardView from './views/DashboardView';
 function App() {
   return (
     <Switch>
-      <Route path="/app" component={DashboardView} />
+      <Route path="/" component={DashboardView} />
       <Route path="*" component={() => <h1>Page not found</h1>} />
     </Switch>
   );
