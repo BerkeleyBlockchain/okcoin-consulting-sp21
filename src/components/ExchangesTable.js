@@ -5,7 +5,7 @@ import { midpricesAtom } from '../utils/atoms';
 
 function ExchangesTable() {
   const [midprices] = useAtom(midpricesAtom);
-
+  console.log(midprices);
   return (
     <Table variant="simple" colorScheme="teal">
       <Thead>
