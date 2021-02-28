@@ -19,14 +19,14 @@ export default function useKyberPrice(tokenFrom, tokenTo) {
 
       const ratesRequest = await fetch(`https://api.kyber.network/sell_rate?id=${address1}&qty=1`);
       const rates = await ratesRequest.json();
-      const inputInEth = rates.data[0].dst_qty;
+      const inputInEth = rates.data[0].dst_qty; // buy rate
 
       const ratesRequest2 = await fetch(`https://api.kyber.network/buy_rate?id=${address2}&qty=1`);
       // Parsing the output
       const rates2 = await ratesRequest2.json();
-      const outputInEth = rates2.data[0].src_qty;
+      const outputInEth = rates2.data[0].src_qty; // sell rate
 
-      setMidprice(inputInEth / outputInEth);
+      setMidprice(inputInEth / outputInEth); // buy/sell
       setInverse(outputInEth / inputInEth);
     };
     getPrices();

@@ -49,21 +49,24 @@ const toasts = {
   },
 };
 
-export default function SwapForm({ web3 }) {
+export default function SwapForm({ web3, userAuthenticated, pressConnectWallet }) {
+  // watch fromToken
   const { register, handleSubmit, watch, setValue, errors } = useForm();
   const watchFromToken = watch('fromToken', '');
   const watchToToken = watch('toToken', '');
   const watchFromAmount = watch('fromAmount', 0);
+
   const gas = useGas();
   const [, kyberMidprice] = useKyberPrice(Tokens[watchFromToken], Tokens[watchToToken]);
   const [, uniswapMidprice] = useUniswapPrice(Tokens[watchFromToken], Tokens[watchToToken]);
   const [, zeroXMidprice] = use0xPrice(Tokens[watchFromToken], Tokens[watchToToken]);
+
   const [midprices, setMidprices] = useAtom(midpricesAtom);
   const [isLoading, setIsLoading] = React.useState();
   const toast = useToast();
 
   // eslint-disable-next-line prefer-const
-  let { midprice, exchange } = useCheapestPrice(midprices);
+  let { midprice, exchange } = useCheapestPrice(midprices); // highest midprice = cheapest Price
   exchange = '0x';
 
   const onSubmit = (data) => {
@@ -130,6 +133,8 @@ export default function SwapForm({ web3 }) {
     if (!watchFromToken || !watchToToken || watchFromToken === watchToToken) {
       setMidprices({ uniswap: 0, kyber: 0, zeroX: 0 });
     }
+
+    console.log(midprice);
   }, [midprice, watchFromAmount, watchFromToken, watchToToken]);
 
   return (
@@ -225,22 +230,39 @@ export default function SwapForm({ web3 }) {
           </>
         ) : null}
         <Center>
-          <Button
-            w="100%"
-            h="60px"
-            _hover={{ backgroundColor: '#194BB6' }}
-            backgroundColor="#205FEC"
-            color="white"
-            size="lg"
-            type="submit"
-            mt={6}
-            mb={10}
-            disabled={Object.keys(errors).length !== 0}
-            loadingText="Executing Swap"
-            isLoading={isLoading}
-          >
-            Swap Tokens
-          </Button>
+          {userAuthenticated ? (
+            <Button
+              w="100%"
+              h="60px"
+              _hover={{ backgroundColor: '#194BB6' }}
+              backgroundColor="#205FEC"
+              color="white"
+              size="lg"
+              type="submit"
+              mt={6}
+              mb={10}
+              disabled={Object.keys(errors).length !== 0}
+              loadingText="Executing Swap"
+              isLoading={isLoading}
+            >
+              Swap Tokens
+            </Button>
+          ) : (
+            <Button
+              w="100%"
+              h="60px"
+              _hover={{ backgroundColor: '#194BB6' }}
+              backgroundColor="#205FEC"
+              color="white"
+              size="lg"
+              mt={6}
+              mb={10}
+              disabled={Object.keys(errors).length !== 0}
+              onClick={pressConnectWallet}
+            >
+              Connect Wallet
+            </Button>
+          )}
         </Center>
         <Text color="tomato">{errors.fromAmount ? 'From Amount is required' : null}</Text>
         <Text color="tomato">{errors.toToken ? 'Cannot swap the same tokens' : null}</Text>
