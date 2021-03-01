@@ -1,8 +1,7 @@
-import { Table, Tbody, Th, Thead, Tr } from '@chakra-ui/react';
+import { Box, Image, Td, Table, Tbody, Th, Thead, Tr } from '@chakra-ui/react';
 import { useAtom } from 'jotai';
 import { useEffect, useState, React } from 'react';
 import { midpricesAtom } from '../utils/atoms';
-import ExchangesColumn from './ExchangesColumn';
 
 function ExchangesTable() {
   // if the midprice is 0 then the price is not found
@@ -14,6 +13,7 @@ function ExchangesTable() {
 
   useEffect(() => {
     setLoading(false);
+    console.log(midprices)
   });
 
   return (
@@ -28,9 +28,17 @@ function ExchangesTable() {
         {loading ? (
           <div> Loading </div>
         ) : (
-          Object.keys(midprices).map((exchange, index) =>
-            midprices.exchange !== 0 ? (
-              <ExchangesColumn exchangeName={exchange} midprice={midprices.exchange} photo={`/static/${exchange}.png`} alt={`${exchange}-logo`}/>
+          Object.keys(midprices).map((exchange) =>
+            midprices[exchange] !== 0 ? (
+            <Tr>
+              <Td>
+                <Box d="flex" alignItems="center">
+                  <Image maxW="32px" src={`/static/${exchange}.png`} alt={`${exchange}-logo`} mr={2} />
+                  {exchange}
+                </Box>
+              </Td>
+              <Td isNumeric>{midprices[exchange]}</Td>
+            </Tr>
             ) : (
               <div></div>
             )
