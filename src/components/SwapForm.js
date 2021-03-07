@@ -1,3 +1,4 @@
+/* eslint-disable no-shadow */
 import {
   Box,
   Button,
@@ -15,6 +16,7 @@ import { useAtom } from 'jotai';
 import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import * as Tokens from '../constants/tokens';
+import * as Toasts from '../constants/toasts';
 import use0xPrice from '../hooks/use0xPrice';
 import useGas from '../hooks/useGas';
 import useKyberPrice from '../hooks/useKyberPrice';
@@ -32,24 +34,7 @@ function useCheapestPrice({ uniswap, kyber, zeroX }) {
   return { midprice: prices[i], exchange: exchange[i] };
 }
 
-const toasts = {
-  success: {
-    title: 'Swap Success',
-    description: 'Your swap was successfully executed',
-    status: 'success',
-    duration: 9000,
-    isClosable: true,
-  },
-  error: {
-    title: 'Swap Error',
-    description: 'There was an error while executing your swap, check the console',
-    status: 'error',
-    duration: 9000,
-    isClosable: true,
-  },
-};
-
-export default function SwapForm({ web3 }) {
+export default function SwapForm({ web3, userAuthenticated, pressConnectWallet }) {
   const { register, handleSubmit, watch, setValue, errors } = useForm();
   const watchFromToken = watch('fromToken', '');
   const watchToToken = watch('toToken', '');
@@ -57,13 +42,13 @@ export default function SwapForm({ web3 }) {
   const gas = useGas();
   const [, kyberMidprice] = useKyberPrice(Tokens[watchFromToken], Tokens[watchToToken]);
   const [, uniswapMidprice] = useUniswapPrice(Tokens[watchFromToken], Tokens[watchToToken]);
-  const [, zeroXMidprice] = use0xPrice(Tokens[watchFromToken], Tokens[watchToToken]);
+  const { data: zeroXPrices } = use0xPrice(Tokens[watchFromToken], Tokens[watchToToken]);
   const [midprices, setMidprices] = useAtom(midpricesAtom);
   const [isLoading, setIsLoading] = React.useState();
   const toast = useToast();
 
   // eslint-disable-next-line prefer-const
-  let { midprice, exchange } = useCheapestPrice(midprices);
+  let { midprice, exchange } = useCheapestPrice(midprices); // highest midprice = cheapest Price
   exchange = '0x';
 
   const onSubmit = (data) => {
@@ -77,34 +62,34 @@ export default function SwapForm({ web3 }) {
       uniswapSwap(Tokens[fromToken], Tokens[toToken], fromAmount, web3)
         .then(() => {
           setIsLoading(false);
-          toast(toasts.success);
+          toast(Toasts.success);
         })
         .catch((error) => {
           console.log('Error: ', error);
           setIsLoading(false);
-          toast(toasts.error);
+          toast(Toasts.error);
         });
     } else if (exchange === 'Kyber') {
       kyberSwap(Tokens[fromToken], Tokens[toToken], fromAmount, web3)
         .then(() => {
           setIsLoading(false);
-          toast(toasts.success);
+          toast(Toasts.success);
         })
         .catch((error) => {
           console.log('Error: ', error);
           setIsLoading(false);
-          toast(toasts.error);
+          toast(Toasts.error);
         });
     } else if (exchange === '0x') {
       zeroXSwap(Tokens[fromToken], Tokens[toToken], fromAmount, web3)
         .then(() => {
           setIsLoading(false);
-          toast(toasts.success);
+          toast(Toasts.success);
         })
         .catch((error) => {
           console.log('Error: ', error);
           setIsLoading(false);
-          toast(toasts.error);
+          toast(Toasts.error);
         });
     }
 
@@ -115,10 +100,12 @@ export default function SwapForm({ web3 }) {
     );
   };
 
+  // Used to set global midprices
   useEffect(() => {
-    setMidprices({ kyber: kyberMidprice, uniswap: uniswapMidprice, zeroX: zeroXMidprice });
-  }, [kyberMidprice, uniswapMidprice, zeroXMidprice]);
+    setMidprices({ kyber: kyberMidprice, uniswap: uniswapMidprice, zeroX: zeroXPrices?.midprice });
+  }, [kyberMidprice, uniswapMidprice, zeroXPrices]);
 
+  // Used to calculate exchange amount and clear form/global midprices
   useEffect(() => {
     if (watchFromAmount && watchFromToken && watchToToken) {
       const n = watchFromAmount * midprice;
@@ -130,6 +117,8 @@ export default function SwapForm({ web3 }) {
     if (!watchFromToken || !watchToToken || watchFromToken === watchToToken) {
       setMidprices({ uniswap: 0, kyber: 0, zeroX: 0 });
     }
+
+    console.log(midprice);
   }, [midprice, watchFromAmount, watchFromToken, watchToToken]);
 
   return (
@@ -225,22 +214,39 @@ export default function SwapForm({ web3 }) {
           </>
         ) : null}
         <Center>
-          <Button
-            w="100%"
-            h="60px"
-            _hover={{ backgroundColor: '#194BB6' }}
-            backgroundColor="#205FEC"
-            color="white"
-            size="lg"
-            type="submit"
-            mt={6}
-            mb={10}
-            disabled={Object.keys(errors).length !== 0}
-            loadingText="Executing Swap"
-            isLoading={isLoading}
-          >
-            Swap Tokens
-          </Button>
+          {userAuthenticated ? (
+            <Button
+              w="100%"
+              h="60px"
+              _hover={{ backgroundColor: '#194BB6' }}
+              backgroundColor="#205FEC"
+              color="white"
+              size="lg"
+              type="submit"
+              mt={6}
+              mb={10}
+              disabled={Object.keys(errors).length !== 0}
+              loadingText="Executing Swap"
+              isLoading={isLoading}
+            >
+              Swap Tokens
+            </Button>
+          ) : (
+            <Button
+              w="100%"
+              h="60px"
+              _hover={{ backgroundColor: '#194BB6' }}
+              backgroundColor="#205FEC"
+              color="white"
+              size="lg"
+              mt={6}
+              mb={10}
+              disabled={Object.keys(errors).length !== 0}
+              onClick={pressConnectWallet}
+            >
+              Connect Wallet
+            </Button>
+          )}
         </Center>
         <Text color="tomato">{errors.fromAmount ? 'From Amount is required' : null}</Text>
         <Text color="tomato">{errors.toToken ? 'Cannot swap the same tokens' : null}</Text>

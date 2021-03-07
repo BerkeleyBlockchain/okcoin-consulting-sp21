@@ -61,4 +61,11 @@ module.exports = {
     ropsten: null,
     decimals: 18,
   },
+
+  CDAI: {
+    ticker: 'CDAI',
+    mainnet: '0x5d3a536e4d6dbd6114cc1ead35777bab948e3643',
+    ropsten: '0x2B536482a01E620eE111747F8334B395a42A555E',
+    decimals: 18,
+  },
 };

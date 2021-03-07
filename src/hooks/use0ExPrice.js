@@ -7,15 +7,17 @@ import axios from 'axios';
  * @param tokenTo An output token of type defined in shared/token.js
  */
 
-const getPrice = async (tokenFrom, tokenTo) => {
-  if (!tokenFrom || !tokenTo) {
+const getPrice = async (tokenFrom, tokenTo, sellAmount) => {
+  if (!tokenFrom || !tokenTo || !sellAmount) {
     return [];
   }
   const params = new URLSearchParams({
     sellToken: tokenFrom.ticker,
     buyToken: tokenTo.ticker,
     buyAmount: 10 ** tokenTo.decimals,
+    sellAmount,
   });
+
   const { data } = await axios.get(`https://api.0x.org/swap/v1/quote?${params.toString()}`);
   const midprice = 1 / data.price;
   const inverse = data.price;
@@ -26,8 +28,12 @@ const getPrice = async (tokenFrom, tokenTo) => {
   };
 };
 
-export default function use0xPrice(tokenFrom, tokenTo) {
-  return useQuery(['price', '0x', tokenFrom, tokenTo], () => getPrice(tokenFrom, tokenTo), {
-    enabled: !tokenFrom && !tokenTo,
-  });
+export default function use0xExPrice(tokenFrom, tokenTo, sellAmount) {
+  return useQuery(
+    ['price', '0x', tokenFrom, tokenTo, sellAmount],
+    () => getPrice(tokenFrom, tokenTo, sellAmount),
+    {
+      enabled: !tokenFrom && !tokenTo && !sellAmount,
+    }
+  );
 }
