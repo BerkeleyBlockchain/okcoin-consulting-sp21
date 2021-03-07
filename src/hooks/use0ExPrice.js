@@ -17,6 +17,7 @@ const getPrice = async (tokenFrom, tokenTo, sellAmount) => {
     buyAmount: 10 ** tokenTo.decimals,
     sellAmount,
   });
+
   const { data } = await axios.get(`https://api.0x.org/swap/v1/quote?${params.toString()}`);
   const midprice = 1 / data.price;
   const inverse = data.price;
