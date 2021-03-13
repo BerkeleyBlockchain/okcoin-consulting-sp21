@@ -1,6 +1,10 @@
+/* eslint-disable */
 import { Box, Container, Grid, GridItem } from '@chakra-ui/react';
 import { useAtom } from 'jotai';
 import React, { useState } from 'react';
+import Onboard from 'bnc-onboard';
+import Web3 from 'web3';
+
 import ExchangesTable from '../components/ExchangesTable';
 import MyWallet from '../components/MyWallet';
 import NavBar from '../components/NavBar';
@@ -9,29 +13,35 @@ import { tabIndexAtom } from '../utils/atoms';
 import getWeb3 from '../utils/getWeb3';
 
 export default function DashboardView() {
-  const [web3, setWeb3] = useState(null);
+  let web3;
+  //const [web3, setWeb3] = useState(null);
   const [account, setAccount] = useState(null);
   const [userAuthenticated, setUserAuthenticated] = useState(false);
   const [tabIndex] = useAtom(tabIndexAtom);
 
-  const connectToWallet = async () => {
+  const onboard = Onboard({
+    dappId: 'd6aa46ce-1375-4ead-aa93-3cf905fc6dcc', // [String] The API key created by step one above
+    networkId: 1, // [Integer] The Ethereum network ID your Dapp uses.
+    subscriptions: {
+      wallet: (wallet) => {
+        web3 = new Web3(wallet.provider);
+      },
+    },
+  });
+
+  async function login() {
     try {
-      // Get network provider and web3 instance.
-      const web3Instance = await getWeb3();
-
-      // Use web3 to get the user's account
-      const userAccount = await web3Instance.eth.getAccounts();
-
-      // Set web3 and account address values
-      setWeb3(web3Instance);
-      setAccount(userAccount[0]);
+      let selected = await onboard.walletSelect();
+      if (!selected) {
+        return;
+      }
+      let ready = await onboard.walletCheck();
       setUserAuthenticated(true);
-    } catch (error) {
-      // Catch any errors for any of the above operations.
+    } catch {
       console.log(`Failed to load web3, accounts, or contract`);
       console.error(error);
     }
-  };
+  }
 
   console.log('🚀 ~ file: App.js ~ line 10 ~ App ~ web3', web3);
   console.log('🚀 ~ file: App.js ~ line 12 ~ App ~ account', account);
@@ -53,7 +63,7 @@ export default function DashboardView() {
               <SwapForm
                 web3={web3}
                 userAuthenticated={userAuthenticated}
-                pressConnectWallet={connectToWallet}
+                pressConnectWallet={login}
               />
             </Box>
           </Container>
