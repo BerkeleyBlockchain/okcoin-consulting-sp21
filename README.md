@@ -4,6 +4,8 @@ Setting up and running the DEX aggregator interface
 
 ### Setup
 
+Make sure you are using npm LTS (14.x as of 2/20/21), not Beta (15.xas of 2/20/21)
+
 ```
 git clone https://github.com/BerkeleyBlockchain/okcoin-consulting.git
 cd okcoin-consulting
