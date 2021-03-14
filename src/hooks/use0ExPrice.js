@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { useQuery } from 'react-query';
 import axios from 'axios';
 
@@ -14,8 +15,10 @@ const getPrice = async (tokenFrom, tokenTo, sellAmount) => {
   const params = new URLSearchParams({
     sellToken: tokenFrom.ticker,
     buyToken: tokenTo.ticker,
-    buyAmount: 10 ** tokenTo.decimals,
-    sellAmount,
+    // buyAmount: 10 ** tokenTo.decimals,
+    sellAmount: sellAmount * Math.pow(10, tokenFrom.decimals),
+    // excludedSources:
+    //  'Native,Eth2Dai,LiquidityProvider,Balancer,Cream,Mooniswap,MultiHop,Shell,Swerve,SnowSwap,Dodo', // Exclude uniswap and kyber
   });
 
   const { data } = await axios.get(`https://api.0x.org/swap/v1/quote?${params.toString()}`);
@@ -29,11 +32,7 @@ const getPrice = async (tokenFrom, tokenTo, sellAmount) => {
 };
 
 export default function use0xExPrice(tokenFrom, tokenTo, sellAmount) {
-  return useQuery(
-    ['price', '0x', tokenFrom, tokenTo, sellAmount],
-    () => getPrice(tokenFrom, tokenTo, sellAmount),
-    {
-      enabled: !tokenFrom && !tokenTo && !sellAmount,
-    }
+  return useQuery(['price', '0x', tokenFrom, tokenTo, sellAmount], () =>
+    getPrice(tokenFrom, tokenTo, sellAmount)
   );
 }
