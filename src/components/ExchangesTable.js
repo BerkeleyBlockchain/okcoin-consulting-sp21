@@ -31,7 +31,7 @@ function ExchangesTable() {
                   <Box d="flex" alignItems="center">
                     <Image
                       maxW="32px"
-                      src={`/static/${exchange}.png`}
+                      src={`/static/exchange-icons/32/${exchange}.png`}
                       alt={`${exchange}-logo`}
                       mr={2}
                     />
