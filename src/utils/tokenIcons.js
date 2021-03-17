@@ -1,4 +1,4 @@
-const iconDirectory = '../../node_modules/cryptocurrency-icons';
+const iconDirectory = '~/node_modules/cryptocurrency-icons';
 
 /**
  * Gets path string for a token icon in SVG format
