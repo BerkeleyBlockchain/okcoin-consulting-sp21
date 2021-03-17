@@ -1,44 +1,7 @@
-/* eslint-disable */
+/* eslint-disable no-console */
 const GAS_PRICE = 'medium';
 const ETH_TOKEN_ADDRESS = '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee';
 const API_ENDPOINT = 'https://api.kyber.network';
-
-/**
- * Gets the data necessary to execute the given trade.
- */
-export default async function executeSwap(tokenFrom, tokenTo, inputAmount, web3) {
-  console.log('🚀 ~ file: useKyberSwap.js ~ line 66 ~ executeSwap ~ inputAmount', inputAmount);
-
-  // Set user account
-  const accounts = await web3.eth.getAccounts();
-  const USER_ACCOUNT = accounts[0];
-
-  const inputAddress = tokenFrom.mainnet;
-  const outputAddress = tokenTo.mainnet;
-
-  // Get trade price
-  const ratesRequest = await fetch(
-    `${API_ENDPOINT}/sell_rate?id=${inputAddress}&qty=${inputAmount}`
-  );
-
-  const rates = await ratesRequest.json();
-  const inputInETH = rates.data[0].dst_qty;
-  const ratesRequest2 = await fetch(`${API_ENDPOINT}/buy_rate?id=${outputAddress}&qty=1`);
-
-  const rates2 = await ratesRequest2.json();
-  console.log('🚀 ~ file: useKyberSwap.js ~ line 104 ~ executeSwap ~ rates2 =', rates2);
-  const outputInETH = rates2.data[0].src_qty;
-
-  const outputAmount = inputInETH / outputInETH;
-  const result = await kyberTokenForETH(inputAddress, inputAmount, web3, USER_ACCOUNT);
-
-  if (result === true) {
-    console.log('Trade 1 successful, awaiting trade 2.');
-    await kyberEthForToken(outputAddress, outputAmount, web3, USER_ACCOUNT, true);
-  } else {
-    throw new Error('Trade 1 failed, transactions reverted.');
-  }
-}
 
 async function kyberTokenForETH(tokenAddress, QTY, web3, USER_ACCOUNT) {
   /*
@@ -172,4 +135,41 @@ async function kyberEthForToken(tokenAddress, QTY, web3, USER_ACCOUNT, increment
 
   // Log the transaction receipt
   console.log(txReceipt);
+}
+
+/**
+ * Gets the data necessary to execute the given trade.
+ */
+export default async function executeSwap(tokenFrom, tokenTo, inputAmount, web3) {
+  console.log('🚀 ~ file: useKyberSwap.js ~ line 66 ~ executeSwap ~ inputAmount', inputAmount);
+
+  // Set user account
+  const accounts = await web3.eth.getAccounts();
+  const USER_ACCOUNT = accounts[0];
+
+  const inputAddress = tokenFrom.mainnet;
+  const outputAddress = tokenTo.mainnet;
+
+  // Get trade price
+  const ratesRequest = await fetch(
+    `${API_ENDPOINT}/sell_rate?id=${inputAddress}&qty=${inputAmount}`
+  );
+
+  const rates = await ratesRequest.json();
+  const inputInETH = rates.data[0].dst_qty;
+  const ratesRequest2 = await fetch(`${API_ENDPOINT}/buy_rate?id=${outputAddress}&qty=1`);
+
+  const rates2 = await ratesRequest2.json();
+  console.log('🚀 ~ file: useKyberSwap.js ~ line 104 ~ executeSwap ~ rates2 =', rates2);
+  const outputInETH = rates2.data[0].src_qty;
+
+  const outputAmount = inputInETH / outputInETH;
+  const result = await kyberTokenForETH(inputAddress, inputAmount, web3, USER_ACCOUNT);
+
+  if (result === true) {
+    console.log('Trade 1 successful, awaiting trade 2.');
+    await kyberEthForToken(outputAddress, outputAmount, web3, USER_ACCOUNT, true);
+  } else {
+    throw new Error('Trade 1 failed, transactions reverted.');
+  }
 }

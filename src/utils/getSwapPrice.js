@@ -1,5 +1,4 @@
 import { axios } from 'axios';
-import Tokens from './constants/tokens.json';
 import Exchanges from '../constants/exchanges';
 
 /**
@@ -9,7 +8,7 @@ import Exchanges from '../constants/exchanges';
  * @param amountIn An integer string denoting the amount of `tokenIn` in its smallest unit
  * @param exchangeName The name of the exchange to get a price quote from
  */
-export async function getPrice(tokenIn, tokenOut, amountIn, exchangeName) {
+export async function estimateSwapPrice(tokenIn, tokenOut, amountIn, exchangeName) {
   const exchangeId = exchangeName === '0x' ? 'Native' : exchangeName;
   const params = new URLSearchParams({
     sellToken: tokenIn.symbol,
@@ -27,11 +26,14 @@ export async function getPrice(tokenIn, tokenOut, amountIn, exchangeName) {
 }
 
 /**
- * Returns a list of exchange name, quoted price pairs
+ * Returns a list of [exchange name, quoted price] pairs
+ * @param tokenIn An input token of type defined in constants/tokens.json
+ * @param tokenOut An output token of type defined in constants/tokens.json
+ * @param amountIn An integer string denoting the amount of `tokenIn` in its smallest unit
  */
-export async function getAllPrices() {
+export async function estimateAllSwapPrices(tokenIn, tokenOut, amountIn) {
   return Exchanges.map((exchange) => [
     exchange === 'Native' ? '0x' : exchange,
-    getPrice(Tokens.USDC, Tokens.DAI, 1000000, exchange),
+    estimateSwapPrice(tokenIn, tokenOut, amountIn, exchange),
   ]);
 }
