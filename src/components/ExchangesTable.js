@@ -5,15 +5,11 @@ import { midpricesAtom } from '../utils/atoms';
 
 function ExchangesTable() {
   // if the midprice is 0 then the price is not found
-  /* eslint-disable no-unused-vars */
-  /* eslint-disable prettier/prettier */
-  /* eslint-disable react/self-closing-comp */
   const [midprices] = useAtom(midpricesAtom);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     setLoading(false);
-    console.log(midprices)
   });
 
   return (
@@ -30,17 +26,22 @@ function ExchangesTable() {
         ) : (
           Object.keys(midprices).map((exchange) =>
             midprices[exchange] !== 0 ? (
-            <Tr>
-              <Td>
-                <Box d="flex" alignItems="center">
-                  <Image maxW="32px" src={`/static/${exchange}.png`} alt={`${exchange}-logo`} mr={2} />
-                  {exchange}
-                </Box>
-              </Td>
-              <Td isNumeric>{midprices[exchange]}</Td>
-            </Tr>
+              <Tr>
+                <Td>
+                  <Box d="flex" alignItems="center">
+                    <Image
+                      maxW="32px"
+                      src={`/static/${exchange}.png`}
+                      alt={`${exchange}-logo`}
+                      mr={2}
+                    />
+                    {exchange}
+                  </Box>
+                </Td>
+                <Td isNumeric>{midprices[exchange]}</Td>
+              </Tr>
             ) : (
-              <div></div>
+              <div />
             )
           )
         )}
