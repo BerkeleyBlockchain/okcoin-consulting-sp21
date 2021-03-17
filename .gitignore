@@ -17,6 +17,7 @@ Thumbs.db
 
 # locks
 package-lock.json
+yarn.lock
 
 # misc
 .env
