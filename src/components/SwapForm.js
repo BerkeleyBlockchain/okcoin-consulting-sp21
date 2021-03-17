@@ -1,4 +1,4 @@
-/* eslint-disable no-shadow */
+/* eslint-disable no-console */
 import {
   Box,
   Button,

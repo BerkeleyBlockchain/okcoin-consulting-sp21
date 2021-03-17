@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import Web3 from 'web3';
 
 // eslint-disable-next-line consistent-return

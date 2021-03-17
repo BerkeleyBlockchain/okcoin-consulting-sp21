@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { Alert, AlertDescription, AlertIcon, AlertTitle } from '@chakra-ui/react';
 import React from 'react';
 
