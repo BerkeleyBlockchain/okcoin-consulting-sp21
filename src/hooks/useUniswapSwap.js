@@ -1,4 +1,4 @@
-/* eslint-disable */
+/* eslint-disable no-console */
 import {
   ChainId,
   TradeType,
@@ -10,19 +10,18 @@ import {
   Trade,
 } from '@uniswap/sdk';
 import { ethers } from 'ethers';
-import IUniswapV2Router02 from '../constants/IUniswapV2Router02.json';
-import erc20Abi from '../constants/erc20abi.json';
+import IUniswapV2Router02 from '../constants/abis/IUniswapV2Router02.json';
+import erc20Abi from '../constants/abis/erc20.json';
 
 const UNISWAP_ROUTER_CONTRACT = '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D'; // Mainnet contract
 
 export default async function executeSwap(tokenFrom, tokenTo, inputAmount, web3) {
-
   const provider = new ethers.providers.Web3Provider(web3.currentProvider);
 
   // Get pricing information from the SDK
   const inputToken = new Token(ChainId.MAINNET, tokenFrom.mainnet, tokenFrom.decimals);
   const outputToken = new Token(ChainId.MAINNET, tokenTo.mainnet, tokenTo.decimals);
-  
+
   console.log(
     '🚀 ~ file: useUniswapSwap.js ~ line 37 ~ executeSwap ~ inputToken.decimals',
     inputToken.decimals
@@ -58,11 +57,7 @@ export default async function executeSwap(tokenFrom, tokenTo, inputAmount, web3)
   const account = provider.getSigner();
 
   // Construct uniswap router contract
-  const uniswap = new ethers.Contract(
-    UNISWAP_ROUTER_CONTRACT,
-    IUniswapV2Router02.abi,
-    account
-  );
+  const uniswap = new ethers.Contract(UNISWAP_ROUTER_CONTRACT, IUniswapV2Router02.abi, account);
 
   // Construct erc20 contract
   const erc20Contract = new ethers.Contract(inputToken.address, erc20Abi, account);
@@ -71,14 +66,10 @@ export default async function executeSwap(tokenFrom, tokenTo, inputAmount, web3)
   const gasPrice = await provider.getGasPrice();
 
   // Approve erc20 token amount
-  const txApprove = await erc20Contract.approve(
-    UNISWAP_ROUTER_CONTRACT,
-    amountIn,
-    {
-      gasPrice,
-      gasLimit: ethers.BigNumber.from(40000),
-    }
-  );
+  const txApprove = await erc20Contract.approve(UNISWAP_ROUTER_CONTRACT, amountIn, {
+    gasPrice,
+    gasLimit: ethers.BigNumber.from(40000),
+  });
 
   console.log(`Approval transaction hash: ${txApprove.hash}`);
 

@@ -1,4 +1,3 @@
-/* eslint-disable */
 import {
   Box,
   Button,

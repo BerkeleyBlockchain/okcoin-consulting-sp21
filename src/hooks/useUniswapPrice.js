@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { ChainId, Fetcher, Route, Token } from '@uniswap/sdk';
 import { useEffect, useState } from 'react';
 import { ethers } from 'ethers';
