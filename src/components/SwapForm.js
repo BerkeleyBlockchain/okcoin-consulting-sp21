@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import {
   Box,
   Button,
@@ -13,7 +12,7 @@ import {
   useToast,
 } from '@chakra-ui/react';
 import { useAtom } from 'jotai';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import * as Tokens from '../constants/tokens';
 import * as Toasts from '../constants/toasts';
@@ -24,7 +23,9 @@ import useUniswapPrice from '../hooks/useUniswapPrice';
 import uniswapSwap from '../hooks/useUniswapSwap';
 import kyberSwap from '../hooks/useKyberSwap';
 import zeroXSwap from '../hooks/use0xSwap';
+import use0ExPrice from '../hooks/use0ExPrice';
 import { midpricesAtom } from '../utils/atoms';
+import debounce from 'debounce';
 
 function useCheapestPrice({ uniswap, kyber, zeroX }) {
   const prices = [parseFloat(uniswap), parseFloat(kyber), parseFloat(zeroX)];
@@ -43,13 +44,20 @@ export default function SwapForm({ web3, userAuthenticated, pressConnectWallet }
   const [, kyberMidprice] = useKyberPrice(Tokens[watchFromToken], Tokens[watchToToken]);
   const [, uniswapMidprice] = useUniswapPrice(Tokens[watchFromToken], Tokens[watchToToken]);
   const { data: zeroXPrices } = use0xPrice(Tokens[watchFromToken], Tokens[watchToToken]);
+  const [sellAmount, setSellAmount] = useState();
+  const { midprice: zeroXExPrice } = use0ExPrice(
+    Tokens[watchFromToken],
+    Tokens[watchToToken],
+    sellAmount
+  );
+  console.log(zeroXExPrice);
   const [midprices, setMidprices] = useAtom(midpricesAtom);
   const [isLoading, setIsLoading] = React.useState();
   const toast = useToast();
 
   // eslint-disable-next-line prefer-const
-  let { midprice, exchange } = useCheapestPrice(midprices); // highest midprice = cheapest Price
-  exchange = '0x';
+  let midprice = zeroXExPrice; // highest midprice = cheapest Price
+  const exchange = '0x';
 
   const onSubmit = (data) => {
     const { fromAmount, fromToken, toToken } = data;
@@ -156,6 +164,7 @@ export default function SwapForm({ web3, userAuthenticated, pressConnectWallet }
               variant="unstyled"
               mr={6}
               isReadOnly={isLoading}
+              onChange={debounce((event) => setSellAmount(event.target.value), 5000)}
             />
           </Flex>
         </Box>
