@@ -1,4 +1,3 @@
-/* eslint-disable */
 import { Box, Container, Grid, GridItem } from '@chakra-ui/react';
 import { useAtom } from 'jotai';
 import React, { useState } from 'react';
@@ -10,11 +9,10 @@ import MyWallet from '../components/MyWallet';
 import NavBar from '../components/NavBar';
 import SwapForm from '../components/SwapForm';
 import { tabIndexAtom } from '../utils/atoms';
-import getWeb3 from '../utils/getWeb3';
 
 export default function DashboardView() {
   let web3;
-  //const [web3, setWeb3] = useState(null);
+  // eslint-disable-next-line no-unused-vars
   const [account, setAccount] = useState(null);
   const [userAuthenticated, setUserAuthenticated] = useState(false);
   const [tabIndex] = useAtom(tabIndexAtom);
@@ -31,14 +29,16 @@ export default function DashboardView() {
 
   async function login() {
     try {
-      let selected = await onboard.walletSelect();
+      const selected = await onboard.walletSelect();
       if (!selected) {
         return;
       }
-      let ready = await onboard.walletCheck();
+      // eslint-disable-next-line no-unused-vars
+      const ready = await onboard.walletCheck();
       setUserAuthenticated(true);
     } catch {
       console.log(`Failed to load web3, accounts, or contract`);
+      // eslint-disable-next-line no-undef
       console.error(error);
     }
   }

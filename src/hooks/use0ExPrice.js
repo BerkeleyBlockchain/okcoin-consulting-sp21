@@ -1,4 +1,3 @@
-/* eslint-disable */
 import { useQuery } from 'react-query';
 import axios from 'axios';
 
@@ -16,18 +15,19 @@ const getPrice = async (tokenFrom, tokenTo, sellAmount) => {
     sellToken: tokenFrom.ticker,
     buyToken: tokenTo.ticker,
     // buyAmount: 10 ** tokenTo.decimals,
+    // eslint-disable-next-line no-restricted-properties
     sellAmount: sellAmount * Math.pow(10, tokenFrom.decimals),
-    // excludedSources:
-    //  'Native,Eth2Dai,LiquidityProvider,Balancer,Cream,Mooniswap,MultiHop,Shell,Swerve,SnowSwap,Dodo', // Exclude uniswap and kyber
   });
 
   const { data } = await axios.get(`https://api.0x.org/swap/v1/quote?${params.toString()}`);
+  const getDex = data.sources.filter((item) => item.proportion === '1')[0].name;
   const midprice = 1 / data.price;
   const inverse = data.price;
+
   return {
-    exchange: '0x',
+    exchange: getDex,
     midprice,
-    inverse,
+    inverse, // REAL PRICE
   };
 };
 

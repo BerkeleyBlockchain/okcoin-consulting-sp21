@@ -14,6 +14,7 @@ import {
 import { useAtom } from 'jotai';
 import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
+import debounce from 'debounce';
 import * as Tokens from '../constants/tokens';
 import * as Toasts from '../constants/toasts';
 import use0xPrice from '../hooks/use0xPrice';
@@ -23,17 +24,8 @@ import useUniswapPrice from '../hooks/useUniswapPrice';
 import uniswapSwap from '../hooks/useUniswapSwap';
 import kyberSwap from '../hooks/useKyberSwap';
 import zeroXSwap from '../hooks/use0xSwap';
-import use0ExPrice from '../hooks/use0ExPrice';
+import use0xExPrice from '../hooks/use0ExPrice';
 import { midpricesAtom } from '../utils/atoms';
-import debounce from 'debounce';
-
-function useCheapestPrice({ uniswap, kyber, zeroX }) {
-  const prices = [parseFloat(uniswap), parseFloat(kyber), parseFloat(zeroX)];
-  const exchange = ['Uniswap', 'Kyber', '0x'];
-  const i = prices.indexOf(Math.max(...prices));
-
-  return { midprice: prices[i], exchange: exchange[i] };
-}
 
 export default function SwapForm({ web3, userAuthenticated, pressConnectWallet }) {
   const { register, handleSubmit, watch, setValue, errors } = useForm();
@@ -45,19 +37,18 @@ export default function SwapForm({ web3, userAuthenticated, pressConnectWallet }
   const [, uniswapMidprice] = useUniswapPrice(Tokens[watchFromToken], Tokens[watchToToken]);
   const { data: zeroXPrices } = use0xPrice(Tokens[watchFromToken], Tokens[watchToToken]);
   const [sellAmount, setSellAmount] = useState();
-  const { midprice: zeroXExPrice } = use0ExPrice(
-    Tokens[watchFromToken],
-    Tokens[watchToToken],
-    sellAmount
-  );
-  console.log(zeroXExPrice);
+
+  const executionData = use0xExPrice(Tokens[watchFromToken], Tokens[watchToToken], sellAmount);
+
+  // eslint-disable-next-line no-unused-vars
   const [midprices, setMidprices] = useAtom(midpricesAtom);
   const [isLoading, setIsLoading] = React.useState();
   const toast = useToast();
 
   // eslint-disable-next-line prefer-const
-  let midprice = zeroXExPrice; // highest midprice = cheapest Price
-  const exchange = '0x';
+
+  const midprice = executionData.data ? executionData.data.inverse : '⟳'; // highest midprice = cheapest Price
+  const exchange = executionData.data ? executionData.data.exchange : '⟳';
 
   const onSubmit = (data) => {
     const { fromAmount, fromToken, toToken } = data;
@@ -211,12 +202,19 @@ export default function SwapForm({ web3, userAuthenticated, pressConnectWallet }
             <Flex>
               <Text>Rate</Text>
               <Spacer />
-              <Text>{`1 ${watchFromToken} = ${midprice} ${watchToToken}`}</Text>
+              <Text
+                style={{ fontWeight: 'bold' }}
+              >{`1 ${watchFromToken} = ${midprice} ${watchToToken}`}</Text>
+            </Flex>
+            <Flex>
+              <Text>Best Price Exchange</Text>
+              <Spacer />
+              <Text style={{ fontWeight: 'bold' }}>{exchange}</Text>
             </Flex>
             <Flex>
               <Text>Gas price (gwei)</Text>
               <Spacer />
-              <Text>{gas}</Text>
+              <Text style={{ fontWeight: 'bold' }}>{gas}</Text>
             </Flex>
 
             <Divider mt={3} />
