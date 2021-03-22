@@ -1,3 +1,5 @@
+/* eslint-disable no-console */
+
 import {
   Box,
   Button,
@@ -11,6 +13,7 @@ import {
   Text,
   useToast,
 } from '@chakra-ui/react';
+import debounce from 'debounce';
 import { useAtom } from 'jotai';
 import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -25,15 +28,14 @@ import kyberSwap from '../hooks/useKyberSwap';
 import zeroXSwap from '../hooks/use0xSwap';
 import use0ExPrice from '../hooks/use0ExPrice';
 import { midpricesAtom } from '../utils/atoms';
-import debounce from 'debounce';
 
-function useCheapestPrice({ uniswap, kyber, zeroX }) {
-  const prices = [parseFloat(uniswap), parseFloat(kyber), parseFloat(zeroX)];
-  const exchange = ['Uniswap', 'Kyber', '0x'];
-  const i = prices.indexOf(Math.max(...prices));
+// function useCheapestPrice({ uniswap, kyber, zeroX }) {
+//   const prices = [parseFloat(uniswap), parseFloat(kyber), parseFloat(zeroX)];
+//   const exchange = ['Uniswap', 'Kyber', '0x'];
+//   const i = prices.indexOf(Math.max(...prices));
 
-  return { midprice: prices[i], exchange: exchange[i] };
-}
+//   return { midprice: prices[i], exchange: exchange[i] };
+// }
 
 export default function SwapForm({ web3, userAuthenticated, pressConnectWallet }) {
   const { register, handleSubmit, watch, setValue, errors } = useForm();
@@ -51,7 +53,7 @@ export default function SwapForm({ web3, userAuthenticated, pressConnectWallet }
     sellAmount
   );
   console.log(zeroXExPrice);
-  const [midprices, setMidprices] = useAtom(midpricesAtom);
+  const [, setMidprices] = useAtom(midpricesAtom);
   const [isLoading, setIsLoading] = React.useState();
   const toast = useToast();
 
