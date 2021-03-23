@@ -1,11 +1,12 @@
-import { Box, Image, Td, Table, Tbody, Th, Thead, Tr } from '@chakra-ui/react';
+import { Image, Td, Table, Tbody, Th, Thead, Tr, Text } from '@chakra-ui/react';
 import { useAtom } from 'jotai';
 import { useEffect, useState, React } from 'react';
-import { midpricesAtom } from '../utils/atoms';
+import { pricesAtom } from '../utils/atoms';
+import Exchanges from '../constants/exchanges';
 
 function ExchangesTable() {
   // if the midprice is 0 then the price is not found
-  const [midprices] = useAtom(midpricesAtom);
+  const [prices] = useAtom(pricesAtom);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -21,30 +22,27 @@ function ExchangesTable() {
         </Tr>
       </Thead>
       <Tbody>
-        {loading ? (
-          <div> Loading </div>
-        ) : (
-          Object.keys(midprices).map((exchange) =>
-            midprices[exchange] !== 0 ? (
-              <Tr>
-                <Td>
-                  <Box d="flex" alignItems="center">
-                    <Image
-                      maxW="32px"
-                      src={`/static/exchange-icons/32/${exchange}.png`}
-                      alt={`${exchange}-logo`}
-                      mr={2}
-                    />
-                    {exchange}
-                  </Box>
-                </Td>
-                <Td isNumeric>{midprices[exchange]}</Td>
-              </Tr>
-            ) : (
-              <div />
-            )
-          )
-        )}
+        {loading
+          ? null
+          : Object.keys(prices).map((exchange) =>
+              prices[exchange] !== null ? (
+                <Tr>
+                  <Td>
+                    <Text>
+                      <Image
+                        display="inline"
+                        maxW="32px"
+                        src={Exchanges.data[exchange].iconSVG}
+                        alt={`${exchange}-logo`}
+                        mr={2}
+                      />
+                      {Exchanges.data[exchange].name}
+                    </Text>
+                  </Td>
+                  <Td isNumeric>{prices[exchange]}</Td>
+                </Tr>
+              ) : null
+            )}
       </Tbody>
     </Table>
   );
