@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-shadow */
-import { Box, Container, Grid, GridItem } from '@chakra-ui/react';
+import { Box, Button, Container, Grid, GridItem } from '@chakra-ui/react';
 import { useAtom } from 'jotai';
 import React, { useEffect, useState } from 'react';
 import { ethers } from 'ethers';
@@ -14,6 +14,7 @@ import initOnboard from '../utils/initOnboard';
 export default function DashboardView() {
   const [tabIndex] = useAtom(tabIndexAtom);
   const [address, setAddress] = useState(null);
+  console.log('🚀 ~ file: DashboardView.js ~ line 17 ~ DashboardView ~ address', address);
   const [network, setNetwork] = useState(null);
   const [balance, setBalance] = useState(null);
   const [wallet, setWallet] = useState({});
@@ -29,11 +30,13 @@ export default function DashboardView() {
       balance: setBalance,
       wallet: (wallet) => {
         if (wallet.provider) {
+          console.log('WALLET: ', wallet);
           setWallet(wallet);
 
           const ethersProvider = new ethers.providers.Web3Provider(wallet.provider);
 
           provider = ethersProvider;
+          console.log('🚀 ~ file: DashboardView.js ~ line 39 ~ useEffect ~ provider', provider);
 
           window.localStorage.setItem('selectedWallet', wallet.name);
         } else {
@@ -46,8 +49,15 @@ export default function DashboardView() {
     setOnboard(onboard);
   }, []);
 
+  useEffect(() => {
+    const previouslySelectedWallet = window.localStorage.getItem('selectedWallet');
+
+    if (previouslySelectedWallet && onboard) {
+      onboard.walletSelect(previouslySelectedWallet);
+    }
+  }, [onboard]);
+
   const gasPrice = () => provider.getGasPrice().then((res) => res.toString());
-  console.log('🚀 ~ file: DashboardView.js ~ line 49 ~ DashboardView ~ gasPrice', gasPrice);
 
   // console.log('🚀 ~ file: App.js ~ line 10 ~ App ~ web3', web3);
   // console.log('🚀 ~ file: App.js ~ line 12 ~ App ~ account', account);
@@ -66,12 +76,7 @@ export default function DashboardView() {
         <GridItem colSpan={3}>
           <Container minWidth={500}>
             <Box bgColor="white" mt="100px">
-              <SwapForm
-                web3={null}
-                userAuthenticated={false}
-                pressConnectWallet={() => {}}
-                onboard={onboard}
-              />
+              <SwapForm web3={null} wallet={wallet} onboard={onboard} />
             </Box>
           </Container>
         </GridItem>

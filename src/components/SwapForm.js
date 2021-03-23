@@ -27,7 +27,7 @@ import useUniswapPrice from '../hooks/useUniswapPrice';
 import uniswapSwap from '../hooks/useUniswapSwap';
 import { midpricesAtom } from '../utils/atoms';
 
-export default function SwapForm({ web3, userAuthenticated, pressConnectWallet }) {
+export default function SwapForm({ web3, wallet, onboard }) {
   const { register, handleSubmit, watch, setValue, errors } = useForm();
   const watchFromToken = watch('fromToken', '');
   const watchToToken = watch('toToken', '');
@@ -216,7 +216,7 @@ export default function SwapForm({ web3, userAuthenticated, pressConnectWallet }
           </>
         ) : null}
         <Center>
-          {userAuthenticated ? (
+          {wallet.provider ? (
             <Button
               w="100%"
               h="60px"
@@ -244,7 +244,7 @@ export default function SwapForm({ web3, userAuthenticated, pressConnectWallet }
               mt={6}
               mb={10}
               disabled={Object.keys(errors).length !== 0}
-              onClick={pressConnectWallet}
+              onClick={onboard.walletSelect}
             >
               Connect Wallet
             </Button>
