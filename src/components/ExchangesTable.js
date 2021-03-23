@@ -24,8 +24,10 @@ function ExchangesTable() {
       <Tbody>
         {loading
           ? null
-          : Object.keys(prices).map((exchange) =>
-              prices[exchange] !== null ? (
+          : Object.keys(prices)
+              .filter((exchange) => prices[exchange] !== null)
+              .sort((a, b) => parseFloat(prices[b]) - parseFloat(prices[a]))
+              .map((exchange) => (
                 <Tr>
                   <Td>
                     <Text>
@@ -41,8 +43,7 @@ function ExchangesTable() {
                   </Td>
                   <Td isNumeric>{prices[exchange]}</Td>
                 </Tr>
-              ) : null
-            )}
+              ))}
       </Tbody>
     </Table>
   );
