@@ -1,0 +1,26 @@
+const exchangeList = [
+  'Balancer',
+  'Bancor',
+  'CREAM',
+  'CryptoCom',
+  'Curve',
+  'DODO',
+  'DODO_V2',
+  'Eth2Dai',
+  'Kyber',
+  'Linkswap',
+  'LiquidityProvider',
+  'Mooniswap',
+  'MultiBridge',
+  'MultiHop',
+  'Native',
+  'Shell',
+  'SnowSwap',
+  'SushiSwap',
+  'Swerve',
+  'Uniswap',
+  'Uniswap_V2',
+  'mStable',
+];
+
+export default exchangeList;
