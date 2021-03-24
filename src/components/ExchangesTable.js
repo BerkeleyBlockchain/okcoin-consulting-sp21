@@ -28,7 +28,7 @@ function ExchangesTable() {
               .filter((exchange) => prices[exchange] !== null)
               .sort((a, b) => parseFloat(prices[b]) - parseFloat(prices[a]))
               .map((exchange) => (
-                <Tr>
+                <Tr key={exchange}>
                   <Td>
                     <Text>
                       <Image
