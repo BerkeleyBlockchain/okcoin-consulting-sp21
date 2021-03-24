@@ -30,6 +30,7 @@ export default function SwapForm({ web3, userAuthenticated, pressConnectWallet }
   const { register, handleSubmit, watch, setValue, errors } = useForm();
   const [isLoading, setIsLoading] = useState();
   const [sellAmount, setSellAmount] = useState();
+  const [loadingPrices, setLoadingPrices] = useState(false);
   const [, setPrices] = useAtom(pricesAtom);
   const toast = useToast();
 
@@ -55,17 +56,23 @@ export default function SwapForm({ web3, userAuthenticated, pressConnectWallet }
     if (!watchAmountIn) {
       setValue('amountOut', '');
     }
+    if (!watchAmountIn || !watchTokenIn || !watchTokenOut) {
+      setPrices({});
+    }
   }, [price, watchAmountIn, watchTokenIn, watchTokenOut]);
 
   useEffect(() => {
-    if (watchAmountIn && watchTokenIn && watchTokenOut) {
-      estimateAllSwapPrices(watchTokenIn, watchTokenOut, watchAmountIn).then((values) => {
-        setPrices(values);
-      });
-    } else {
+    if (!loadingPrices) {
       setPrices({});
+      if (sellAmount && watchTokenIn && watchTokenOut) {
+        setLoadingPrices(true);
+        estimateAllSwapPrices(watchTokenIn, watchTokenOut, sellAmount).then((values) => {
+          setPrices(values);
+          setLoadingPrices(false);
+        });
+      }
     }
-  }, [watchAmountIn, watchTokenIn, watchTokenOut]);
+  }, [sellAmount, watchTokenIn, watchTokenOut]);
 
   // Execute the swap
   const onSubmit = (data) => {
@@ -118,7 +125,7 @@ export default function SwapForm({ web3, userAuthenticated, pressConnectWallet }
               variant="unstyled"
               mr={6}
               isReadOnly={isLoading}
-              onChange={debounce((event) => setSellAmount(event.target.value), 1000)}
+              onChange={debounce((event) => setSellAmount(event.target.value), 1500)}
             />
           </Flex>
         </Box>
