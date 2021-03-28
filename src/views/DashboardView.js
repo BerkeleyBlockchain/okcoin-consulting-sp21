@@ -10,7 +10,6 @@ import MyWallet from '../components/MyWallet';
 import NavBar from '../components/NavBar';
 import SwapForm from '../components/SwapForm';
 import { tabIndexAtom } from '../utils/atoms';
-import getWeb3 from '../utils/getWeb3';
 
 export default function DashboardView() {
   let web3;
@@ -43,8 +42,6 @@ export default function DashboardView() {
     }
   }
 
-  console.log('🚀 ~ file: App.js ~ line 10 ~ App ~ web3', web3);
-  console.log('🚀 ~ file: App.js ~ line 12 ~ App ~ account', account);
   return (
     <Box bgColor="#F7F9FC" minWidth={tabIndex === 1 ? '1550px' : '1000px'}>
       <Grid templateColumns="repeat(7, 1fr)">
