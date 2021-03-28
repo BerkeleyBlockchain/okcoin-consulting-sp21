@@ -42,12 +42,14 @@ export default function SwapForm({ web3, userAuthenticated, pressConnectWallet }
   const defaults = {
     price: '🔄',
     gasPrice: '🔄',
+    exchange: '🔄',
     estimatedGas: '🔄',
     sources: [],
   };
 
   const { data: zeroExQuote } = use0xPrice(Tokens[watchTokenIn], Tokens[watchTokenOut], sellAmount);
-  const { price, gasPrice, estimatedGas } = zeroExQuote === undefined ? defaults : zeroExQuote;
+  const { price, gasPrice, estimatedGas, exchange } =
+    zeroExQuote === undefined ? defaults : zeroExQuote;
 
   useEffect(() => {
     if (watchAmountIn && watchTokenIn && watchTokenOut && price !== defaults.price) {
@@ -174,6 +176,11 @@ export default function SwapForm({ web3, userAuthenticated, pressConnectWallet }
               <Text>Rate</Text>
               <Spacer />
               <Text>{`1 ${watchTokenIn} = ${price} ${watchTokenOut}`}</Text>
+            </Flex>
+            <Flex>
+              <Text>Dex Used</Text>
+              <Spacer />
+              <Text style={{ fontWeight: 'bold' }}>{exchange}</Text>
             </Flex>
             <Flex>
               <Text>Gas price</Text>
