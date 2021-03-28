@@ -7,7 +7,7 @@ import {
   Flex,
   Heading,
   Input,
-  Select,
+  
   Spacer,
   Text,
   useToast,
@@ -26,6 +26,8 @@ import use0xPrice from '../hooks/use0xPrice';
 
 import * as Tokens from '../constants/tokens';
 import * as Toasts from '../constants/toasts';
+
+import Select from 'react-select';
 
 export default function SwapForm({ web3, userAuthenticated, pressConnectWallet }) {
   const { register, handleSubmit, watch, setValue, errors } = useForm();
@@ -77,6 +79,16 @@ export default function SwapForm({ web3, userAuthenticated, pressConnectWallet }
     }
   }, [sellAmount, watchTokenIn, watchTokenOut]);
 
+  //Display tokens
+  var tokenArray = new Array(Object.keys(Tokens).length);
+  var count = 0;
+
+for (var key in Tokens) {
+    tokenArray[count] = {value: Tokens[key].ticker, label:Tokens[key].ticker, icon: "public/static/token-icons/128/sushi.png"}
+    count++;
+}
+
+
   // Execute the swap
   const onSubmit = (data) => {
     const { amountIn, tokenIn, tokenOut } = data;
@@ -102,21 +114,30 @@ export default function SwapForm({ web3, userAuthenticated, pressConnectWallet }
         </Text>
         <Box borderWidth="1px" borderRadius="lg" mb={6}>
           <Flex>
-            <Select
-              h="52px"
-              placeholder="Select"
-              name="tokenIn"
-              size="lg"
-              variant="filled"
-              ref={register}
-              isReadOnly={isLoading}
-            >
-              {Object.keys(Tokens).map((t) => (
-                <option key={Tokens[t].ticker} value={Tokens[t].ticker}>
-                  {Tokens[t].ticker}
-                </option>
-              ))}
-            </Select>
+          <Select 
+          styles= {{
+            menu: (provided, state) => ({
+              ...provided,
+              width: 150,
+              
+              margin: 0
+            }),
+          
+            control: (_, { selectProps: { width }}) => ({
+              width: 170,
+              height: 52,
+              display: 'flex',
+              flexDirection: 'row',
+            }),
+          
+            singleValue: (provided, state) => {
+              const opacity = state.isDisabled ? 0.5 : 1;
+              const transition = 'opacity 300ms';
+          
+              return { ...provided, opacity, transition };
+            }
+          }}
+          options={tokenArray} />
             <Input
               placeholder="Enter Amount"
               name="amountIn"
@@ -137,23 +158,34 @@ export default function SwapForm({ web3, userAuthenticated, pressConnectWallet }
         </Text>
         <Box borderWidth="1px" borderRadius="lg" mb={6}>
           <Flex>
-            <Select
-              h="52px"
-              placeholder="Select"
-              name="tokenOut"
-              size="lg"
-              variant="filled"
-              ref={register({
-                validate: (value) => value !== watchTokenIn,
-              })}
-              isReadOnly={isLoading}
-            >
-              {Object.keys(Tokens).map((t) => (
-                <option key={Tokens[t].ticker} value={Tokens[t].ticker}>
-                  {Tokens[t].ticker}
-                </option>
-              ))}
-            </Select>
+
+          <Select 
+          
+          styles= {{
+            menu: (provided, state) => ({
+              ...provided,
+              width: 150,
+              borderBottom: '1px dotted pink',
+              color: state.selectProps.menuColor,
+              padding: 0,
+            }),
+          
+            control: (_, { selectProps: { width }}) => ({
+              width: 170,
+              height: 52,
+              display: 'flex',
+              flexDirection: 'row'
+            }),
+          
+            singleValue: (provided, state) => {
+              const opacity = state.isDisabled ? 0.5 : 1;
+              const transition = 'opacity 300ms';
+          
+              return { ...provided, opacity, transition };
+            }
+          }}
+          options={tokenArray} />
+            
             <Input
               isReadOnly
               placeholder="To"
