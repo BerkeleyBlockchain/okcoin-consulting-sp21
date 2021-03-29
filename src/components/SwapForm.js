@@ -26,6 +26,7 @@ import kyberSwap from '../hooks/useKyberSwap';
 import useUniswapPrice from '../hooks/useUniswapPrice';
 import uniswapSwap from '../hooks/useUniswapSwap';
 import { midpricesAtom } from '../utils/atoms';
+import FullPageSpinner from './FullPageSpinner';
 
 export default function SwapForm({ web3, wallet, onboard }) {
   const { register, handleSubmit, watch, setValue, errors } = useForm();
@@ -122,6 +123,9 @@ export default function SwapForm({ web3, wallet, onboard }) {
     console.log(midprice);
   }, [midprice, watchFromAmount, watchFromToken, watchToToken]);
 
+  if (!onboard) {
+    return <FullPageSpinner />;
+  }
   return (
     <Box py={12} px={12} pb={6} boxShadow="lg">
       <Heading mb={10}>Swap</Heading>
@@ -244,7 +248,7 @@ export default function SwapForm({ web3, wallet, onboard }) {
               mt={6}
               mb={10}
               disabled={Object.keys(errors).length !== 0}
-              onClick={onboard.walletSelect}
+              onClick={() => onboard.walletSelect()}
             >
               Connect Wallet
             </Button>
