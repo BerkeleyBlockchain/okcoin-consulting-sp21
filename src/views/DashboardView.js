@@ -1,7 +1,5 @@
-/* eslint-disable no-shadow */
-/* eslint-disable no-unused-vars */
 import { Box, Container, Grid, GridItem } from '@chakra-ui/react';
-import { ethers } from 'ethers';
+import Web3 from 'web3';
 import { useAtom } from 'jotai';
 import React, { useEffect, useState } from 'react';
 import ExchangesTable from '../components/ExchangesTable';
@@ -13,37 +11,30 @@ import initOnboard from '../utils/initOnboard';
 
 export default function DashboardView() {
   const [tabIndex] = useAtom(tabIndexAtom);
-  const [address, setAddress] = useState(null);
-  const [network, setNetwork] = useState(null);
-  const [balance, setBalance] = useState(null);
-  const [wallet, setWallet] = useState({});
 
+  const [, setAddress] = useState(null);
+  const [, setNetwork] = useState(null);
+  const [, setBalance] = useState(null);
+
+  const [wallet, setWallet] = useState({});
   const [onboard, setOnboard] = useState(null);
 
-  let provider;
-
   useEffect(() => {
-    const onboard = initOnboard({
+    const ob = initOnboard({
       address: setAddress,
       network: setNetwork,
       balance: setBalance,
-      wallet: (wallet) => {
-        if (wallet.provider) {
-          setWallet(wallet);
-
-          const ethersProvider = new ethers.providers.Web3Provider(wallet.provider);
-
-          provider = ethersProvider;
-
-          window.localStorage.setItem('selectedWallet', wallet.name);
+      wallet: (w) => {
+        if (w.provider) {
+          setWallet(w);
+          window.localStorage.setItem('selectedWallet', w.name);
         } else {
-          provider = null;
           setWallet({});
         }
       },
     });
 
-    setOnboard(onboard);
+    setOnboard(ob);
   }, []);
 
   useEffect(() => {
@@ -69,7 +60,7 @@ export default function DashboardView() {
         <GridItem colSpan={3}>
           <Container minWidth={500}>
             <Box bgColor="white" mt="100px">
-              <SwapForm web3={provider} wallet={wallet} onboard={onboard} />
+              <SwapForm web3={new Web3(wallet.provider)} wallet={wallet} onboard={onboard} />
             </Box>
           </Container>
         </GridItem>
