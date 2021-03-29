@@ -21,12 +21,14 @@ export default async function swapTokens(tokenIn, tokenOut, sellAmount, web3) {
   );
 
   const quote = await response.json();
+  const accounts = await web3.eth.getAccounts();
+  const accountAddress = accounts[0];
 
   // Approve ERC20 token allowance
   if (tokenIn.symbol !== 'ETH') {
     const tokenContract = new web3.eth.Contract(erc20Abi, tokenIn.address);
     const approvalRawTx = {
-      from: web3.eth.accounts[0],
+      from: accountAddress,
       gasPrice: `0x${parseInt(quote.gasPrice, 10).toString(16)}`,
       gasLimit: `0x${parseInt(quote.estimatedGas * 2, 10).toString(16)}`,
       to: tokenIn.address,
@@ -39,7 +41,7 @@ export default async function swapTokens(tokenIn, tokenOut, sellAmount, web3) {
 
   // Execute the swap
   const swapRawTx = {
-    from: web3.eth.accounts[0],
+    from: accountAddress,
     gasPrice: `0x${parseInt(quote.gasPrice, 10).toString(16)}`,
     gasLimit: `0x${parseInt(quote.estimatedGas * 2, 10).toString(16)}`,
     to: quote.to,

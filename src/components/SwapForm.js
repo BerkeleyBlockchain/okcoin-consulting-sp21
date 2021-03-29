@@ -17,16 +17,18 @@ import { useAtom } from 'jotai';
 import { useForm } from 'react-hook-form';
 import React, { useEffect, useState } from 'react';
 
-import { pricesAtom } from '../utils/atoms';
-import { estimateAllSwapPrices } from '../utils/getSwapPrice';
+import FullPageSpinner from './FullPageSpinner';
 
 import zeroXSwap from '../hooks/use0xSwap';
 import use0xPrice from '../hooks/use0xPrice';
 
+import { pricesAtom } from '../utils/atoms';
+import { estimateAllSwapPrices } from '../utils/getSwapPrice';
+
 import Tokens from '../constants/tokens';
 import Toasts from '../constants/toasts';
 
-export default function SwapForm({ web3, userAuthenticated, pressConnectWallet }) {
+export default function SwapForm({ web3, wallet, onboard }) {
   const { register, handleSubmit, watch, setValue, errors } = useForm();
   const [isLoading, setIsLoading] = useState();
   const [sellAmount, setSellAmount] = useState();
@@ -96,6 +98,9 @@ export default function SwapForm({ web3, userAuthenticated, pressConnectWallet }
       });
   };
 
+  if (!onboard) {
+    return <FullPageSpinner />;
+  }
   return (
     <Box py={12} px={12} pb={6} boxShadow="lg">
       <Heading mb={10}>Swap</Heading>
@@ -201,7 +206,7 @@ export default function SwapForm({ web3, userAuthenticated, pressConnectWallet }
         ) : null}
 
         <Center>
-          {userAuthenticated ? (
+          {wallet.provider ? (
             <Button
               w="100%"
               h="60px"
@@ -229,7 +234,7 @@ export default function SwapForm({ web3, userAuthenticated, pressConnectWallet }
               mt={6}
               mb={10}
               disabled={Object.keys(errors).length !== 0}
-              onClick={pressConnectWallet}
+              onClick={() => onboard.walletSelect()}
             >
               Connect Wallet
             </Button>
