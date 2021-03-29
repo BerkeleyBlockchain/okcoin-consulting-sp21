@@ -12,8 +12,8 @@ const getPrice = async (tokenIn, tokenOut, sellAmount) => {
   const converted = new BD(sellAmount).multiply(conversionRate);
 
   const params = new URLSearchParams({
-    sellToken: tokenIn.ticker,
-    buyToken: tokenOut.ticker,
+    sellToken: tokenIn.symbol,
+    buyToken: tokenOut.symbol,
     sellAmount: converted.getValue(),
   });
 

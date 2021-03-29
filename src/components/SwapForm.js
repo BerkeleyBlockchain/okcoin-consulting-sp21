@@ -23,8 +23,8 @@ import { estimateAllSwapPrices } from '../utils/getSwapPrice';
 import zeroXSwap from '../hooks/use0xSwap';
 import use0xPrice from '../hooks/use0xPrice';
 
-import * as Tokens from '../constants/tokens';
-import * as Toasts from '../constants/toasts';
+import Tokens from '../constants/tokens';
+import Toasts from '../constants/toasts';
 
 export default function SwapForm({ web3, userAuthenticated, pressConnectWallet }) {
   const { register, handleSubmit, watch, setValue, errors } = useForm();
@@ -46,14 +46,18 @@ export default function SwapForm({ web3, userAuthenticated, pressConnectWallet }
     sources: [],
   };
 
-  const { data: zeroExQuote } = use0xPrice(Tokens[watchTokenIn], Tokens[watchTokenOut], sellAmount);
+  const { data: zeroExQuote } = use0xPrice(
+    Tokens.data[watchTokenIn],
+    Tokens.data[watchTokenOut],
+    sellAmount
+  );
   const { price, gasPrice, estimatedGas, exchange } =
     zeroExQuote === undefined ? defaults : zeroExQuote;
 
   useEffect(() => {
     if (watchAmountIn && watchTokenIn && watchTokenOut && price !== defaults.price) {
       const n = watchAmountIn * price;
-      setValue('amountOut', n.toFixed(Tokens[watchTokenOut].decimals));
+      setValue('amountOut', n.toFixed(Tokens.data[watchTokenOut].decimals));
     }
     if (!watchAmountIn) {
       setValue('amountOut', '');
@@ -81,7 +85,7 @@ export default function SwapForm({ web3, userAuthenticated, pressConnectWallet }
     const { amountIn, tokenIn, tokenOut } = data;
     setIsLoading(true);
 
-    zeroXSwap(Tokens[tokenIn], Tokens[tokenOut], amountIn, web3)
+    zeroXSwap(Tokens.data[tokenIn], Tokens.data[tokenOut], amountIn, web3)
       .then(() => {
         setIsLoading(false);
         toast(Toasts.success);
@@ -110,9 +114,9 @@ export default function SwapForm({ web3, userAuthenticated, pressConnectWallet }
               ref={register}
               isReadOnly={isLoading}
             >
-              {Object.keys(Tokens).map((t) => (
-                <option key={Tokens[t].ticker} value={Tokens[t].ticker}>
-                  {Tokens[t].ticker}
+              {Tokens.tokens.map((t) => (
+                <option key={t} value={t}>
+                  {t}
                 </option>
               ))}
             </Select>
@@ -147,9 +151,9 @@ export default function SwapForm({ web3, userAuthenticated, pressConnectWallet }
               })}
               isReadOnly={isLoading}
             >
-              {Object.keys(Tokens).map((t) => (
-                <option key={Tokens[t].ticker} value={Tokens[t].ticker}>
-                  {Tokens[t].ticker}
+              {Tokens.tokens.map((t) => (
+                <option key={t} value={t}>
+                  {t}
                 </option>
               ))}
             </Select>
