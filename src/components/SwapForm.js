@@ -11,132 +11,92 @@ import {
   Text,
   useToast,
 } from '@chakra-ui/react';
+
 import debounce from 'debounce';
 import { useAtom } from 'jotai';
-import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import * as Toasts from '../constants/toasts';
-import * as Tokens from '../constants/tokens';
-import use0ExPrice from '../hooks/use0ExPrice';
-import use0xPrice from '../hooks/use0xPrice';
-import zeroXSwap from '../hooks/use0xSwap';
-import useGas from '../hooks/useGas';
-import useKyberPrice from '../hooks/useKyberPrice';
-import kyberSwap from '../hooks/useKyberSwap';
-import useUniswapPrice from '../hooks/useUniswapPrice';
-import uniswapSwap from '../hooks/useUniswapSwap';
-import { midpricesAtom } from '../utils/atoms';
+import React, { useEffect, useState } from 'react';
+
 import FullPageSpinner from './FullPageSpinner';
+
+import zeroXSwap from '../hooks/use0xSwap';
+import use0xPrice from '../hooks/use0xPrice';
+
+import { pricesAtom } from '../utils/atoms';
+import { estimateAllSwapPrices } from '../utils/getSwapPrice';
+
+import Tokens from '../constants/tokens';
+import Toasts from '../constants/toasts';
 
 export default function SwapForm({ web3, wallet, onboard }) {
   const { register, handleSubmit, watch, setValue, errors } = useForm();
-  const watchFromToken = watch('fromToken', '');
-  const watchToToken = watch('toToken', '');
-  const watchFromAmount = watch('fromAmount', 0);
-  const gas = useGas();
-  const [, kyberMidprice] = useKyberPrice(Tokens[watchFromToken], Tokens[watchToToken]);
-  const [, uniswapMidprice] = useUniswapPrice(Tokens[watchFromToken], Tokens[watchToToken]);
-  const { data: zeroXPrices } = use0xPrice(Tokens[watchFromToken], Tokens[watchToToken]);
+  const [isLoading, setIsLoading] = useState();
   const [sellAmount, setSellAmount] = useState();
-  const { midprice: zeroXExPrice } = use0ExPrice(
-    Tokens[watchFromToken],
-    Tokens[watchToToken],
-    sellAmount
-  );
-  console.log(zeroXExPrice);
-  const [midprices, setMidprices] = useAtom(midpricesAtom);
-  console.log('🚀 ~ file: SwapForm.js ~ line 47 ~ SwapForm ~ midprices', midprices);
-  const [isLoading, setIsLoading] = React.useState();
+  const [loadingPrices, setLoadingPrices] = useState(false);
+  const [, setPrices] = useAtom(pricesAtom);
   const toast = useToast();
 
-  // eslint-disable-next-line prefer-const
-  let midprice = zeroXExPrice; // highest midprice = cheapest Price
-  const exchange = '0x';
+  const watchTokenIn = watch('tokenIn', '');
+  const watchTokenOut = watch('tokenOut', '');
+  const watchAmountIn = watch('amountIn', 0);
 
-  async function readyToTransact() {
-    if (!wallet.provider) {
-      const walletSelected = await onboard.walletSelect();
-      if (!walletSelected) return false;
-    }
-
-    const ready = await onboard.walletCheck();
-    return ready;
-  }
-
-  const onSubmit = async (data) => {
-    const ready = await readyToTransact();
-    if (!ready) {
-      return;
-    }
-
-    const { fromAmount, fromToken, toToken } = data;
-    if (!exchange) {
-      return;
-    }
-    setIsLoading(true);
-
-    if (exchange === 'Uniswap') {
-      uniswapSwap(Tokens[fromToken], Tokens[toToken], fromAmount, web3)
-        .then(() => {
-          setIsLoading(false);
-          toast(Toasts.success);
-        })
-        .catch((error) => {
-          console.log('Error: ', error);
-          setIsLoading(false);
-          toast(Toasts.error);
-        });
-    } else if (exchange === 'Kyber') {
-      kyberSwap(Tokens[fromToken], Tokens[toToken], fromAmount, web3)
-        .then(() => {
-          setIsLoading(false);
-          toast(Toasts.success);
-        })
-        .catch((error) => {
-          console.log('Error: ', error);
-          setIsLoading(false);
-          toast(Toasts.error);
-        });
-    } else if (exchange === '0x') {
-      zeroXSwap(Tokens[fromToken], Tokens[toToken], fromAmount, web3)
-        .then(() => {
-          setIsLoading(false);
-          toast(Toasts.success);
-        })
-        .catch((error) => {
-          console.log('Error: ', error);
-          setIsLoading(false);
-          toast(Toasts.error);
-        });
-    }
-
-    console.log('🚀 ~ file: SwapForm.jsx ~ line 46 ~ onSubmit ~ Tokens[toToken]', Tokens[toToken]);
-    console.log(
-      '🚀 ~ file: SwapForm.jsx ~ line 46 ~ onSubmit ~ Tokens[fromToken]',
-      Tokens[fromToken]
-    );
+  const defaults = {
+    price: '🔄',
+    gasPrice: '🔄',
+    exchange: '🔄',
+    estimatedGas: '🔄',
+    sources: [],
   };
 
-  // Used to set global midprices
-  useEffect(() => {
-    setMidprices({ kyber: kyberMidprice, uniswap: uniswapMidprice, zeroX: zeroXPrices?.midprice });
-  }, [kyberMidprice, uniswapMidprice, zeroXPrices]);
+  const { data: zeroExQuote } = use0xPrice(
+    Tokens.data[watchTokenIn],
+    Tokens.data[watchTokenOut],
+    sellAmount
+  );
+  const { price, gasPrice, estimatedGas, exchange } =
+    zeroExQuote === undefined ? defaults : zeroExQuote;
 
-  // Used to calculate exchange amount and clear form/global midprices
   useEffect(() => {
-    if (watchFromAmount && watchFromToken && watchToToken) {
-      const n = watchFromAmount * midprice;
-      setValue('toAmount', n.toFixed(Tokens[watchFromToken].decimals));
+    if (watchAmountIn && watchTokenIn && watchTokenOut && price !== defaults.price) {
+      const n = watchAmountIn * price;
+      setValue('amountOut', n.toFixed(Tokens.data[watchTokenOut].decimals));
     }
-    if (!watchFromAmount) {
-      setValue('toAmount', '');
+    if (!watchAmountIn) {
+      setValue('amountOut', '');
     }
-    if (!watchFromToken || !watchToToken || watchFromToken === watchToToken) {
-      setMidprices({ uniswap: 0, kyber: 0, zeroX: 0 });
+    if (!watchAmountIn || !watchTokenIn || !watchTokenOut) {
+      setPrices({});
     }
+  }, [price, watchAmountIn, watchTokenIn, watchTokenOut]);
 
-    console.log(midprice);
-  }, [midprice, watchFromAmount, watchFromToken, watchToToken]);
+  useEffect(() => {
+    if (!loadingPrices) {
+      setPrices({});
+      if (sellAmount && watchTokenIn && watchTokenOut) {
+        setLoadingPrices(true);
+        estimateAllSwapPrices(watchTokenIn, watchTokenOut, sellAmount).then((values) => {
+          setPrices(values);
+          setLoadingPrices(false);
+        });
+      }
+    }
+  }, [sellAmount, watchTokenIn, watchTokenOut]);
+
+  // Execute the swap
+  const onSubmit = (data) => {
+    const { amountIn, tokenIn, tokenOut } = data;
+    setIsLoading(true);
+
+    zeroXSwap(Tokens.data[tokenIn], Tokens.data[tokenOut], amountIn, web3)
+      .then(() => {
+        setIsLoading(false);
+        toast(Toasts.success);
+      })
+      .catch(() => {
+        setIsLoading(false);
+        toast(Toasts.error);
+      });
+  };
 
   if (!onboard) {
     return <FullPageSpinner />;
@@ -153,21 +113,21 @@ export default function SwapForm({ web3, wallet, onboard }) {
             <Select
               h="52px"
               placeholder="Select"
-              name="fromToken"
+              name="tokenIn"
               size="lg"
               variant="filled"
               ref={register}
               isReadOnly={isLoading}
             >
-              {Object.keys(Tokens).map((t) => (
-                <option key={Tokens[t].ticker} value={Tokens[t].ticker}>
-                  {Tokens[t].ticker}
+              {Tokens.tokens.map((t) => (
+                <option key={t} value={t}>
+                  {t}
                 </option>
               ))}
             </Select>
             <Input
               placeholder="Enter Amount"
-              name="fromAmount"
+              name="amountIn"
               type="number"
               step="0.000000000000000001"
               size="lg"
@@ -176,7 +136,7 @@ export default function SwapForm({ web3, wallet, onboard }) {
               variant="unstyled"
               mr={6}
               isReadOnly={isLoading}
-              onChange={debounce((event) => setSellAmount(event.target.value), 5000)}
+              onChange={debounce((event) => setSellAmount(event.target.value), 1500)}
             />
           </Flex>
         </Box>
@@ -188,24 +148,24 @@ export default function SwapForm({ web3, wallet, onboard }) {
             <Select
               h="52px"
               placeholder="Select"
-              name="toToken"
+              name="tokenOut"
               size="lg"
               variant="filled"
               ref={register({
-                validate: (value) => value !== watchFromToken,
+                validate: (value) => value !== watchTokenIn,
               })}
               isReadOnly={isLoading}
             >
-              {Object.keys(Tokens).map((t) => (
-                <option key={Tokens[t].ticker} value={Tokens[t].ticker}>
-                  {Tokens[t].ticker}
+              {Tokens.tokens.map((t) => (
+                <option key={t} value={t}>
+                  {t}
                 </option>
               ))}
             </Select>
             <Input
               isReadOnly
               placeholder="To"
-              name="toAmount"
+              name="amountOut"
               type="number"
               step="0.000000000000000001"
               size="lg"
@@ -217,23 +177,34 @@ export default function SwapForm({ web3, wallet, onboard }) {
           </Flex>
         </Box>
 
-        {watchFromToken && watchToToken ? (
+        {watchTokenIn && watchTokenOut && watchAmountIn && price ? (
           <>
             <Divider mb={3} />
             <Flex>
               <Text>Rate</Text>
               <Spacer />
-              <Text>{`1 ${watchFromToken} = ${midprice} ${watchToToken}`}</Text>
+              <Text>{`1 ${watchTokenIn} = ${price} ${watchTokenOut}`}</Text>
             </Flex>
             <Flex>
-              <Text>Gas price (gwei)</Text>
+              <Text>Dex Used</Text>
               <Spacer />
-              <Text>{gas}</Text>
+              <Text style={{ fontWeight: 'bold' }}>{exchange}</Text>
+            </Flex>
+            <Flex>
+              <Text>Gas price</Text>
+              <Spacer />
+              <Text>{gasPrice} Gwei</Text>
+            </Flex>
+            <Flex>
+              <Text>Gas estimate</Text>
+              <Spacer />
+              <Text>{estimatedGas}</Text>
             </Flex>
 
             <Divider mt={3} />
           </>
         ) : null}
+
         <Center>
           {wallet.provider ? (
             <Button
@@ -269,8 +240,8 @@ export default function SwapForm({ web3, wallet, onboard }) {
             </Button>
           )}
         </Center>
-        <Text color="tomato">{errors.fromAmount ? 'From Amount is required' : null}</Text>
-        <Text color="tomato">{errors.toToken ? 'Cannot swap the same tokens' : null}</Text>
+        <Text color="tomato">{errors.amountIn ? 'Input amount is required' : null}</Text>
+        <Text color="tomato">{errors.tokenOut ? 'Cannot swap to the same token' : null}</Text>
       </form>
     </Box>
   );

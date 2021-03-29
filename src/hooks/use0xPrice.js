@@ -1,33 +1,39 @@
 import { useQuery } from 'react-query';
 import axios from 'axios';
+import BD from 'js-big-decimal';
+import Web3 from 'web3';
 
-/**
- * Gets the midprice for the given token pair as well as the inverse midprice.
- * @param tokenFrom An input token of type defined in shared/token.js
- * @param tokenTo An output token of type defined in shared/token.js
- */
-
-const getPrice = async (tokenFrom, tokenTo) => {
-  if (!tokenFrom || !tokenTo) {
+const getPrice = async (tokenIn, tokenOut, sellAmount) => {
+  if (!tokenIn || !tokenOut || !sellAmount) {
     return [];
   }
+
+  const conversionRate = new BD(`1.0e${tokenIn.decimals}`);
+  const converted = new BD(sellAmount).multiply(conversionRate);
+
   const params = new URLSearchParams({
-    sellToken: tokenFrom.ticker,
-    buyToken: tokenTo.ticker,
-    buyAmount: 10 ** tokenTo.decimals,
+    sellToken: tokenIn.symbol,
+    buyToken: tokenOut.symbol,
+    sellAmount: converted.getValue(),
   });
-  const { data } = await axios.get(`https://api.0x.org/swap/v1/quote?${params.toString()}`);
-  const midprice = 1 / data.price;
-  const inverse = data.price;
+
+  const { data } = await axios.get(`https://api.0x.org/swap/v1/price?${params.toString()}`);
+  const { price, gasPrice, estimatedGas, sources } = data;
+  const getDex = data.sources.filter((item) => item.proportion === '1')[0].name;
+  const inverse = new BD(1).divide(new BD(data.price));
+
   return {
-    exchange: '0x',
-    midprice,
-    inverse,
+    exchange: getDex,
+    sources: sources.filter((source) => source.proportion !== '0'),
+    price,
+    inverse: inverse.getValue(),
+    gasPrice: Web3.utils.fromWei(gasPrice, 'Gwei'),
+    estimatedGas: new BD(estimatedGas).getPrettyValue(),
   };
 };
 
-export default function use0xPrice(tokenFrom, tokenTo) {
-  return useQuery(['price', '0x', tokenFrom, tokenTo], () => getPrice(tokenFrom, tokenTo), {
-    enabled: !tokenFrom && !tokenTo,
-  });
+export default function use0xPrice(tokenIn, tokenOut, sellAmount) {
+  return useQuery(['price', '0x', tokenIn, tokenOut, sellAmount], () =>
+    getPrice(tokenIn, tokenOut, sellAmount)
+  );
 }
