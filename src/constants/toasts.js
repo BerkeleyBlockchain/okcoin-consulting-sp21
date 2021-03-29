@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   success: {
     title: 'Swap Success',
     description: 'Your swap was successfully executed',
