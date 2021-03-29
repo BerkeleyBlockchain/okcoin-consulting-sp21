@@ -53,7 +53,22 @@ export default function SwapForm({ web3, wallet, onboard }) {
   let midprice = zeroXExPrice; // highest midprice = cheapest Price
   const exchange = '0x';
 
-  const onSubmit = (data) => {
+  async function readyToTransact() {
+    if (!wallet.provider) {
+      const walletSelected = await onboard.walletSelect();
+      if (!walletSelected) return false;
+    }
+
+    const ready = await onboard.walletCheck();
+    return ready;
+  }
+
+  const onSubmit = async (data) => {
+    const ready = await readyToTransact();
+    if (!ready) {
+      return;
+    }
+
     const { fromAmount, fromToken, toToken } = data;
     if (!exchange) {
       return;
