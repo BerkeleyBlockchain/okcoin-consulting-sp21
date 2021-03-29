@@ -8,7 +8,7 @@ const getPrice = async (tokenIn, tokenOut, sellAmount) => {
     return [];
   }
 
-  const conversionRate = new BD(`10e${tokenIn.decimals}`);
+  const conversionRate = new BD(`1.0e${tokenIn.decimals}`);
   const converted = new BD(sellAmount).multiply(conversionRate);
 
   const params = new URLSearchParams({
