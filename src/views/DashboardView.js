@@ -1,9 +1,9 @@
-/* eslint-disable no-unused-vars */
 /* eslint-disable no-shadow */
-import { Box, Button, Container, Grid, GridItem } from '@chakra-ui/react';
+/* eslint-disable no-unused-vars */
+import { Box, Container, Grid, GridItem } from '@chakra-ui/react';
+import { ethers } from 'ethers';
 import { useAtom } from 'jotai';
 import React, { useEffect, useState } from 'react';
-import { ethers } from 'ethers';
 import ExchangesTable from '../components/ExchangesTable';
 import MyWallet from '../components/MyWallet';
 import NavBar from '../components/NavBar';
@@ -14,7 +14,6 @@ import initOnboard from '../utils/initOnboard';
 export default function DashboardView() {
   const [tabIndex] = useAtom(tabIndexAtom);
   const [address, setAddress] = useState(null);
-  console.log('🚀 ~ file: DashboardView.js ~ line 17 ~ DashboardView ~ address', address);
   const [network, setNetwork] = useState(null);
   const [balance, setBalance] = useState(null);
   const [wallet, setWallet] = useState({});
@@ -30,13 +29,11 @@ export default function DashboardView() {
       balance: setBalance,
       wallet: (wallet) => {
         if (wallet.provider) {
-          console.log('WALLET: ', wallet);
           setWallet(wallet);
 
           const ethersProvider = new ethers.providers.Web3Provider(wallet.provider);
 
           provider = ethersProvider;
-          console.log('🚀 ~ file: DashboardView.js ~ line 39 ~ useEffect ~ provider', provider);
 
           window.localStorage.setItem('selectedWallet', wallet.name);
         } else {
@@ -72,7 +69,7 @@ export default function DashboardView() {
         <GridItem colSpan={3}>
           <Container minWidth={500}>
             <Box bgColor="white" mt="100px">
-              <SwapForm web3={null} wallet={wallet} onboard={onboard} />
+              <SwapForm web3={provider} wallet={wallet} onboard={onboard} />
             </Box>
           </Container>
         </GridItem>
