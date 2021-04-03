@@ -1,7 +1,11 @@
 import Onboard from 'bnc-onboard';
 
-const networkId = 1;
-const dappId = 'e91fc253-2191-4ac1-986f-37b96bb7462a';
+const networkId =
+  process.env.NODE_ENV === 'production'
+    ? parseInt(process.env.REACT_APP_ONBOARD_NETWORKID_PROD, 10)
+    : parseInt(process.env.REACT_APP_ONBOARD_NETWORKID_DEV, 10);
+
+const dappId = process.env.REACT_APP_ONBOARD_DAPPID;
 
 export default function initOnboard(subscriptions) {
   return Onboard({

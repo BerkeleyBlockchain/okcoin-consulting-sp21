@@ -26,7 +26,13 @@ export async function estimateSwapPrice(tokenInSymbol, tokenOutSymbol, amountIn,
   });
 
   try {
-    const { data } = await axios.get(`https://api.0x.org/swap/v1/price?${params.toString()}`);
+    const { data } = await axios.get(
+      `${
+        process.env.NODE_ENV === 'production'
+          ? process.env.REACT_APP_ZEROEX_PROD
+          : process.env.REACT_APP_ZEROEX_DEV
+      }/swap/v1/price?${params.toString()}`
+    );
     return data.price;
   } catch {
     return null;

@@ -2,7 +2,10 @@
 import BD from 'js-big-decimal';
 import erc20Abi from '../constants/abis/erc20.json';
 
-const API_ENDPOINT = 'https://api.0x.org';
+const API_ENDPOINT =
+  process.env.NODE_ENV === 'production'
+    ? process.env.REACT_APP_ZEROEX_PROD
+    : process.env.REACT_APP_ZEROEX_DEV;
 
 export default async function swapTokens(tokenIn, tokenOut, sellAmount, web3) {
   // Convert sell amount to smallest units of input token
