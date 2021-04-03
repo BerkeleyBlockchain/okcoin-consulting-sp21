@@ -82,8 +82,21 @@ export default function SwapForm({ web3, wallet, onboard }) {
     }
   }, [sellAmount, watchTokenIn, watchTokenOut]);
 
+  async function readyToTransact() {
+    if (!wallet.provider) {
+      const walletSelected = await onboard.walletSelect();
+      if (!walletSelected) return false;
+    }
+
+    const ready = await onboard.walletCheck();
+    return ready;
+  }
+
   // Execute the swap
-  const onSubmit = (data) => {
+  const onSubmit = async (data) => {
+    const ready = await readyToTransact();
+    if (!ready) return;
+
     const { amountIn, tokenIn, tokenOut } = data;
     setIsLoading(true);
 
