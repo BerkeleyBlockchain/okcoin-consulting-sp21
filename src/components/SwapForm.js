@@ -18,14 +18,16 @@ import { useAtom } from 'jotai';
 import { useForm } from 'react-hook-form';
 import React, { useEffect, useState } from 'react';
 
-import { pricesAtom } from '../utils/atoms';
-import { estimateAllSwapPrices } from '../utils/getSwapPrice';
+import FullPageSpinner from './FullPageSpinner';
 
 import zeroXSwap from '../hooks/use0xSwap';
 import use0xPrice from '../hooks/use0xPrice';
 
-import * as Tokens from '../constants/tokens';
-import * as Toasts from '../constants/toasts';
+import { pricesAtom } from '../utils/atoms';
+import { estimateAllSwapPrices } from '../utils/getSwapPrice';
+
+import Tokens from '../constants/tokens';
+import Toasts from '../constants/toasts';
 
 import Select from 'react-select';
 
@@ -49,14 +51,18 @@ export default function SwapForm({ web3, userAuthenticated, pressConnectWallet }
     sources: [],
   };
 
-  const { data: zeroExQuote } = use0xPrice(Tokens[watchTokenIn], Tokens[watchTokenOut], sellAmount);
+  const { data: zeroExQuote } = use0xPrice(
+    Tokens.data[watchTokenIn],
+    Tokens.data[watchTokenOut],
+    sellAmount
+  );
   const { price, gasPrice, estimatedGas, exchange } =
     zeroExQuote === undefined ? defaults : zeroExQuote;
 
   useEffect(() => {
     if (watchAmountIn && watchTokenIn && watchTokenOut && price !== defaults.price) {
       const n = watchAmountIn * price;
-      setValue('amountOut', n.toFixed(Tokens[watchTokenOut].decimals));
+      setValue('amountOut', n.toFixed(Tokens.data[watchTokenOut].decimals));
     }
     if (!watchAmountIn) {
       setValue('amountOut', '');
@@ -80,12 +86,16 @@ export default function SwapForm({ web3, userAuthenticated, pressConnectWallet }
   }, [sellAmount, watchTokenIn, watchTokenOut]);
 
   //Display tokens
-  var tokenArray = new Array(Object.keys(Tokens).length);
+  var tokenArray = new Array(Object.keys(Tokens.tokens).length);
   var count = 0;
 
 for (var key in Tokens) {
-    tokenArray[count] = {value: Tokens[key].ticker, label:Tokens[key].ticker, icon: "public/static/token-icons/128/sushi.png"}
+    tokenArray[count] = {value: Tokens[key], label:Tokens[key], icon: "public/static/token-icons/128/sushi.png"}
     count++;
+}
+
+const handleChange = (event) => {
+  tokenIn = event.target.value
 }
 
 
@@ -94,7 +104,7 @@ for (var key in Tokens) {
     const { amountIn, tokenIn, tokenOut } = data;
     setIsLoading(true);
 
-    zeroXSwap(Tokens[tokenIn], Tokens[tokenOut], amountIn, web3)
+    zeroXSwap(Tokens.data[tokenIn], Tokens.data[tokenOut], amountIn, web3)
       .then(() => {
         setIsLoading(false);
         toast(Toasts.success);
@@ -105,6 +115,9 @@ for (var key in Tokens) {
       });
   };
 
+  if (!onboard) {
+    return <FullPageSpinner />;
+  }
   return (
     <Box py={12} px={12} pb={6} boxShadow="lg">
       <Heading mb={10}>Swap</Heading>
@@ -184,7 +197,8 @@ for (var key in Tokens) {
               return { ...provided, opacity, transition };
             }
           }}
-          options={tokenArray} />
+          options={tokenArray}
+          onChange={handleChange} />
             
             <Input
               isReadOnly
@@ -230,7 +244,7 @@ for (var key in Tokens) {
         ) : null}
 
         <Center>
-          {userAuthenticated ? (
+          {wallet.provider ? (
             <Button
               w="100%"
               h="60px"
@@ -258,7 +272,7 @@ for (var key in Tokens) {
               mt={6}
               mb={10}
               disabled={Object.keys(errors).length !== 0}
-              onClick={pressConnectWallet}
+              onClick={() => onboard.walletSelect()}
             >
               Connect Wallet
             </Button>

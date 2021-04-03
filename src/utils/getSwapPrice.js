@@ -1,7 +1,7 @@
 import axios from 'axios';
 import BD from 'js-big-decimal';
 import Exchanges from '../constants/exchanges';
-import * as Tokens from '../constants/tokens';
+import Tokens from '../constants/tokens';
 
 function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -15,7 +15,7 @@ function sleep(ms) {
  * @param exchangeName The name of the exchange to get a price quote from
  */
 export async function estimateSwapPrice(tokenInSymbol, tokenOutSymbol, amountIn, exchangeName) {
-  const conversionRate = new BD(`10e${Tokens[tokenInSymbol].decimals}`);
+  const conversionRate = new BD(`1.0e${Tokens.data[tokenInSymbol].decimals}`);
   const converted = new BD(amountIn).multiply(conversionRate);
 
   const params = new URLSearchParams({

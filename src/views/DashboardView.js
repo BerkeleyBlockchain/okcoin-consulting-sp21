@@ -1,46 +1,49 @@
-/* eslint-disable */
 import { Box, Container, Grid, GridItem } from '@chakra-ui/react';
-import { useAtom } from 'jotai';
-import React, { useState } from 'react';
-import Onboard from 'bnc-onboard';
 import Web3 from 'web3';
-
+import { useAtom } from 'jotai';
+import React, { useEffect, useState } from 'react';
 import ExchangesTable from '../components/ExchangesTable';
 import MyWallet from '../components/MyWallet';
 import NavBar from '../components/NavBar';
 import SwapForm from '../components/SwapForm';
 import { tabIndexAtom } from '../utils/atoms';
+import initOnboard from '../utils/initOnboard';
 
 export default function DashboardView() {
-  let web3;
-  //const [web3, setWeb3] = useState(null);
-  const [account, setAccount] = useState(null);
-  const [userAuthenticated, setUserAuthenticated] = useState(false);
   const [tabIndex] = useAtom(tabIndexAtom);
 
-  const onboard = Onboard({
-    dappId: 'd6aa46ce-1375-4ead-aa93-3cf905fc6dcc', // [String] The API key created by step one above
-    networkId: 1, // [Integer] The Ethereum network ID your Dapp uses.
-    subscriptions: {
-      wallet: (wallet) => {
-        web3 = new Web3(wallet.provider);
-      },
-    },
-  });
+  const [, setAddress] = useState(null);
+  const [, setNetwork] = useState(null);
+  const [, setBalance] = useState(null);
 
-  async function login() {
-    try {
-      let selected = await onboard.walletSelect();
-      if (!selected) {
-        return;
-      }
-      let ready = await onboard.walletCheck();
-      setUserAuthenticated(true);
-    } catch {
-      console.log(`Failed to load web3, accounts, or contract`);
-      console.error(error);
+  const [wallet, setWallet] = useState({});
+  const [onboard, setOnboard] = useState(null);
+
+  useEffect(() => {
+    const ob = initOnboard({
+      address: setAddress,
+      network: setNetwork,
+      balance: setBalance,
+      wallet: (w) => {
+        if (w.provider) {
+          setWallet(w);
+          window.localStorage.setItem('selectedWallet', w.name);
+        } else {
+          setWallet({});
+        }
+      },
+    });
+
+    setOnboard(ob);
+  }, []);
+
+  useEffect(() => {
+    const previouslySelectedWallet = window.localStorage.getItem('selectedWallet');
+
+    if (previouslySelectedWallet && onboard) {
+      onboard.walletSelect(previouslySelectedWallet);
     }
-  }
+  }, [onboard]);
 
   return (
     <Box bgColor="#F7F9FC" minWidth={tabIndex === 1 ? '1550px' : '1000px'}>
@@ -57,11 +60,7 @@ export default function DashboardView() {
         <GridItem colSpan={3}>
           <Container minWidth={500}>
             <Box bgColor="white" mt="100px">
-              <SwapForm
-                web3={web3}
-                userAuthenticated={userAuthenticated}
-                pressConnectWallet={login}
-              />
+              <SwapForm web3={new Web3(wallet.provider)} wallet={wallet} onboard={onboard} />
             </Box>
           </Container>
         </GridItem>
