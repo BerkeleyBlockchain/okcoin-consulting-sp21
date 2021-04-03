@@ -11,8 +11,10 @@ import {
   Spacer,
   Text,
   useToast,
+  Tooltip,
+  IconButton,
 } from '@chakra-ui/react';
-
+import { IoAlertCircle } from 'react-icons/io5';
 import debounce from 'debounce';
 import { useForm } from 'react-hook-form';
 import React, { useEffect, useState } from 'react';
@@ -181,7 +183,16 @@ export default function SwapForm({ web3, wallet, onboard }) {
             <Flex>
               <Text>Dex Used</Text>
               <Spacer />
-              <Text style={{ fontWeight: 'bold' }}>{exchange}</Text>
+              <Text style={{ fontWeight: 'bold' }}>{exchange}...</Text>
+              <Tooltip hasArrow label={`${exchange} 50% \n SushiSwap 50%`} placement="bottom">
+                <IconButton
+                  variant="outline"
+                  isRound
+                  borderColor="transparent"
+                  size="xs"
+                  icon={<IoAlertCircle size="20" />}
+                />
+              </Tooltip>
             </Flex>
             <Flex>
               <Text>Gas price</Text>
