@@ -9,10 +9,10 @@ export default function NavBar() {
     <Tabs size="lg" onChange={(index) => setTabIndex(index)}>
       <TabList>
         <Tab ml={10} pt={4} pb={4}>
-          Exchanges
+          Home
         </Tab>
         <Tab ml={4} mr={10} pt={4} pb={4}>
-          My Wallet
+          Documentation
         </Tab>
       </TabList>
     </Tabs>
