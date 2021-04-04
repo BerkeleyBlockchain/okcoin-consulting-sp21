@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import {
   Box,
   Button,
@@ -105,8 +106,9 @@ export default function SwapForm({ web3, wallet, onboard }) {
         setIsLoading(false);
         toast(Toasts.success);
       })
-      .catch(() => {
+      .catch((err) => {
         setIsLoading(false);
+        console.log(err);
         toast(Toasts.error);
       });
   };
