@@ -1,7 +1,7 @@
 import axios from 'axios';
 import BD from 'js-big-decimal';
-import Exchanges from '../constants/exchanges';
-import Tokens from '../constants/tokens';
+import Exchanges from '../../src/constants/exchanges';
+import Tokens from '../../src/constants/tokens';
 
 function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));

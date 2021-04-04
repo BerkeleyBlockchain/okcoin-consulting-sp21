@@ -17,6 +17,7 @@ import {
 } from '@chakra-ui/react';
 import React from 'react';
 import { VictoryContainer, VictoryPie } from 'victory';
+// eslint-disable-next-line import/extensions
 import CoinCard from './CoinCard';
 
 const chartData = [
