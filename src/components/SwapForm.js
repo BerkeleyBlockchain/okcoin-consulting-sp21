@@ -14,7 +14,6 @@ import {
 } from '@chakra-ui/react';
 
 import debounce from 'debounce';
-import { useAtom } from 'jotai';
 import { useForm } from 'react-hook-form';
 import React, { useEffect, useState } from 'react';
 
@@ -23,9 +22,6 @@ import FullPageSpinner from './FullPageSpinner';
 import zeroXSwap from '../hooks/use0xSwap';
 import use0xPrice from '../hooks/use0xPrice';
 
-import { pricesAtom } from '../utils/atoms';
-import { estimateAllSwapPrices } from '../utils/getSwapPrice';
-
 import Tokens from '../constants/tokens';
 import Toasts from '../constants/toasts';
 
@@ -33,8 +29,6 @@ export default function SwapForm({ web3, wallet, onboard }) {
   const { register, handleSubmit, watch, setValue, errors } = useForm();
   const [isLoading, setIsLoading] = useState();
   const [sellAmount, setSellAmount] = useState();
-  const [loadingPrices, setLoadingPrices] = useState(false);
-  const [, setPrices] = useAtom(pricesAtom);
   const toast = useToast();
 
   const watchTokenIn = watch('tokenIn', '');
@@ -65,23 +59,17 @@ export default function SwapForm({ web3, wallet, onboard }) {
     if (!watchAmountIn) {
       setValue('amountOut', '');
     }
-    if (!watchAmountIn || !watchTokenIn || !watchTokenOut) {
-      setPrices({});
-    }
   }, [price, watchAmountIn, watchTokenIn, watchTokenOut]);
 
-  useEffect(() => {
-    if (!loadingPrices) {
-      setPrices({});
-      if (sellAmount && watchTokenIn && watchTokenOut) {
-        setLoadingPrices(true);
-        estimateAllSwapPrices(watchTokenIn, watchTokenOut, sellAmount).then((values) => {
-          setPrices(values);
-          setLoadingPrices(false);
-        });
-      }
+  async function readyToTransact() {
+    if (!wallet.provider) {
+      const walletSelected = await onboard.walletSelect();
+      if (!walletSelected) return false;
     }
-  }, [sellAmount, watchTokenIn, watchTokenOut]);
+
+    const ready = await onboard.walletCheck();
+    return ready;
+  }
 
   async function readyToTransact() {
     if (!wallet.provider) {
