@@ -15,7 +15,7 @@ import {
 
 import debounce from 'debounce';
 import { useAtom } from 'jotai';
-import { useForm } from 'react-hook-form';
+import { useForm, Controller, useController } from 'react-hook-form';
 import React, { useEffect, useState } from 'react';
 
 import FullPageSpinner from './FullPageSpinner';
@@ -31,8 +31,10 @@ import Toasts from '../constants/toasts';
 
 import Select from 'react-select';
 
-export default function SwapForm({ web3, userAuthenticated, pressConnectWallet }) {
-  const { register, handleSubmit, watch, setValue, errors } = useForm();
+export default function SwapForm({ web3, userAuthenticated, pressConnectWallet, onboard, wallet }) {
+  const { register, handleSubmit, watch, setValue, errors, control} = useForm();
+
+
   const [isLoading, setIsLoading] = useState();
   const [sellAmount, setSellAmount] = useState();
   const [loadingPrices, setLoadingPrices] = useState(false);
@@ -85,17 +87,12 @@ export default function SwapForm({ web3, userAuthenticated, pressConnectWallet }
     }
   }, [sellAmount, watchTokenIn, watchTokenOut]);
 
-  //Display tokens
-  var tokenArray = new Array(Object.keys(Tokens.tokens).length);
-  var count = 0;
+//display tokens
 
-for (var key in Tokens) {
-    tokenArray[count] = {value: Tokens[key], label:Tokens[key], icon: "public/static/token-icons/128/sushi.png"}
-    count++;
-}
+var tokenArray = new Array(Tokens.tokens.length);
 
-const handleChange = (event) => {
-  tokenIn = event.target.value
+for (var i = 0; i < tokenArray.length; i++) {
+  tokenArray[i] = {value: Tokens.tokens[i], label:Tokens.tokens[i], icon: "public/static/token-icons/128/sushi.png"}
 }
 
 
@@ -127,30 +124,43 @@ const handleChange = (event) => {
         </Text>
         <Box borderWidth="1px" borderRadius="lg" mb={6}>
           <Flex>
-          <Select 
-          styles= {{
-            menu: (provided, state) => ({
-              ...provided,
-              width: 150,
-              
-              margin: 0
-            }),
+
+          <Controller
+            name="tokenIn"
+            control={control}
+            render={( {name, value, ref }) => (
+            <Select 
+              styles= {{
+                menu: (provided, state) => ({
+                ...provided,
+                width: 150,
+                
+                margin: 0
+              }),
+            
+              control: (_, { selectProps: { width }}) => ({
+                width: 170,
+                height: 52,
+                display: 'flex',
+                flexDirection: 'row',
+              }),
+            
+              singleValue: (provided, state) => {
+                const opacity = state.isDisabled ? 0.5 : 1;
+                const transition = 'opacity 300ms';
+            
+                return { ...provided, opacity, transition };
+              }
+            }}
+            options={tokenArray}
+            ref={register}
+            value={tokenArray.find(c => c.value === value)}
+            name={name}
+            
+       />)}
+    
+   />
           
-            control: (_, { selectProps: { width }}) => ({
-              width: 170,
-              height: 52,
-              display: 'flex',
-              flexDirection: 'row',
-            }),
-          
-            singleValue: (provided, state) => {
-              const opacity = state.isDisabled ? 0.5 : 1;
-              const transition = 'opacity 300ms';
-          
-              return { ...provided, opacity, transition };
-            }
-          }}
-          options={tokenArray} />
             <Input
               placeholder="Enter Amount"
               name="amountIn"
@@ -172,33 +182,43 @@ const handleChange = (event) => {
         <Box borderWidth="1px" borderRadius="lg" mb={6}>
           <Flex>
 
-          <Select 
-          
-          styles= {{
-            menu: (provided, state) => ({
-              ...provided,
-              width: 150,
-              borderBottom: '1px dotted pink',
-              color: state.selectProps.menuColor,
-              padding: 0,
-            }),
-          
-            control: (_, { selectProps: { width }}) => ({
-              width: 170,
-              height: 52,
-              display: 'flex',
-              flexDirection: 'row'
-            }),
-          
-            singleValue: (provided, state) => {
-              const opacity = state.isDisabled ? 0.5 : 1;
-              const transition = 'opacity 300ms';
-          
-              return { ...provided, opacity, transition };
-            }
-          }}
-          options={tokenArray}
-          onChange={handleChange} />
+          <Controller
+            name="tokenOut"
+            control={control}
+            render={( {name, value, ref}) => (
+            <Select 
+              styles= {{
+                menu: (provided, state) => ({
+                ...provided,
+                width: 150,
+                
+                margin: 0
+              }),
+            
+              control: (_, { selectProps: { width }}) => ({
+                width: 170,
+                height: 52,
+                display: 'flex',
+                flexDirection: 'row',
+              }),
+            
+              singleValue: (provided, state) => {
+                const opacity = state.isDisabled ? 0.5 : 1;
+                const transition = 'opacity 300ms';
+            
+                return { ...provided, opacity, transition };
+              }
+            }}
+            options={tokenArray}
+            ref={register({
+              validate: (value) => value !== watchTokenIn,
+            })}
+            value={tokenArray.find(c => c.value === value)}
+            name = {name}
+       />)}
+    
+   />
+    
             
             <Input
               isReadOnly
