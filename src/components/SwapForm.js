@@ -40,7 +40,7 @@ export default function SwapForm({ web3, wallet, onboard }) {
   const defaults = {
     price: '🔄',
     gasPrice: '🔄',
-    exchange: '🔄',
+    exchanges: '🔄',
     estimatedGas: '🔄',
     sources: [],
   };
@@ -50,7 +50,7 @@ export default function SwapForm({ web3, wallet, onboard }) {
     Tokens.data[watchTokenOut],
     sellAmount
   );
-  const { price, gasPrice, estimatedGas, exchange } =
+  const { price, gasPrice, estimatedGas, exchanges } =
     zeroExQuote === undefined ? defaults : zeroExQuote;
 
   useEffect(() => {
@@ -92,7 +92,7 @@ export default function SwapForm({ web3, wallet, onboard }) {
         toast(Toasts.error);
       });
   };
-
+  console.log(exchanges);
   if (!onboard) {
     return <FullPageSpinner />;
   }
@@ -183,8 +183,23 @@ export default function SwapForm({ web3, wallet, onboard }) {
             <Flex>
               <Text>Dex Used</Text>
               <Spacer />
-              <Text style={{ fontWeight: 'bold' }}>{exchange}...</Text>
-              <Tooltip hasArrow label={`${exchange} 50% \n SushiSwap 50%`} placement="bottom">
+              {typeof exchanges === 'object' && (
+                <Text style={{ fontWeight: 'bold' }}>
+                  {exchanges[0].name} {`${parseFloat(exchanges[0].proportion * 100)}%`}
+                </Text>
+              )}
+              <Tooltip
+                hasArrow
+                label={
+                  typeof exchanges === 'object' &&
+                  exchanges.map((item) => (
+                    <Text style={{ fontWeight: 'bold' }}>
+                      {item.name} {`${parseFloat(item.proportion * 100)}%`}
+                    </Text>
+                  ))
+                }
+                placement="bottom"
+              >
                 <IconButton
                   variant="outline"
                   isRound
