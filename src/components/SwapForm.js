@@ -7,7 +7,6 @@ import {
   Flex,
   Heading,
   Input,
-  
   Spacer,
   Text,
   useToast,
@@ -15,7 +14,7 @@ import {
 
 import debounce from 'debounce';
 import { useAtom } from 'jotai';
-import { useForm, Controller, useController } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 import React, { useEffect, useState } from 'react';
 
 import FullPageSpinner from './FullPageSpinner';
@@ -33,7 +32,6 @@ import Select from 'react-select';
 
 export default function SwapForm({ web3, userAuthenticated, pressConnectWallet, onboard, wallet }) {
   const { register, handleSubmit, watch, setValue, errors, control} = useForm();
-
 
   const [isLoading, setIsLoading] = useState();
   const [sellAmount, setSellAmount] = useState();
@@ -54,17 +52,18 @@ export default function SwapForm({ web3, userAuthenticated, pressConnectWallet, 
   };
 
   const { data: zeroExQuote } = use0xPrice(
-    Tokens.data[watchTokenIn],
-    Tokens.data[watchTokenOut],
+    Tokens.data[watchTokenIn.value],
+    Tokens.data[watchTokenOut.value],
     sellAmount
   );
   const { price, gasPrice, estimatedGas, exchange } =
     zeroExQuote === undefined ? defaults : zeroExQuote;
 
   useEffect(() => {
+    console.log(watchTokenIn, watchTokenOut)
     if (watchAmountIn && watchTokenIn && watchTokenOut && price !== defaults.price) {
       const n = watchAmountIn * price;
-      setValue('amountOut', n.toFixed(Tokens.data[watchTokenOut].decimals));
+      setValue('amountOut', n.toFixed(Tokens.data[watchTokenOut.value].decimals));
     }
     if (!watchAmountIn) {
       setValue('amountOut', '');
@@ -72,20 +71,20 @@ export default function SwapForm({ web3, userAuthenticated, pressConnectWallet, 
     if (!watchAmountIn || !watchTokenIn || !watchTokenOut) {
       setPrices({});
     }
-  }, [price, watchAmountIn, watchTokenIn, watchTokenOut]);
+  }, [price, watchAmountIn, watchTokenIn.value, watchTokenOut.value]);
 
   useEffect(() => {
     if (!loadingPrices) {
       setPrices({});
       if (sellAmount && watchTokenIn && watchTokenOut) {
         setLoadingPrices(true);
-        estimateAllSwapPrices(watchTokenIn, watchTokenOut, sellAmount).then((values) => {
+        estimateAllSwapPrices(watchTokenIn.value, watchTokenOut.value, sellAmount).then((values) => {
           setPrices(values);
           setLoadingPrices(false);
         });
       }
     }
-  }, [sellAmount, watchTokenIn, watchTokenOut]);
+  }, [sellAmount, watchTokenIn.value, watchTokenOut.value]);
 
 //display tokens
 
@@ -128,7 +127,9 @@ for (var i = 0; i < tokenArray.length; i++) {
           <Controller
             name="tokenIn"
             control={control}
-            render={( {name, value, ref }) => (
+            
+            render={( {onChange, name, value, ref 
+          }) => (
             <Select 
               styles= {{
                 menu: (provided, state) => ({
@@ -153,9 +154,10 @@ for (var i = 0; i < tokenArray.length; i++) {
               }
             }}
             options={tokenArray}
-            ref={register}
-            value={tokenArray.find(c => c.value === value)}
+            inputRef={ref}
+            value={value}
             name={name}
+            onChange={onChange}
             
        />)}
     
@@ -183,9 +185,10 @@ for (var i = 0; i < tokenArray.length; i++) {
           <Flex>
 
           <Controller
+          
             name="tokenOut"
             control={control}
-            render={( {name, value, ref}) => (
+            render={( {onChange, name, value, ref}) => (
             <Select 
               styles= {{
                 menu: (provided, state) => ({
@@ -210,11 +213,10 @@ for (var i = 0; i < tokenArray.length; i++) {
               }
             }}
             options={tokenArray}
-            ref={register({
-              validate: (value) => value !== watchTokenIn,
-            })}
-            value={tokenArray.find(c => c.value === value)}
+            inputRef={ref}
+            value={ value}
             name = {name}
+            onChange={onChange}
        />)}
     
    />
@@ -241,7 +243,7 @@ for (var i = 0; i < tokenArray.length; i++) {
             <Flex>
               <Text>Rate</Text>
               <Spacer />
-              <Text>{`1 ${watchTokenIn} = ${price} ${watchTokenOut}`}</Text>
+              <Text>{`1 ${watchTokenIn.value} = ${price} ${watchTokenOut.value}`}</Text>
             </Flex>
             <Flex>
               <Text>Dex Used</Text>
