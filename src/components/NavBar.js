@@ -44,12 +44,12 @@ import React from 'react';
 
 const NAV_ITEMS = [
   {
-    label: 'Swap',
+    label: 'Home',
     children: [
       {
-        label: 'Sublabel',
-        subLabel: 'Subsublabel',
-        href: '#',
+        label: 'Swap',
+        subLabel: 'Execute swaps between your favorite ERC20 tokens',
+        href: '/',
       },
     ],
   },
@@ -57,8 +57,8 @@ const NAV_ITEMS = [
     label: 'Documentation',
     children: [
       {
-        label: 'Sublabel',
-        subLabel: 'Subsublabel',
+        label: 'Guides',
+        subLabel: 'Learn more about split order routing',
         href: '#',
       },
     ],
