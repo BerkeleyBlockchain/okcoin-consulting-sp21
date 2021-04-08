@@ -65,7 +65,7 @@ const NAV_ITEMS = [
   },
 ];
 
-export default function Navbar({ address }) {
+export default function Navbar({ address, onboard }) {
   const { isOpen, onToggle } = useDisclosure();
 
   return (
@@ -106,6 +106,9 @@ export default function Navbar({ address }) {
             </Tag>
             <Heading size="sm">ETH</Heading>
           </Flex> */}
+          {process.env.NODE_ENV === 'development' ? (
+            <Button onClick={() => onboard.walletReset()}>Reset Wallet</Button>
+          ) : null}
           {address ? (
             <Button size="md" colorScheme="blue" variant="solid">
               {`${address?.substr(0, 10)}...`}
