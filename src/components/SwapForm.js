@@ -210,7 +210,7 @@ export default function SwapForm({ web3, wallet, onboard }) {
               type="submit"
               mt={6}
               mb={10}
-              disabled={Object.keys(errors).length !== 0}
+              disabled={isLoading || Object.keys(errors).length !== 0}
               loadingText="Executing Swap"
               isLoading={isLoading}
             >
