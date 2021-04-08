@@ -13,4 +13,11 @@ export default {
     duration: 9000,
     isClosable: true,
   },
+  error_insufficient_liquidity: {
+    title: 'Validation Error',
+    description: 'INSUFFICIENT LIQUIDITY',
+    status: 'error',
+    duration: 9000,
+    isClosable: true,
+  },
 };

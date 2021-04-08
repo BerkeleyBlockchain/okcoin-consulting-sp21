@@ -29,6 +29,7 @@ export default function SwapForm({ web3, wallet, onboard }) {
   const { register, handleSubmit, watch, setValue, errors } = useForm();
   const [isLoading, setIsLoading] = useState();
   const [sellAmount, setSellAmount] = useState();
+  const [, setSwapDisable] = useState(true);
   const toast = useToast();
 
   const watchTokenIn = watch('tokenIn', '');
@@ -48,16 +49,24 @@ export default function SwapForm({ web3, wallet, onboard }) {
     Tokens.data[watchTokenOut],
     sellAmount
   );
-  const { price, gasPrice, estimatedGas, exchange } =
+
+  const { price, gasPrice, estimatedGas, exchange, tokenError } =
     zeroExQuote === undefined ? defaults : zeroExQuote;
 
   useEffect(() => {
-    if (watchAmountIn && watchTokenIn && watchTokenOut && price !== defaults.price) {
-      const n = watchAmountIn * price;
-      setValue('amountOut', n.toFixed(Tokens.data[watchTokenOut].decimals));
-    }
-    if (!watchAmountIn) {
-      setValue('amountOut', '');
+    console.log('TOKEN ERROR', tokenError);
+    if (tokenError) {
+      setSwapDisable(true);
+      toast(Toasts.error_insufficient_liquidity);
+    } else {
+      if (watchAmountIn && watchTokenIn && watchTokenOut && price !== defaults.price) {
+        const n = watchAmountIn * price;
+        setValue('amountOut', n.toFixed(Tokens.data[watchTokenOut].decimals));
+      }
+      if (!watchAmountIn) {
+        setValue('amountOut', '');
+      }
+      setSwapDisable(false);
     }
   }, [price, watchAmountIn, watchTokenIn, watchTokenOut]);
 
@@ -205,12 +214,13 @@ export default function SwapForm({ web3, wallet, onboard }) {
               h="60px"
               _hover={{ backgroundColor: '#194BB6' }}
               backgroundColor="#205FEC"
+              // isDisabled={swapDisable}
               color="white"
               size="lg"
               type="submit"
               mt={6}
               mb={10}
-              disabled={Object.keys(errors).length !== 0}
+              disabled={isLoading || Object.keys(errors).length !== 0}
               loadingText="Executing Swap"
               isLoading={isLoading}
             >
@@ -226,7 +236,7 @@ export default function SwapForm({ web3, wallet, onboard }) {
               size="lg"
               mt={6}
               mb={10}
-              disabled={Object.keys(errors).length !== 0}
+              // disabled={Object.keys(errors).length !== 0}
               onClick={() => onboard.walletSelect()}
             >
               Connect Wallet
