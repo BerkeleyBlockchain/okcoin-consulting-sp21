@@ -12,6 +12,7 @@ import {
   Text,
   useToast,
   Tooltip,
+  Image,
   IconButton,
 } from '@chakra-ui/react';
 import { IoAlertCircle } from 'react-icons/io5';
@@ -185,7 +186,8 @@ export default function SwapForm({ web3, wallet, onboard }) {
               <Spacer />
               {typeof exchanges === 'object' && (
                 <Text style={{ fontWeight: 'bold' }}>
-                  {exchanges[0].name} {`${parseFloat(exchanges[0].proportion * 100)}%`}
+                  {exchanges[0].name && exchanges[0].name}{' '}
+                  {`${parseFloat(exchanges[0].proportion * 100)}%`}
                 </Text>
               )}
               <Tooltip
@@ -193,9 +195,17 @@ export default function SwapForm({ web3, wallet, onboard }) {
                 label={
                   typeof exchanges === 'object' &&
                   exchanges.map((item) => (
-                    <Text style={{ fontWeight: 'bold' }}>
-                      {item.name} {`${parseFloat(item.proportion * 100)}%`}
-                    </Text>
+                    <Flex alignItems="center">
+                      <Image
+                        src="/static/exchange-icons/32/uniswap.png"
+                        alt={item.name}
+                        width="25px"
+                        height="25px"
+                      />
+                      <Text style={{ fontWeight: 'bold', marginLeft: 5 }}>
+                        {item.name} {`${parseFloat(item.proportion * 100)}%`}
+                      </Text>
+                    </Flex>
                   ))
                 }
                 placement="bottom"
