@@ -27,6 +27,7 @@ import use0xPrice from '../hooks/use0xPrice';
 
 import Tokens from '../constants/tokens';
 import Toasts from '../constants/toasts';
+import Exchanges from '../constants/exchanges';
 
 export default function SwapForm({ web3, wallet, onboard }) {
   const { register, handleSubmit, watch, setValue, errors } = useForm();
@@ -192,12 +193,14 @@ export default function SwapForm({ web3, wallet, onboard }) {
               )}
               <Tooltip
                 hasArrow
+                bgColor="#333333"
+                padding="10px"
                 label={
                   typeof exchanges === 'object' &&
                   exchanges.map((item) => (
                     <Flex alignItems="center">
                       <Image
-                        src="/static/exchange-icons/32/uniswap.png"
+                        src={Exchanges.data[item.name].iconSVG}
                         alt={item.name}
                         width="25px"
                         height="25px"
