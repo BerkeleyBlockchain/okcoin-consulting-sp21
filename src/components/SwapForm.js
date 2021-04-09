@@ -139,11 +139,25 @@ for (var i = 0; i < tokenArray.length; i++) {
                 margin: 0
               }),
             
+              dropdownIndicator: (provided, state) => ({
+                ...provided,
+                color: '#A0AEBF',
+              }),
+              
               control: (_, { selectProps: { width }}) => ({
                 width: 170,
                 height: 52,
                 display: 'flex',
                 flexDirection: 'row',
+                marginLeft: 6,
+                color: '#A0AEBF',
+              }),
+
+              placeholder: (provided, state) => ({
+                ...provided,
+                color: '#A0AEBF',
+                fontSize: 19,
+                marginTop: 1,
               }),
             
               singleValue: (provided, state) => {
@@ -194,15 +208,29 @@ for (var i = 0; i < tokenArray.length; i++) {
                 menu: (provided, state) => ({
                 ...provided,
                 width: 150,
+                margin: 0,
                 
-                margin: 0
               }),
-            
+
+              dropdownIndicator: (provided, state) => ({
+                ...provided,
+                color: '#A0AEBF',
+              }),
+
               control: (_, { selectProps: { width }}) => ({
                 width: 170,
                 height: 52,
                 display: 'flex',
                 flexDirection: 'row',
+                marginLeft: 6,
+                color: '#A0AEBF',
+              }),
+
+              placeholder: (provided, state) => ({
+                ...provided,
+                color: '#A0AEBF',
+                fontSize: 19,
+                marginTop: 1,
               }),
             
               singleValue: (provided, state) => {
