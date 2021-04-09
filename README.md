@@ -13,6 +13,7 @@ yarn install
 Requires a .env file in the project root with the following contents:
 
 ```
+REACT_APP_ENV=production
 REACT_APP_ONBOARD_DAPPID=XXXXXXXXXXXXXXXXXXXX
 REACT_APP_ONBOARD_NETWORKID_PROD=1
 REACT_APP_ONBOARD_NETWORKID_DEV=42
