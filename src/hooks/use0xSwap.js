@@ -3,7 +3,7 @@ import BD from 'js-big-decimal';
 import erc20Abi from '../constants/abis/erc20.json';
 
 const API_ENDPOINT =
-  process.env.NODE_ENV === 'production'
+  process.env.REACT_APP_ENV === 'production'
     ? process.env.REACT_APP_ZEROEX_PROD
     : process.env.REACT_APP_ZEROEX_DEV;
 
