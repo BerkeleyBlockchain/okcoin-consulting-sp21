@@ -6,7 +6,7 @@ import SwapForm from '../components/SwapForm';
 import initOnboard from '../utils/initOnboard';
 
 export default function DashboardView() {
-  const [, setAddress] = useState(null);
+  const [address, setAddress] = useState(null);
   const [, setNetwork] = useState(null);
   const [, setBalance] = useState(null);
 
@@ -41,7 +41,7 @@ export default function DashboardView() {
 
   return (
     <Box bgColor="#F7F9FC" height="100vh" width="100%">
-      <NavBar />
+      <NavBar address={address} />
       <Grid templateColumns="repeat(7, 1fr)">
         <GridItem colSpan={12}>
           <Container minWidth={500}>
