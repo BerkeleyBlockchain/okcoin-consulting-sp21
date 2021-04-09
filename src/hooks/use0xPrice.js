@@ -25,11 +25,11 @@ const getPrice = async (tokenIn, tokenOut, sellAmount) => {
     }/swap/v1/price?${params.toString()}`
   );
   const { price, gasPrice, estimatedGas, sources } = data;
-  const getDex = data.sources.filter((item) => item.proportion === '1')[0].name;
+  const getDex = data.sources.filter((item) => item.proportion !== '0');
   const inverse = new BD(1).divide(new BD(data.price));
 
   return {
-    exchange: getDex,
+    exchanges: getDex,
     sources: sources.filter((source) => source.proportion !== '0'),
     price,
     inverse: inverse.getValue(),
