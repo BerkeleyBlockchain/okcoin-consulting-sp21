@@ -19,7 +19,7 @@ const getPrice = async (tokenIn, tokenOut, sellAmount) => {
 
   const { data } = await axios.get(
     `${
-      process.env.NODE_ENV === 'production'
+      process.env.REACT_APP_ENV === 'production'
         ? process.env.REACT_APP_ZEROEX_PROD
         : process.env.REACT_APP_ZEROEX_DEV
     }/swap/v1/price?${params.toString()}`
