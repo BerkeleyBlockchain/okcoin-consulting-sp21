@@ -1,25 +1,4 @@
-/* eslint-disable */
-// import { Tab, TabList, Tabs } from '@chakra-ui/react';
-// import { useAtom } from 'jotai';
-// import React from 'react';
-// import { tabIndexAtom } from '../utils/atoms';
-
-// export default function NavBar() {
-//   const [, setTabIndex] = useAtom(tabIndexAtom);
-//   return (
-//     <Tabs size="lg" onChange={(index) => setTabIndex(index)}>
-//       <TabList>
-//         <Tab ml={10} pt={4} pb={4}>
-//           Home
-//         </Tab>
-//         <Tab ml={4} mr={10} pt={4} pb={4}>
-//           Documentation
-//         </Tab>
-//       </TabList>
-//     </Tabs>
-//   );
-// }
-
+/*eslint-disable*/
 import { ChevronDownIcon, ChevronRightIcon, CloseIcon, HamburgerIcon } from '@chakra-ui/icons';
 import {
   Box,
@@ -107,8 +86,8 @@ export default function Navbar({ address }) {
             <Heading size="sm">ETH</Heading>
           </Flex> */}
           {address ? (
-            <Button size="md" colorScheme="blue" variant="solid">
-              {`${address?.substr(0, 10)}...`}
+            <Button size="md" colorScheme="blue" variant="solid"  fontFamily="Poppins">
+               {`${address?.substr(0, 6)}...` + address?.substr(address.length - 4)}
             </Button>
           ) : null}
         </Stack>
