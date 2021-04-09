@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import {
   Box,
   Button,
@@ -106,12 +107,12 @@ export default function SwapForm({ web3, onboard, wallet }) {
         toast(Toasts.error);
       });
   };
-  console.log(exchanges);
+
   if (!onboard) {
     return <FullPageSpinner />;
   }
   return (
-    <Box py={12} px={12} pb={6} boxShadow="lg" bgColor="#fff" borderRadius={10}>
+    <Box py={12} px={12} pb={6} boxShadow="lg" bgColor="#fff" borderRadius={20}>
       <Heading fontFamily="Poppins" fontWeight="700" mb={10}>
         Swap
       </Heading>
