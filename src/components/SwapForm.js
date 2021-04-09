@@ -183,44 +183,51 @@ export default function SwapForm({ web3, wallet, onboard }) {
               <Text>{`1 ${watchTokenIn} = ${price} ${watchTokenOut}`}</Text>
             </Flex>
             <Flex>
-              <Text>Dex Used</Text>
+              <Text>Source</Text>
               <Spacer />
-              {typeof exchanges === 'object' && (
-                <Text style={{ fontWeight: 'bold' }}>
-                  {exchanges[0].name && exchanges[0].name}{' '}
-                  {`${parseFloat(exchanges[0].proportion * 100)}%`}
-                </Text>
+              {typeof exchanges === 'object' ? (
+                <>
+                  <Text style={{ fontWeight: 'bold' }}>
+                    {exchanges.length === 1
+                      ? Exchanges.data[exchanges[0].name].name
+                      : 'Split Routing'}
+                  </Text>
+                  <Tooltip
+                    hasArrow
+                    bgColor="#333333"
+                    padding="10px"
+                    label={
+                      typeof exchanges === 'object' &&
+                      exchanges.map((item) => (
+                        <Flex alignItems="center">
+                          <Image
+                            src={Exchanges.data[item.name].iconSVG}
+                            alt={item.name}
+                            width="25px"
+                            height="25px"
+                            m={1}
+                          />
+                          <Text style={{ fontWeight: 'bold', marginLeft: 5 }}>
+                            {Exchanges.data[item.name].name}
+                            {` (${parseFloat(item.proportion * 100).toPrecision(3)}%)`}
+                          </Text>
+                        </Flex>
+                      ))
+                    }
+                    placement="bottom"
+                  >
+                    <IconButton
+                      variant="outline"
+                      isRound
+                      borderColor="transparent"
+                      size="xs"
+                      icon={<IoAlertCircle size="20" />}
+                    />
+                  </Tooltip>
+                </>
+              ) : (
+                <Text>{defaults.exchanges}</Text>
               )}
-              <Tooltip
-                hasArrow
-                bgColor="#333333"
-                padding="10px"
-                label={
-                  typeof exchanges === 'object' &&
-                  exchanges.map((item) => (
-                    <Flex alignItems="center">
-                      <Image
-                        src={Exchanges.data[item.name].iconSVG}
-                        alt={item.name}
-                        width="25px"
-                        height="25px"
-                      />
-                      <Text style={{ fontWeight: 'bold', marginLeft: 5 }}>
-                        {item.name} {`${parseFloat(item.proportion * 100)}%`}
-                      </Text>
-                    </Flex>
-                  ))
-                }
-                placement="bottom"
-              >
-                <IconButton
-                  variant="outline"
-                  isRound
-                  borderColor="transparent"
-                  size="xs"
-                  icon={<IoAlertCircle size="20" />}
-                />
-              </Tooltip>
             </Flex>
             <Flex>
               <Text>Gas price</Text>
