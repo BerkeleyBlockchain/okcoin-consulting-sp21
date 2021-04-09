@@ -198,21 +198,23 @@ export default function SwapForm({ web3, wallet, onboard }) {
                     padding="10px"
                     label={
                       typeof exchanges === 'object' &&
-                      exchanges.map((item) => (
-                        <Flex alignItems="center">
-                          <Image
-                            src={Exchanges.data[item.name].iconSVG}
-                            alt={item.name}
-                            width="25px"
-                            height="25px"
-                            m={1}
-                          />
-                          <Text style={{ fontWeight: 'bold', marginLeft: 5 }}>
-                            {Exchanges.data[item.name].name}
-                            {` (${parseFloat(item.proportion * 100).toPrecision(3)}%)`}
-                          </Text>
-                        </Flex>
-                      ))
+                      exchanges
+                        .sort((a, b) => parseFloat(b.proportion) - parseFloat(a.proportion))
+                        .map((item) => (
+                          <Flex alignItems="center">
+                            <Image
+                              src={Exchanges.data[item.name].iconSVG}
+                              alt={item.name}
+                              width="25px"
+                              height="25px"
+                              m={1}
+                            />
+                            <Text style={{ fontWeight: 'bold', marginLeft: 5 }}>
+                              {Exchanges.data[item.name].name}
+                              {` (${parseFloat(item.proportion * 100).toFixed(2)}%)`}
+                            </Text>
+                          </Flex>
+                        ))
                     }
                     placement="bottom"
                   >
