@@ -45,7 +45,7 @@ export default function DashboardView() {
       <Grid templateColumns="repeat(7, 1fr)">
         <GridItem colSpan={12}>
           <Container minWidth={500}>
-            <Box bgColor="white" mt="100px">
+            <Box mt="100px">
               <SwapForm web3={new Web3(wallet.provider)} wallet={wallet} onboard={onboard} />
             </Box>
           </Container>

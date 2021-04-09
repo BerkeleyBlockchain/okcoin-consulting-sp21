@@ -107,8 +107,8 @@ export default function Navbar({ address }) {
             <Heading size="sm">ETH</Heading>
           </Flex> */}
           {address ? (
-            <Button size="md" colorScheme="blue" variant="solid">
-              {`${address?.substr(0, 10)}...`}
+            <Button size="md" colorScheme="blue" variant="solid" fontFamily="Poppins">
+              {`${address?.substr(0, 6)}...` + address?.substr(address.length - 4)}
             </Button>
           ) : null}
         </Stack>
