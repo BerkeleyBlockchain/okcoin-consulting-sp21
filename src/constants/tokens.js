@@ -803,4 +803,4 @@ const tokensMainnet = {
   ],
 };
 
-export default process.env.NODE_ENV === 'production' ? tokensMainnet : tokensTestnet;
+export default process.env.REACT_APP_ENV === 'production' ? tokensMainnet : tokensTestnet;
