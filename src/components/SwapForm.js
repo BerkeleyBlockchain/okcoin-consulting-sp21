@@ -1,4 +1,3 @@
-/* eslint-disable */
 import {
   Box,
   Button,
@@ -17,6 +16,8 @@ import { useAtom } from 'jotai';
 import { useForm, Controller } from 'react-hook-form';
 import React, { useEffect, useState } from 'react';
 
+import Select from 'react-select';
+
 import FullPageSpinner from './FullPageSpinner';
 
 import zeroXSwap from '../hooks/use0xSwap';
@@ -28,10 +29,8 @@ import { estimateAllSwapPrices } from '../utils/getSwapPrice';
 import Tokens from '../constants/tokens';
 import Toasts from '../constants/toasts';
 
-import Select from 'react-select';
-
-export default function SwapForm({ web3, userAuthenticated, pressConnectWallet, onboard, wallet }) {
-  const { register, handleSubmit, watch, setValue, errors, control} = useForm();
+export default function SwapForm({ web3, onboard, wallet }) {
+  const { register, handleSubmit, watch, setValue, errors, control } = useForm();
 
   const [isLoading, setIsLoading] = useState();
   const [sellAmount, setSellAmount] = useState();
@@ -59,8 +58,18 @@ export default function SwapForm({ web3, userAuthenticated, pressConnectWallet, 
   const { price, gasPrice, estimatedGas, exchange } =
     zeroExQuote === undefined ? defaults : zeroExQuote;
 
+  // display tokens
+  const tokenArray = new Array(Tokens.tokens.length);
+
+  for (let i = 0; i < tokenArray.length; i += 1) {
+    tokenArray[i] = {
+      value: Tokens.tokens[i],
+      label: Tokens.tokens[i],
+      icon: 'public/static/token-icons/128/sushi.png',
+    };
+  }
+
   useEffect(() => {
-    console.log(watchTokenIn, watchTokenOut)
     if (watchAmountIn && watchTokenIn && watchTokenOut && price !== defaults.price) {
       const n = watchAmountIn * price;
       setValue('amountOut', n.toFixed(Tokens.data[watchTokenOut.value].decimals));
@@ -78,22 +87,15 @@ export default function SwapForm({ web3, userAuthenticated, pressConnectWallet, 
       setPrices({});
       if (sellAmount && watchTokenIn && watchTokenOut) {
         setLoadingPrices(true);
-        estimateAllSwapPrices(watchTokenIn.value, watchTokenOut.value, sellAmount).then((values) => {
-          setPrices(values);
-          setLoadingPrices(false);
-        });
+        estimateAllSwapPrices(watchTokenIn.value, watchTokenOut.value, sellAmount).then(
+          (values) => {
+            setPrices(values);
+            setLoadingPrices(false);
+          }
+        );
       }
     }
   }, [sellAmount, watchTokenIn.value, watchTokenOut.value]);
-
-//display tokens
-
-var tokenArray = new Array(Tokens.tokens.length);
-
-for (var i = 0; i < tokenArray.length; i++) {
-  tokenArray[i] = {value: Tokens.tokens[i], label:Tokens.tokens[i], icon: "public/static/token-icons/128/sushi.png"}
-}
-
 
   // Execute the swap
   const onSubmit = (data) => {
@@ -123,60 +125,55 @@ for (var i = 0; i < tokenArray.length; i++) {
         </Text>
         <Box borderWidth="1px" borderRadius="lg" mb={6}>
           <Flex>
+            <Controller
+              name="tokenIn"
+              control={control}
+              render={({ onChange, name, value, ref }) => (
+                <Select
+                  styles={{
+                    menu: (provided) => ({
+                      ...provided,
+                      width: 150,
+                      margin: 0,
+                    }),
 
-          <Controller
-            name="tokenIn"
-            control={control}
-            
-            render={( {onChange, name, value, ref 
-          }) => (
-            <Select 
-              styles= {{
-                menu: (provided, state) => ({
-                ...provided,
-                width: 150,
-                
-                margin: 0
-              }),
-            
-              dropdownIndicator: (provided, state) => ({
-                ...provided,
-                color: '#A0AEBF',
-              }),
-              
-              control: (_, { selectProps: { width }}) => ({
-                width: 170,
-                height: 52,
-                display: 'flex',
-                flexDirection: 'row',
-                marginLeft: 6,
-                color: '#A0AEBF',
-              }),
+                    dropdownIndicator: (provided) => ({
+                      ...provided,
+                      color: '#A0AEBF',
+                    }),
 
-              placeholder: (provided, state) => ({
-                ...provided,
-                color: '#A0AEBF',
-                fontSize: 19,
-                marginTop: 1,
-              }),
-            
-              singleValue: (provided, state) => {
-                const opacity = state.isDisabled ? 0.5 : 1;
-                const transition = 'opacity 300ms';
-            
-                return { ...provided, opacity, transition };
-              }
-            }}
-            options={tokenArray}
-            inputRef={ref}
-            value={value}
-            name={name}
-            onChange={onChange}
-            
-       />)}
-    
-   />
-          
+                    control: () => ({
+                      width: 170,
+                      height: 52,
+                      display: 'flex',
+                      flexDirection: 'row',
+                      marginLeft: 6,
+                      color: '#A0AEBF',
+                    }),
+
+                    placeholder: (provided) => ({
+                      ...provided,
+                      color: '#A0AEBF',
+                      fontSize: 19,
+                      marginTop: 1,
+                    }),
+
+                    singleValue: (provided, state) => {
+                      const opacity = state.isDisabled ? 0.5 : 1;
+                      const transition = 'opacity 300ms';
+
+                      return { ...provided, opacity, transition };
+                    },
+                  }}
+                  options={tokenArray}
+                  inputRef={ref}
+                  value={value}
+                  name={name}
+                  onChange={onChange}
+                />
+              )}
+            />
+
             <Input
               placeholder="Enter Amount"
               name="amountIn"
@@ -197,59 +194,55 @@ for (var i = 0; i < tokenArray.length; i++) {
         </Text>
         <Box borderWidth="1px" borderRadius="lg" mb={6}>
           <Flex>
+            <Controller
+              name="tokenOut"
+              control={control}
+              render={({ onChange, name, value, ref }) => (
+                <Select
+                  styles={{
+                    menu: (provided) => ({
+                      ...provided,
+                      width: 150,
+                      margin: 0,
+                    }),
 
-          <Controller
-          
-            name="tokenOut"
-            control={control}
-            render={( {onChange, name, value, ref}) => (
-            <Select 
-              styles= {{
-                menu: (provided, state) => ({
-                ...provided,
-                width: 150,
-                margin: 0,
-                
-              }),
+                    dropdownIndicator: (provided) => ({
+                      ...provided,
+                      color: '#A0AEBF',
+                    }),
 
-              dropdownIndicator: (provided, state) => ({
-                ...provided,
-                color: '#A0AEBF',
-              }),
+                    control: () => ({
+                      width: 170,
+                      height: 52,
+                      display: 'flex',
+                      flexDirection: 'row',
+                      marginLeft: 6,
+                      color: '#A0AEBF',
+                    }),
 
-              control: (_, { selectProps: { width }}) => ({
-                width: 170,
-                height: 52,
-                display: 'flex',
-                flexDirection: 'row',
-                marginLeft: 6,
-                color: '#A0AEBF',
-              }),
+                    placeholder: (provided) => ({
+                      ...provided,
+                      color: '#A0AEBF',
+                      fontSize: 19,
+                      marginTop: 1,
+                    }),
 
-              placeholder: (provided, state) => ({
-                ...provided,
-                color: '#A0AEBF',
-                fontSize: 19,
-                marginTop: 1,
-              }),
-            
-              singleValue: (provided, state) => {
-                const opacity = state.isDisabled ? 0.5 : 1;
-                const transition = 'opacity 300ms';
-            
-                return { ...provided, opacity, transition };
-              }
-            }}
-            options={tokenArray}
-            inputRef={ref}
-            value={ value}
-            name = {name}
-            onChange={onChange}
-       />)}
-    
-   />
-    
-            
+                    singleValue: (provided, state) => {
+                      const opacity = state.isDisabled ? 0.5 : 1;
+                      const transition = 'opacity 300ms';
+
+                      return { ...provided, opacity, transition };
+                    },
+                  }}
+                  options={tokenArray}
+                  inputRef={ref}
+                  value={value}
+                  name={name}
+                  onChange={onChange}
+                />
+              )}
+            />
+
             <Input
               isReadOnly
               placeholder="To"
