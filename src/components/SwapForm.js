@@ -7,6 +7,7 @@ import {
   Flex,
   Heading,
   Input,
+  Select,
   Spacer,
   Text,
   useToast,
@@ -16,10 +17,8 @@ import {
 } from '@chakra-ui/react';
 import { IoAlertCircle } from 'react-icons/io5';
 import debounce from 'debounce';
-import { Controller, useForm } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import React, { useEffect, useState } from 'react';
-
-import Select from 'react-select';
 
 import FullPageSpinner from './FullPageSpinner';
 
@@ -30,9 +29,8 @@ import Tokens from '../constants/tokens';
 import Toasts from '../constants/toasts';
 import Exchanges from '../constants/exchanges';
 
-export default function SwapForm({ web3, onboard, wallet }) {
-  const { register, handleSubmit, watch, setValue, errors, control } = useForm();
-
+export default function SwapForm({ web3, wallet, onboard }) {
+  const { register, handleSubmit, watch, setValue, errors } = useForm();
   const [isLoading, setIsLoading] = useState();
   const [sellAmount, setSellAmount] = useState();
   const toast = useToast();
@@ -50,28 +48,17 @@ export default function SwapForm({ web3, onboard, wallet }) {
   };
 
   const { data: zeroExQuote } = use0xPrice(
-    Tokens.data[watchTokenIn.value],
-    Tokens.data[watchTokenOut.value],
+    Tokens.data[watchTokenIn],
+    Tokens.data[watchTokenOut],
     sellAmount
   );
   const { price, gasPrice, estimatedGas, exchanges } =
     zeroExQuote === undefined ? defaults : zeroExQuote;
 
-  // display tokens
-  const tokenArray = new Array(Tokens.tokens.length);
-
-  for (let i = 0; i < tokenArray.length; i += 1) {
-    tokenArray[i] = {
-      value: Tokens.tokens[i],
-      label: Tokens.tokens[i],
-      icon: 'public/static/token-icons/128/sushi.png',
-    };
-  }
-
   useEffect(() => {
     if (watchAmountIn && watchTokenIn && watchTokenOut && price !== defaults.price) {
       const n = watchAmountIn * price;
-      setValue('amountOut', n.toFixed(Tokens.data[watchTokenOut.value].decimals));
+      setValue('amountOut', n.toFixed(Tokens.data[watchTokenOut].decimals));
     }
     if (!watchAmountIn) {
       setValue('amountOut', '');
@@ -96,7 +83,7 @@ export default function SwapForm({ web3, onboard, wallet }) {
     const { amountIn, tokenIn, tokenOut } = data;
     setIsLoading(true);
 
-    zeroXSwap(Tokens.data[tokenIn.label], Tokens.data[tokenOut.label], amountIn, web3)
+    zeroXSwap(Tokens.data[tokenIn], Tokens.data[tokenOut], amountIn, web3)
       .then(() => {
         setIsLoading(false);
         toast(Toasts.success);
@@ -120,55 +107,21 @@ export default function SwapForm({ web3, onboard, wallet }) {
         </Text>
         <Box borderWidth="1px" borderRadius="lg" mb={6}>
           <Flex>
-            <Controller
+            <Select
+              h="52px"
+              placeholder="Select"
               name="tokenIn"
-              control={control}
-              render={({ onChange, name, value, ref }) => (
-                <Select
-                  styles={{
-                    menu: (provided) => ({
-                      ...provided,
-                      width: 150,
-                      margin: 0,
-                    }),
-
-                    dropdownIndicator: (provided) => ({
-                      ...provided,
-                      color: '#A0AEBF',
-                    }),
-
-                    control: () => ({
-                      width: 170,
-                      height: 52,
-                      display: 'flex',
-                      flexDirection: 'row',
-                      marginLeft: 6,
-                      color: '#A0AEBF',
-                    }),
-
-                    placeholder: (provided) => ({
-                      ...provided,
-                      color: '#A0AEBF',
-                      fontSize: 19,
-                      marginTop: 1,
-                    }),
-
-                    singleValue: (provided, state) => {
-                      const opacity = state.isDisabled ? 0.5 : 1;
-                      const transition = 'opacity 300ms';
-
-                      return { ...provided, opacity, transition };
-                    },
-                  }}
-                  options={tokenArray}
-                  inputRef={ref}
-                  value={value}
-                  name={name}
-                  onChange={onChange}
-                />
-              )}
-            />
-
+              size="lg"
+              variant="filled"
+              ref={register}
+              isReadOnly={isLoading}
+            >
+              {Tokens.tokens.map((t) => (
+                <option key={t} value={t}>
+                  {t}
+                </option>
+              ))}
+            </Select>
             <Input
               placeholder="Enter Amount"
               name="amountIn"
@@ -189,55 +142,23 @@ export default function SwapForm({ web3, onboard, wallet }) {
         </Text>
         <Box borderWidth="1px" borderRadius="lg" mb={6}>
           <Flex>
-            <Controller
+            <Select
+              h="52px"
+              placeholder="Select"
               name="tokenOut"
-              control={control}
-              render={({ onChange, name, value, ref }) => (
-                <Select
-                  styles={{
-                    menu: (provided) => ({
-                      ...provided,
-                      width: 150,
-                      margin: 0,
-                    }),
-
-                    dropdownIndicator: (provided) => ({
-                      ...provided,
-                      color: '#A0AEBF',
-                    }),
-
-                    control: () => ({
-                      width: 170,
-                      height: 52,
-                      display: 'flex',
-                      flexDirection: 'row',
-                      marginLeft: 6,
-                      color: '#A0AEBF',
-                    }),
-
-                    placeholder: (provided) => ({
-                      ...provided,
-                      color: '#A0AEBF',
-                      fontSize: 19,
-                      marginTop: 1,
-                    }),
-
-                    singleValue: (provided, state) => {
-                      const opacity = state.isDisabled ? 0.5 : 1;
-                      const transition = 'opacity 300ms';
-
-                      return { ...provided, opacity, transition };
-                    },
-                  }}
-                  options={tokenArray}
-                  inputRef={ref}
-                  value={value}
-                  name={name}
-                  onChange={onChange}
-                />
-              )}
-            />
-
+              size="lg"
+              variant="filled"
+              ref={register({
+                validate: (value) => value !== watchTokenIn,
+              })}
+              isReadOnly={isLoading}
+            >
+              {Tokens.tokens.map((t) => (
+                <option key={t} value={t}>
+                  {t}
+                </option>
+              ))}
+            </Select>
             <Input
               isReadOnly
               placeholder="To"
@@ -259,7 +180,7 @@ export default function SwapForm({ web3, onboard, wallet }) {
             <Flex>
               <Text>Rate</Text>
               <Spacer />
-              <Text>{`1 ${watchTokenIn.value} = ${price} ${watchTokenOut.value}`}</Text>
+              <Text>{`1 ${watchTokenIn} = ${price} ${watchTokenOut}`}</Text>
             </Flex>
             <Flex>
               <Text>Source</Text>
