@@ -17,13 +17,19 @@ const getPrice = async (tokenIn, tokenOut, sellAmount) => {
     sellAmount: converted.getValue(),
   });
 
-  const { data } = await axios.get(`https://api.0x.org/swap/v1/price?${params.toString()}`);
+  const { data } = await axios.get(
+    `${
+      process.env.NODE_ENV === 'production'
+        ? process.env.REACT_APP_ZEROEX_PROD
+        : process.env.REACT_APP_ZEROEX_DEV
+    }/swap/v1/price?${params.toString()}`
+  );
   const { price, gasPrice, estimatedGas, sources } = data;
-  const getDex = data.sources.filter((item) => item.proportion === '1')[0].name;
+  const getDex = data.sources.filter((item) => item.proportion !== '0');
   const inverse = new BD(1).divide(new BD(data.price));
 
   return {
-    exchange: getDex,
+    exchanges: getDex,
     sources: sources.filter((source) => source.proportion !== '0'),
     price,
     inverse: inverse.getValue(),

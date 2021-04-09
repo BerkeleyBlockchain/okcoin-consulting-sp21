@@ -1,7 +1,7 @@
 import axios from 'axios';
 import BD from 'js-big-decimal';
-import Exchanges from '../constants/exchanges';
-import Tokens from '../constants/tokens';
+import Exchanges from '../../src/constants/exchanges';
+import Tokens from '../../src/constants/tokens';
 
 function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -26,7 +26,13 @@ export async function estimateSwapPrice(tokenInSymbol, tokenOutSymbol, amountIn,
   });
 
   try {
-    const { data } = await axios.get(`https://api.0x.org/swap/v1/price?${params.toString()}`);
+    const { data } = await axios.get(
+      `${
+        process.env.NODE_ENV === 'production'
+          ? process.env.REACT_APP_ZEROEX_PROD
+          : process.env.REACT_APP_ZEROEX_DEV
+      }/swap/v1/price?${params.toString()}`
+    );
     return data.price;
   } catch {
     return null;

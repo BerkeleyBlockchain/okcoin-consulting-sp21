@@ -1,3 +1,4 @@
+/* eslint-disable import/extensions */
 import { Image, Td, Table, Tbody, Th, Thead, Tr, Text } from '@chakra-ui/react';
 import { useAtom } from 'jotai';
 import { useEffect, useState, React } from 'react';

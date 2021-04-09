@@ -1,4 +1,116 @@
-export default {
+const tokensTestnet = {
+  data: {
+    DAI: {
+      symbol: 'DAI',
+      address: '0x4f96fe3b7a6cf9725f59d353f723c1bdb64ca6aa',
+      name: 'Dai Stablecoin',
+      decimals: 18,
+    },
+    REP: {
+      symbol: 'REP',
+      address: '0x4e5cb5a0caca30d1ad27d8cd8200a907854fb518',
+      name: 'Augur Reputation',
+      decimals: 18,
+    },
+    ETH: {
+      symbol: 'ETH',
+      address: '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee',
+      name: 'Ether',
+      decimals: 18,
+    },
+    WETH: {
+      symbol: 'WETH',
+      address: '0xd0a1e359811322d97991e03f863a0c30c2cf029c',
+      name: 'Wrapped Ether',
+      decimals: 18,
+    },
+    ZRX: {
+      symbol: 'ZRX',
+      address: '0x2002d3812f58e35f0ea1ffbf80a75a38c32175fa',
+      name: '0x Protocol Token',
+      decimals: 18,
+    },
+    USDC: {
+      symbol: 'USDC',
+      address: '0x75b0622cec14130172eae9cf166b92e5c112faff',
+      name: 'USD Coin',
+      decimals: 6,
+    },
+    BAT: {
+      symbol: 'BAT',
+      address: '0x9f8cfb61d3b2af62864408dd703f9c3beb55dff7',
+      name: 'Basic Attention Token',
+      decimals: 18,
+    },
+    MKR: {
+      symbol: 'MKR',
+      address: '0xaaf64bfcc32d0f15873a02163e7e500671a4ffcd',
+      name: 'Maker',
+      decimals: 18,
+    },
+    WBTC: {
+      symbol: 'WBTC',
+      address: '0xa0a5ad2296b38bd3e3eb59aaeaf1589e8d9a29a9',
+      name: 'Wrapped BTC',
+      decimals: 8,
+    },
+    KNC: {
+      symbol: 'KNC',
+      address: '0xad67cb4d63c9da94aca37fdf2761aadf780ff4a2',
+      name: 'Kyber Network Crystal',
+      decimals: 18,
+    },
+    SAI: {
+      symbol: 'SAI',
+      address: '0xc4375b7de8af5a38a93548eb8453a498222c4ff2',
+      name: 'Sai Stablecoin v1.0',
+      decimals: 18,
+    },
+    cREP: {
+      symbol: 'cREP',
+      address: '0xfd874be7e6733bdc6dca9c7cdd97c225ec235d39',
+      name: 'Compound Augur',
+      decimals: 8,
+    },
+    cZRX: {
+      symbol: 'cZRX',
+      address: '0xc014dc10a57ac78350c5fddb26bb66f1cb0960a0',
+      name: 'Compound 0x',
+      decimals: 8,
+    },
+    ZWETH: {
+      symbol: 'ZWETH',
+      address: '0x1FcAf05ABa8c7062D6F08E25c77Bf3746fCe5433',
+      name: 'Custom Kovan Wrapped Ether',
+      decimals: 18,
+    },
+    ZUSDC: {
+      symbol: 'ZUSDC',
+      address: '0x5a719Cf3E02c17c876F6d294aDb5CB7C6eB47e2F',
+      name: 'Custom Kovan USD Coin',
+      decimals: 6,
+    },
+  },
+  tokens: [
+    'DAI',
+    'REP',
+    'ETH',
+    'WETH',
+    'ZRX',
+    'USDC',
+    'BAT',
+    'MKR',
+    'WBTC',
+    'KNC',
+    'SAI',
+    'cREP',
+    'cZRX',
+    'ZWETH',
+    'ZUSDC',
+  ],
+};
+
+const tokensMainnet = {
   data: {
     ETH: {
       symbol: 'ETH',
@@ -690,3 +802,5 @@ export default {
     '1INCH',
   ],
 };
+
+export default process.env.NODE_ENV === 'production' ? tokensMainnet : tokensTestnet;

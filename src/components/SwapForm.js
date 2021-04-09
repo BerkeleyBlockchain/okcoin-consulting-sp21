@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import {
   Box,
   Button,
@@ -9,11 +10,13 @@ import {
   Spacer,
   Text,
   useToast,
+  Tooltip,
+  Image,
+  IconButton,
 } from '@chakra-ui/react';
-
+import { IoAlertCircle } from 'react-icons/io5';
 import debounce from 'debounce';
-import { useAtom } from 'jotai';
-import { useForm, Controller } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import React, { useEffect, useState } from 'react';
 
 import Select from 'react-select';
@@ -23,19 +26,15 @@ import FullPageSpinner from './FullPageSpinner';
 import zeroXSwap from '../hooks/use0xSwap';
 import use0xPrice from '../hooks/use0xPrice';
 
-import { pricesAtom } from '../utils/atoms';
-import { estimateAllSwapPrices } from '../utils/getSwapPrice';
-
 import Tokens from '../constants/tokens';
 import Toasts from '../constants/toasts';
+import Exchanges from '../constants/exchanges';
 
 export default function SwapForm({ web3, onboard, wallet }) {
   const { register, handleSubmit, watch, setValue, errors, control } = useForm();
 
   const [isLoading, setIsLoading] = useState();
   const [sellAmount, setSellAmount] = useState();
-  const [loadingPrices, setLoadingPrices] = useState(false);
-  const [, setPrices] = useAtom(pricesAtom);
   const toast = useToast();
 
   const watchTokenIn = watch('tokenIn', '');
@@ -45,7 +44,7 @@ export default function SwapForm({ web3, onboard, wallet }) {
   const defaults = {
     price: '🔄',
     gasPrice: '🔄',
-    exchange: '🔄',
+    exchanges: '🔄',
     estimatedGas: '🔄',
     sources: [],
   };
@@ -55,7 +54,7 @@ export default function SwapForm({ web3, onboard, wallet }) {
     Tokens.data[watchTokenOut.value],
     sellAmount
   );
-  const { price, gasPrice, estimatedGas, exchange } =
+  const { price, gasPrice, estimatedGas, exchanges } =
     zeroExQuote === undefined ? defaults : zeroExQuote;
 
   // display tokens
@@ -77,28 +76,23 @@ export default function SwapForm({ web3, onboard, wallet }) {
     if (!watchAmountIn) {
       setValue('amountOut', '');
     }
-    if (!watchAmountIn || !watchTokenIn || !watchTokenOut) {
-      setPrices({});
-    }
-  }, [price, watchAmountIn, watchTokenIn.value, watchTokenOut.value]);
+  }, [price, watchAmountIn, watchTokenIn, watchTokenOut]);
 
-  useEffect(() => {
-    if (!loadingPrices) {
-      setPrices({});
-      if (sellAmount && watchTokenIn && watchTokenOut) {
-        setLoadingPrices(true);
-        estimateAllSwapPrices(watchTokenIn.value, watchTokenOut.value, sellAmount).then(
-          (values) => {
-            setPrices(values);
-            setLoadingPrices(false);
-          }
-        );
-      }
+  async function readyToTransact() {
+    if (!wallet.provider) {
+      const walletSelected = await onboard.walletSelect();
+      if (!walletSelected) return false;
     }
-  }, [sellAmount, watchTokenIn.value, watchTokenOut.value]);
+
+    const ready = await onboard.walletCheck();
+    return ready;
+  }
 
   // Execute the swap
-  const onSubmit = (data) => {
+  const onSubmit = async (data) => {
+    const ready = await readyToTransact();
+    if (!ready) return;
+
     const { amountIn, tokenIn, tokenOut } = data;
     setIsLoading(true);
 
@@ -107,12 +101,13 @@ export default function SwapForm({ web3, onboard, wallet }) {
         setIsLoading(false);
         toast(Toasts.success);
       })
-      .catch(() => {
+      .catch((err) => {
         setIsLoading(false);
+        console.log(err);
         toast(Toasts.error);
       });
   };
-
+  console.log(exchanges);
   if (!onboard) {
     return <FullPageSpinner />;
   }
@@ -267,9 +262,53 @@ export default function SwapForm({ web3, onboard, wallet }) {
               <Text>{`1 ${watchTokenIn.value} = ${price} ${watchTokenOut.value}`}</Text>
             </Flex>
             <Flex>
-              <Text>Dex Used</Text>
+              <Text>Source</Text>
               <Spacer />
-              <Text style={{ fontWeight: 'bold' }}>{exchange}</Text>
+              {typeof exchanges === 'object' ? (
+                <>
+                  <Text style={{ fontWeight: 'bold' }}>
+                    {exchanges.length === 1
+                      ? Exchanges.data[exchanges[0].name].name
+                      : 'Split Routing'}
+                  </Text>
+                  <Tooltip
+                    hasArrow
+                    bgColor="#333333"
+                    padding="10px"
+                    label={
+                      typeof exchanges === 'object' &&
+                      exchanges
+                        .sort((a, b) => parseFloat(b.proportion) - parseFloat(a.proportion))
+                        .map((item) => (
+                          <Flex alignItems="center">
+                            <Image
+                              src={Exchanges.data[item.name].iconSVG}
+                              alt={item.name}
+                              width="25px"
+                              height="25px"
+                              m={1}
+                            />
+                            <Text style={{ fontWeight: 'bold', marginLeft: 5 }}>
+                              {Exchanges.data[item.name].name}
+                              {` (${parseFloat(item.proportion * 100).toFixed(2)}%)`}
+                            </Text>
+                          </Flex>
+                        ))
+                    }
+                    placement="bottom"
+                  >
+                    <IconButton
+                      variant="outline"
+                      isRound
+                      borderColor="transparent"
+                      size="xs"
+                      icon={<IoAlertCircle size="20" />}
+                    />
+                  </Tooltip>
+                </>
+              ) : (
+                <Text>{defaults.exchanges}</Text>
+              )}
             </Flex>
             <Flex>
               <Text>Gas price</Text>
@@ -298,7 +337,7 @@ export default function SwapForm({ web3, onboard, wallet }) {
               type="submit"
               mt={6}
               mb={10}
-              disabled={Object.keys(errors).length !== 0}
+              disabled={isLoading || Object.keys(errors).length !== 0}
               loadingText="Executing Swap"
               isLoading={isLoading}
             >
