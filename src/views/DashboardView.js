@@ -40,7 +40,7 @@ export default function DashboardView() {
   }, [onboard]);
 
   return (
-    <Box bgColor="#F7F9FC" height="100vh" width="100%">
+    <Box bgColor="white" height="100vh" width="100%">
       <NavBar address={address} />
       <Grid templateColumns="repeat(7, 1fr)">
         <GridItem colSpan={12}>

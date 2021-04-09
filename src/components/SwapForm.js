@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import {
   Box,
   Button,
@@ -112,10 +111,12 @@ export default function SwapForm({ web3, onboard, wallet }) {
     return <FullPageSpinner />;
   }
   return (
-    <Box py={12} px={12} pb={6} boxShadow="lg">
-      <Heading mb={10}>Swap</Heading>
+    <Box py={12} px={12} pb={6} boxShadow="lg" bgColor="#fff" borderRadius={10}>
+      <Heading fontFamily="Poppins" fontWeight="700" mb={10}>
+        Swap
+      </Heading>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <Text opacity={0.7} mb={2} ml={0.5}>
+        <Text fontFamily="Poppins" opacity={0.7} mb={2} ml={0.5}>
           PAY
         </Text>
         <Box borderWidth="1px" borderRadius="lg" mb={6}>
@@ -130,6 +131,8 @@ export default function SwapForm({ web3, onboard, wallet }) {
                       ...provided,
                       width: 150,
                       margin: 0,
+                      fontFamily: 'Poppins',
+                      fontWeight: '600',
                     }),
 
                     dropdownIndicator: (provided) => ({
@@ -144,6 +147,8 @@ export default function SwapForm({ web3, onboard, wallet }) {
                       flexDirection: 'row',
                       marginLeft: 6,
                       color: '#A0AEBF',
+                      fontFamily: 'Poppins',
+                      fontWeight: '600',
                     }),
 
                     placeholder: (provided) => ({
@@ -151,6 +156,7 @@ export default function SwapForm({ web3, onboard, wallet }) {
                       color: '#A0AEBF',
                       fontSize: 19,
                       marginTop: 1,
+                      fontWeight: '400',
                     }),
 
                     singleValue: (provided, state) => {
@@ -173,6 +179,7 @@ export default function SwapForm({ web3, onboard, wallet }) {
               placeholder="Enter Amount"
               name="amountIn"
               type="number"
+              fontFamily="Poppins"
               step="0.000000000000000001"
               size="lg"
               ref={register({ required: true })}
@@ -184,7 +191,7 @@ export default function SwapForm({ web3, onboard, wallet }) {
             />
           </Flex>
         </Box>
-        <Text opacity={0.7} mb={2} ml={0.5}>
+        <Text fontFamily="Poppins" opacity={0.7} mb={2} ml={0.5}>
           RECEIVE
         </Text>
         <Box borderWidth="1px" borderRadius="lg" mb={6}>
@@ -199,6 +206,8 @@ export default function SwapForm({ web3, onboard, wallet }) {
                       ...provided,
                       width: 150,
                       margin: 0,
+                      fontFamily: 'Poppins',
+                      fontWeight: '600',
                     }),
 
                     dropdownIndicator: (provided) => ({
@@ -213,6 +222,8 @@ export default function SwapForm({ web3, onboard, wallet }) {
                       flexDirection: 'row',
                       marginLeft: 6,
                       color: '#A0AEBF',
+                      fontFamily: 'Poppins',
+                      fontWeight: '600',
                     }),
 
                     placeholder: (provided) => ({
@@ -220,6 +231,7 @@ export default function SwapForm({ web3, onboard, wallet }) {
                       color: '#A0AEBF',
                       fontSize: 19,
                       marginTop: 1,
+                      fontWeight: '400',
                     }),
 
                     singleValue: (provided, state) => {
@@ -244,6 +256,7 @@ export default function SwapForm({ web3, onboard, wallet }) {
               name="amountOut"
               type="number"
               step="0.000000000000000001"
+              fontFamily="Poppins"
               size="lg"
               ref={register}
               variant="unstyled"
@@ -257,16 +270,20 @@ export default function SwapForm({ web3, onboard, wallet }) {
           <>
             <Divider mb={3} />
             <Flex>
-              <Text>Rate</Text>
+              <Text fontFamily="Poppins" fontWeight="600">
+                Rate
+              </Text>
               <Spacer />
-              <Text>{`1 ${watchTokenIn.value} = ${price} ${watchTokenOut.value}`}</Text>
+              <Text fontFamily="Poppins">{`1 ${watchTokenIn.value} = ${price} ${watchTokenOut.value}`}</Text>
             </Flex>
             <Flex>
-              <Text>Source</Text>
+              <Text fontFamily="Poppins" fontWeight="600">
+                Source
+              </Text>
               <Spacer />
               {typeof exchanges === 'object' ? (
                 <>
-                  <Text style={{ fontWeight: 'bold' }}>
+                  <Text fontFamily="Poppins" style={{ fontWeight: 'bold' }}>
                     {exchanges.length === 1
                       ? Exchanges.data[exchanges[0].name].name
                       : 'Split Routing'}
@@ -288,7 +305,9 @@ export default function SwapForm({ web3, onboard, wallet }) {
                               height="25px"
                               m={1}
                             />
-                            <Text style={{ fontWeight: 'bold', marginLeft: 5 }}>
+                            <Text
+                              style={{ fontWeight: 'bold', marginLeft: 5, fontFamily: 'Poppins' }}
+                            >
                               {Exchanges.data[item.name].name}
                               {` (${parseFloat(item.proportion * 100).toFixed(2)}%)`}
                             </Text>
@@ -307,18 +326,22 @@ export default function SwapForm({ web3, onboard, wallet }) {
                   </Tooltip>
                 </>
               ) : (
-                <Text>{defaults.exchanges}</Text>
+                <Text fontFamily="Poppins">{defaults.exchanges}</Text>
               )}
             </Flex>
             <Flex>
-              <Text>Gas price</Text>
+              <Text fontFamily="Poppins" fontWeight="600">
+                Gas Price
+              </Text>
               <Spacer />
-              <Text>{gasPrice} Gwei</Text>
+              <Text fontFamily="Poppins">{gasPrice} Gwei</Text>
             </Flex>
             <Flex>
-              <Text>Gas estimate</Text>
+              <Text fontFamily="Poppins" fontWeight="600">
+                Gas Estimate
+              </Text>
               <Spacer />
-              <Text>{estimatedGas}</Text>
+              <Text fontFamily="Poppins">{estimatedGas}</Text>
             </Flex>
 
             <Divider mt={3} />
@@ -339,6 +362,8 @@ export default function SwapForm({ web3, onboard, wallet }) {
               mb={10}
               disabled={isLoading || Object.keys(errors).length !== 0}
               loadingText="Executing Swap"
+              fontFamily="Poppins"
+              fontWeight="600"
               isLoading={isLoading}
             >
               Swap Tokens
@@ -353,6 +378,8 @@ export default function SwapForm({ web3, onboard, wallet }) {
               size="lg"
               mt={6}
               mb={10}
+              fontFamily="Poppins"
+              fontWeight="600"
               disabled={Object.keys(errors).length !== 0}
               onClick={() => onboard.walletSelect()}
             >
