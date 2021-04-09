@@ -96,7 +96,7 @@ export default function SwapForm({ web3, onboard, wallet }) {
     const { amountIn, tokenIn, tokenOut } = data;
     setIsLoading(true);
 
-    zeroXSwap(Tokens.data[tokenIn], Tokens.data[tokenOut], amountIn, web3)
+    zeroXSwap(Tokens.data[tokenIn.label], Tokens.data[tokenOut.label], amountIn, web3)
       .then(() => {
         setIsLoading(false);
         toast(Toasts.success);
