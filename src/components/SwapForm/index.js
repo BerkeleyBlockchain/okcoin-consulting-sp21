@@ -14,6 +14,7 @@ import {
 import debounce from 'debounce';
 import { Controller, useForm } from 'react-hook-form';
 import React, { useEffect, useState } from 'react';
+import { IoAlertCircle } from 'react-icons/io5';
 
 import Select, { components } from 'react-select';
 import FullPageSpinner from '../FullPageSpinner';
@@ -29,7 +30,7 @@ import SwapInfo from './SwapInfo';
 
 export default function SwapForm({ onboardState, web3, onboard }) {
   const { register, handleSubmit, watch, setValue, errors, control } = useForm();
-
+  const [apiError, setApiError] = useState(false);
   const [isLoading, setIsLoading] = useState();
   const [sellAmount, setSellAmount] = useState();
   const toast = useToast();
@@ -51,17 +52,22 @@ export default function SwapForm({ onboardState, web3, onboard }) {
     Tokens.data[watchTokenOut.value],
     sellAmount
   );
-
-  const { price, gasPrice, estimatedGas, exchanges } =
+  const { price, gasPrice, estimatedGas, exchanges, tokenError } =
     zeroExQuote === undefined ? defaults : zeroExQuote;
 
   useEffect(() => {
-    if (watchAmountIn && watchTokenIn && watchTokenOut && price !== defaults.price) {
-      const n = watchAmountIn * price;
-      setValue('amountOut', n.toFixed(6).replace(/\.0+/, ''));
-    }
-    if (!watchAmountIn) {
+    if (tokenError) {
+      setApiError(true);
       setValue('amountOut', '');
+    } else {
+      setApiError(false);
+      if (watchAmountIn && watchTokenIn && watchTokenOut && price !== defaults.price) {
+        const n = watchAmountIn * price;
+        setValue('amountOut', n.toFixed(Tokens.data[watchTokenOut.value].decimals));
+      }
+      if (!watchAmountIn) {
+        setValue('amountOut', '');
+      }
     }
   }, [price, watchAmountIn, watchTokenIn, watchTokenOut]);
 
@@ -305,20 +311,28 @@ export default function SwapForm({ onboardState, web3, onboard }) {
             <Button
               w="100%"
               h="60px"
-              _hover={{ backgroundColor: '#194BB6' }}
-              backgroundColor="#205FEC"
+              _hover={apiError ? { background: '#E53E3E' } : { background: '#194BB6' }}
+              backgroundColor={apiError ? '#E53E3E' : '#205FEC'}
               color="white"
               size="lg"
               type="submit"
               mt={6}
               mb={10}
-              disabled={isLoading || Object.keys(errors).length !== 0}
+              disabled={isLoading || Object.keys(errors).length !== 0 || apiError}
               loadingText="Executing Swap"
               fontFamily="Poppins"
               fontWeight="600"
               isLoading={isLoading}
             >
               {errors.amountIn ? 'Input Amount required' : 'Swap Tokens'}
+              {apiError ? (
+                <>
+                  <IoAlertCircle size="25" style={{ marginRight: 10 }} />{' '}
+                  {tokenError ? tokenError.validationErrors[0].reason : 'Error Occurred'}
+                </>
+              ) : (
+                'Swap Token'
+              )}
             </Button>
           ) : (
             <Button

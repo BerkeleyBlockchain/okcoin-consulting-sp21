@@ -8,34 +8,40 @@ const getPrice = async (tokenIn, tokenOut, sellAmount) => {
     return [];
   }
 
-  const conversionRate = new BD(`1.0e${tokenIn.decimals}`);
-  const converted = new BD(sellAmount).multiply(conversionRate);
+  try {
+    const conversionRate = new BD(`1.0e${tokenIn.decimals}`);
+    const converted = new BD(sellAmount).multiply(conversionRate);
 
-  const params = new URLSearchParams({
-    sellToken: tokenIn.symbol,
-    buyToken: tokenOut.symbol,
-    sellAmount: converted.getValue(),
-  });
+    const params = new URLSearchParams({
+      sellToken: tokenIn.symbol,
+      buyToken: tokenOut.symbol,
+      sellAmount: converted.getValue(),
+    });
 
-  const { data } = await axios.get(
-    `${
-      process.env.REACT_APP_ENV === 'production'
-        ? process.env.REACT_APP_ZEROEX_PROD
-        : process.env.REACT_APP_ZEROEX_DEV
-    }/swap/v1/price?${params.toString()}`
-  );
-  const { price, gasPrice, estimatedGas, sources } = data;
-  const getDex = data.sources.filter((item) => item.proportion !== '0');
-  const inverse = new BD(1).divide(new BD(data.price));
+    const { data } = await axios.get(
+      `${
+        process.env.REACT_APP_ENV === 'production'
+          ? process.env.REACT_APP_ZEROEX_PROD
+          : process.env.REACT_APP_ZEROEX_DEV
+      }/swap/v1/price?${params.toString()}`
+    );
+    const { price, gasPrice, estimatedGas, sources } = data;
+    const getDex = data.sources.filter((item) => item.proportion !== '0');
+    const inverse = new BD(1).divide(new BD(data.price));
 
-  return {
-    exchanges: getDex,
-    sources: sources.filter((source) => source.proportion !== '0'),
-    price,
-    inverse: inverse.getValue(),
-    gasPrice: Web3.utils.fromWei(gasPrice, 'Gwei'),
-    estimatedGas: new BD(estimatedGas).getPrettyValue(),
-  };
+    return {
+      exchanges: getDex,
+      sources: sources.filter((source) => source.proportion !== '0'),
+      price,
+      inverse: inverse.getValue(),
+      gasPrice: Web3.utils.fromWei(gasPrice, 'Gwei'),
+      estimatedGas: new BD(estimatedGas).getPrettyValue(),
+    };
+  } catch (err) {
+    return {
+      tokenError: err.response.data,
+    };
+  }
 };
 
 export default function use0xPrice(tokenIn, tokenOut, sellAmount) {

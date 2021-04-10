@@ -49,7 +49,7 @@ const tokensTestnet = {
       decimals: 18,
     },
   },
-  tokens: ['ETH', 'WETH', 'DAI', 'USDC', 'KNC', 'MKR', 'SAI', 'ZRX'],
+  tokens: ['DAI', 'REP', 'ETH', 'WETH', 'ZRX', 'USDC', 'BAT', 'MKR', 'WBTC', 'KNC', 'SAI'],
 };
 
 const tokensMainnet = {
