@@ -1,4 +1,4 @@
-/* eslint-disable */
+/* eslint-disable react/jsx-props-no-spreading */
 import {
   Box,
   Button,
@@ -20,8 +20,6 @@ import { Controller, useForm } from 'react-hook-form';
 import React, { useEffect, useState } from 'react';
 
 import Select from 'react-select';
-import Option from 'react-select';
-import SingleValue from 'react-select';
 import FullPageSpinner from './FullPageSpinner';
 
 import zeroXSwap from '../hooks/use0xSwap';
@@ -65,7 +63,7 @@ export default function SwapForm({ web3, onboard, wallet }) {
     tokenArray[i] = {
       value: Tokens.tokens[i],
       label: Tokens.tokens[i],
-      icon: '/static/token-icons/128/sushi.png',
+      icon: `/static/token-icons/128/${Tokens.tokens[i].toLowerCase()}.png`,
     };
   }
 
@@ -97,7 +95,7 @@ export default function SwapForm({ web3, onboard, wallet }) {
     const { amountIn, tokenIn, tokenOut } = data;
     setIsLoading(true);
 
-    zeroXSwap(Tokens.data[tokenIn.label], Tokens.data[tokenOut.label], amountIn, web3)
+    zeroXSwap(Tokens.data[tokenIn.value], Tokens.data[tokenOut.value], amountIn, web3)
       .then(() => {
         setIsLoading(false);
         toast(Toasts.success);
@@ -113,21 +111,32 @@ export default function SwapForm({ web3, onboard, wallet }) {
     return <FullPageSpinner />;
   }
 
-  const IconOption = (props) => (
-    <div
-        >
-          <img src={props.data.icon} />
-          {props.data.label}
-        </div>
-  )
-      
-
-  const SingleValue = (props) => (
-    <div>
-      <img src={require(props.data.icon)} />
-    {props.data.icon}
-    </div>
-  )
+  const IconOption = (props) => {
+    const { innerProps, innerRef, data } = props;
+    return (
+      <div
+        {...innerProps}
+        ref={innerRef}
+        style={{
+          display: 'flex',
+          flexDirection: 'row',
+          margin: 10,
+          marginLeft: 15,
+          alignItems: 'center',
+        }}
+      >
+        <img
+          style={{
+            width: 20,
+            marginRight: 8,
+          }}
+          alt=""
+          src={data.icon}
+        />
+        {data.label}
+      </div>
+    );
+  };
 
   return (
     <Box py={12} px={12} pb={6} boxShadow="lg" bgColor="#fff" borderRadius={20}>
@@ -262,6 +271,7 @@ export default function SwapForm({ web3, onboard, wallet }) {
                     },
                   }}
                   options={tokenArray}
+                  components={{ Option: IconOption }}
                   inputRef={ref}
                   value={value}
                   name={name}
