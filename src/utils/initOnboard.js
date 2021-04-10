@@ -10,7 +10,7 @@ const dappId = process.env.REACT_APP_ONBOARD_DAPPID;
 export default function initOnboard(subscriptions) {
   return Onboard({
     dappId,
-    hideBranding: false,
+    hideBranding: true,
     networkId,
     // darkMode: true,
     subscriptions,
