@@ -68,6 +68,17 @@ export default function SwapForm({ web3, onboard, wallet }) {
     };
   }
 
+  if (onboard != null) {
+    console.log(onboard);
+    console.log('onboard state');
+    const currState = onboard.getState();
+    console.log(currState);
+    console.log('onboard.balance');
+    console.log(onboard.balance);
+    console.log('onboard.balance != null');
+    console.log(onboard.balance != null);
+  }
+
   useEffect(() => {
     if (watchAmountIn && watchTokenIn && watchTokenOut && price !== defaults.price) {
       const n = watchAmountIn * price;
@@ -350,7 +361,7 @@ export default function SwapForm({ web3, onboard, wallet }) {
         ) : null}
 
         <Center>
-          {wallet.provider ? (
+          {onboard.balance != null ? (
             <Button
               w="100%"
               h="60px"
