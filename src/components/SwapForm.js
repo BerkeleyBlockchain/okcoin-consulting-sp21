@@ -1,4 +1,4 @@
-/* eslint-disable no-console */
+/* eslint-disable */
 import {
   Box,
   Button,
@@ -20,7 +20,8 @@ import { Controller, useForm } from 'react-hook-form';
 import React, { useEffect, useState } from 'react';
 
 import Select from 'react-select';
-
+import Option from 'react-select';
+import SingleValue from 'react-select';
 import FullPageSpinner from './FullPageSpinner';
 
 import zeroXSwap from '../hooks/use0xSwap';
@@ -64,7 +65,7 @@ export default function SwapForm({ web3, onboard, wallet }) {
     tokenArray[i] = {
       value: Tokens.tokens[i],
       label: Tokens.tokens[i],
-      icon: 'public/static/token-icons/128/sushi.png',
+      icon: '/static/token-icons/128/sushi.png',
     };
   }
 
@@ -111,6 +112,23 @@ export default function SwapForm({ web3, onboard, wallet }) {
   if (!onboard) {
     return <FullPageSpinner />;
   }
+
+  const IconOption = (props) => (
+    <div
+        >
+          <img src={props.data.icon} />
+          {props.data.label}
+        </div>
+  )
+      
+
+  const SingleValue = (props) => (
+    <div>
+      <img src={require(props.data.icon)} />
+    {props.data.icon}
+    </div>
+  )
+
   return (
     <Box py={12} px={12} pb={6} boxShadow="lg" bgColor="#fff" borderRadius={20}>
       <Heading fontFamily="Poppins" fontWeight="700" mb={10}>
@@ -168,6 +186,7 @@ export default function SwapForm({ web3, onboard, wallet }) {
                     },
                   }}
                   options={tokenArray}
+                  components={{ Option: IconOption }}
                   inputRef={ref}
                   value={value}
                   name={name}
