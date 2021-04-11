@@ -270,7 +270,7 @@ export default function SwapForm({ web3, onboard, wallet }) {
                       return { ...provided, opacity, transition };
                     },
                   }}
-                  options={tokenArray}
+                  options={tokenArray.filter((item) => item.value !== watchTokenIn.value)}
                   components={{ Option: IconOption, SingleValue: ValueOption }}
                   inputRef={ref}
                   value={value}
