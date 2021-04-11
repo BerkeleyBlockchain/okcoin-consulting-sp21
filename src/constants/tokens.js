@@ -6,12 +6,6 @@ const tokensTestnet = {
       name: 'Dai Stablecoin',
       decimals: 18,
     },
-    REP: {
-      symbol: 'REP',
-      address: '0x4e5cb5a0caca30d1ad27d8cd8200a907854fb518',
-      name: 'Augur Reputation',
-      decimals: 18,
-    },
     ETH: {
       symbol: 'ETH',
       address: '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee',
@@ -36,23 +30,11 @@ const tokensTestnet = {
       name: 'USD Coin',
       decimals: 6,
     },
-    BAT: {
-      symbol: 'BAT',
-      address: '0x9f8cfb61d3b2af62864408dd703f9c3beb55dff7',
-      name: 'Basic Attention Token',
-      decimals: 18,
-    },
     MKR: {
       symbol: 'MKR',
       address: '0xaaf64bfcc32d0f15873a02163e7e500671a4ffcd',
       name: 'Maker',
       decimals: 18,
-    },
-    WBTC: {
-      symbol: 'WBTC',
-      address: '0xa0a5ad2296b38bd3e3eb59aaeaf1589e8d9a29a9',
-      name: 'Wrapped BTC',
-      decimals: 8,
     },
     KNC: {
       symbol: 'KNC',
@@ -66,48 +48,8 @@ const tokensTestnet = {
       name: 'Sai Stablecoin v1.0',
       decimals: 18,
     },
-    cREP: {
-      symbol: 'cREP',
-      address: '0xfd874be7e6733bdc6dca9c7cdd97c225ec235d39',
-      name: 'Compound Augur',
-      decimals: 8,
-    },
-    cZRX: {
-      symbol: 'cZRX',
-      address: '0xc014dc10a57ac78350c5fddb26bb66f1cb0960a0',
-      name: 'Compound 0x',
-      decimals: 8,
-    },
-    ZWETH: {
-      symbol: 'ZWETH',
-      address: '0x1FcAf05ABa8c7062D6F08E25c77Bf3746fCe5433',
-      name: 'Custom Kovan Wrapped Ether',
-      decimals: 18,
-    },
-    ZUSDC: {
-      symbol: 'ZUSDC',
-      address: '0x5a719Cf3E02c17c876F6d294aDb5CB7C6eB47e2F',
-      name: 'Custom Kovan USD Coin',
-      decimals: 6,
-    },
   },
-  tokens: [
-    'ETH',
-    'BAT',
-    'DAI',
-    'KNC',
-    'MKR',
-    'REP',
-    'SAI',
-    'USDC',
-    'WBTC',
-    'WETH',
-    'ZRX',
-    'ZUSDC',
-    'ZWETH',
-    'cREP',
-    'cZRX',
-  ],
+  tokens: ['ETH', 'WETH', 'DAI', 'USDC', 'KNC', 'MKR', 'SAI', 'ZRX'],
 };
 
 const tokensMainnet = {
