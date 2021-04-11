@@ -41,7 +41,7 @@ export default function DashboardView() {
 
   return (
     <Box bgColor="gray.100" height="100vh" width="100%">
-      <NavBar address={address} />
+      <NavBar address={address} onboard={onboard} />
       <Grid templateColumns="repeat(7, 1fr)">
         <GridItem colSpan={12}>
           <Container minWidth={500}>

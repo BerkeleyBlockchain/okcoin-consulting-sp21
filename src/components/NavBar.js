@@ -21,6 +21,8 @@ import {
 } from '@chakra-ui/react';
 import React from 'react';
 
+import AccountModal from './AccountModal';
+
 const NAV_ITEMS = [
   {
     label: 'Home',
@@ -44,7 +46,7 @@ const NAV_ITEMS = [
   },
 ];
 
-export default function Navbar({ address }) {
+export default function Navbar({ address, onboard }) {
   const { isOpen, onToggle } = useDisclosure();
 
   return (
@@ -85,11 +87,7 @@ export default function Navbar({ address }) {
             </Tag>
             <Heading size="sm">ETH</Heading>
           </Flex> */}
-          {address ? (
-            <Button size="md" colorScheme="blue" variant="solid"  fontFamily="Poppins">
-               {`${address?.substr(0, 6)}...` + address?.substr(address.length - 4)}
-            </Button>
-          ) : null}
+          {address ? <AccountModal address={address} onboard={onboard} /> : null}
         </Stack>
       </Flex>
 
