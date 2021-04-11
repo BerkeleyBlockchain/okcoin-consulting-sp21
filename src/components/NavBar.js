@@ -46,10 +46,6 @@ const NAV_ITEMS = [
       },
     ],
   },
-  {
-    label: 'Docs',
-    href: '/',
-  },
 ];
 
 export default function Navbar({ address, balance, onboard, web3 }) {
