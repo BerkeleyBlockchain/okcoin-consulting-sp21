@@ -30,7 +30,7 @@ import Tokens from '../constants/tokens';
 import Toasts from '../constants/toasts';
 import Exchanges from '../constants/exchanges';
 
-export default function SwapForm({ web3, onboard, wallet }) {
+export default function SwapForm({ onboardState, web3, onboard, wallet }) {
   const { register, handleSubmit, watch, setValue, errors, control } = useForm();
 
   const [isLoading, setIsLoading] = useState();
@@ -69,14 +69,8 @@ export default function SwapForm({ web3, onboard, wallet }) {
   }
 
   if (onboard != null) {
-    console.log(onboard);
     console.log('onboard state');
-    const currState = onboard.getState();
-    console.log(currState);
-    console.log('onboard.balance');
-    console.log(onboard.balance);
-    console.log('onboard.balance != null');
-    console.log(onboard.balance != null);
+    console.log(onboardState);
   }
 
   useEffect(() => {
@@ -361,7 +355,7 @@ export default function SwapForm({ web3, onboard, wallet }) {
         ) : null}
 
         <Center>
-          {onboard.balance != null ? (
+          {onboardState.address ? (
             <Button
               w="100%"
               h="60px"
@@ -393,7 +387,7 @@ export default function SwapForm({ web3, onboard, wallet }) {
               fontFamily="Poppins"
               fontWeight="600"
               disabled={Object.keys(errors).length !== 0}
-              onClick={() => onboard.walletSelect()}
+              onClick={() => readyToTransact()}
             >
               Connect Wallet
             </Button>

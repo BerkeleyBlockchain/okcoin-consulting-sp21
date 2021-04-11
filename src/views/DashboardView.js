@@ -46,7 +46,12 @@ export default function DashboardView() {
         <GridItem colSpan={12}>
           <Container minWidth={500}>
             <Box mt="100px">
-              <SwapForm web3={new Web3(wallet.provider)} wallet={wallet} onboard={onboard} />
+              <SwapForm
+                onboardState={onboard ? onboard.getState() : null}
+                web3={new Web3(wallet.provider)}
+                wallet={wallet}
+                onboard={onboard}
+              />
             </Box>
           </Container>
         </GridItem>
