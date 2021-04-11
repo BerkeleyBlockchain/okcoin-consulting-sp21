@@ -8,20 +8,22 @@ import {
   ModalFooter,
   ModalBody,
   ModalCloseButton,
+  useClipboard,
   useDisclosure,
   Text,
 } from '@chakra-ui/react';
+import { CopyIcon } from '@chakra-ui/icons';
 import React from 'react';
 
 export default function AccountModal({ address, onboard }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const walletState = onboard.getState();
-  const shortAddress = `${address?.substr(0, 6)}...${address?.substr(address.length - 4)}`;
+  const { onCopy } = useClipboard(address);
 
   return (
     <>
       <Button size="md" colorScheme="blue" variant="solid" fontFamily="Poppins" onClick={onOpen}>
-        {shortAddress}
+        {`${address?.substr(0, 6)}...${address?.substr(address.length - 4)}`}
       </Button>
 
       <Modal onClose={onClose} isOpen={isOpen} isCentered>
@@ -37,8 +39,11 @@ export default function AccountModal({ address, onboard }) {
                 Connected Wallet: {`${walletState.wallet.name}`}
               </Text>
               <Text fontSize="1.6em" fontFamily="Poppins" fontWeight="500">
-                {shortAddress}
+                {`${address?.substr(0, 10)}...${address?.substr(address.length - 8)}`}
               </Text>
+              <Button fontSize="sm" fontFamily="Poppins" variant="link" onClick={onCopy}>
+                <CopyIcon mr={1} /> Copy Address
+              </Button>
             </Box>
           </ModalBody>
           <ModalFooter>
