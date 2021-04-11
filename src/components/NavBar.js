@@ -2,7 +2,6 @@
 import { ChevronDownIcon, ChevronRightIcon, CloseIcon, HamburgerIcon } from '@chakra-ui/icons';
 import {
   Box,
-  Button,
   Collapse,
   Flex,
   Icon,
@@ -90,14 +89,6 @@ export default function Navbar({ address, balance, onboard, web3 }) {
             spacing={2}
             align="center"
           >
-            <Button
-              size="sm"
-              onClick={() => onboard.walletReset()}
-              variant="outline"
-              fontFamily="Poppins"
-            >
-              Reset Wallet State
-            </Button>
             <>
               <Text fontFamily="Poppins" fontWeight="600" color="gray.700" size="sm">
                 {typeof balance === 'string' ? (
