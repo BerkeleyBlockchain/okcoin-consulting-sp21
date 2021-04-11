@@ -15,6 +15,7 @@ import {
   useColorModeValue,
   useDisclosure,
   Spinner,
+  Image,
 } from '@chakra-ui/react';
 import React from 'react';
 
@@ -44,6 +45,10 @@ const NAV_ITEMS = [
         href: '/',
       },
     ],
+  },
+  {
+    label: 'Docs',
+    href: '/',
   },
 ];
 
@@ -109,16 +114,18 @@ export default function Navbar({ address, balance, onboard, web3 }) {
 
 const DesktopNav = () => {
   return (
-    <Stack direction="row" spacing={4}>
+    <Stack direction="row" spacing={4} alignItems="center">
+      <Image src="/static/okcoin_icon.png" style={{ height: '30px', width: '130px' }} />
       {NAV_ITEMS.map((navItem) => (
         <Box key={navItem.label}>
           <Popover trigger="hover" placement="bottom-start">
             <PopoverTrigger>
               <Link
-                p={2}
+                p={4}
                 href={navItem.href ?? '#'}
-                fontSize="sm"
+                fontSize="md"
                 fontWeight={500}
+                fontFamily="Poppins"
                 color={useColorModeValue('gray.600', 'gray.200')}
                 _hover={{
                   textDecoration: 'none',
@@ -167,7 +174,7 @@ const DesktopSubNav = ({ label, href, subLabel }) => {
           <Text transition="all .3s ease" _groupHover={{ color: 'pink.400' }} fontWeight={500}>
             {label}
           </Text>
-          <Text fontSize="sm">{subLabel}</Text>
+          <Text fontSize="md">{subLabel}</Text>
         </Box>
         <Flex
           transition="all .3s ease"
