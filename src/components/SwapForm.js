@@ -1,4 +1,4 @@
-/* eslint-disable no-console */
+/* eslint-disable react/jsx-props-no-spreading */
 import {
   Box,
   Button,
@@ -6,6 +6,7 @@ import {
   Divider,
   Flex,
   Heading,
+  HStack,
   Input,
   Spacer,
   Text,
@@ -19,8 +20,7 @@ import debounce from 'debounce';
 import { Controller, useForm } from 'react-hook-form';
 import React, { useEffect, useState } from 'react';
 
-import Select from 'react-select';
-
+import Select, { components } from 'react-select';
 import FullPageSpinner from './FullPageSpinner';
 
 import zeroXSwap from '../hooks/use0xSwap';
@@ -29,6 +29,8 @@ import use0xPrice from '../hooks/use0xPrice';
 import Tokens from '../constants/tokens';
 import Toasts from '../constants/toasts';
 import Exchanges from '../constants/exchanges';
+
+import { getTokenIconPNG32 } from '../utils/getTokenIcon';
 
 export default function SwapForm({ web3, onboard, wallet }) {
   const { register, handleSubmit, watch, setValue, errors, control } = useForm();
@@ -54,19 +56,9 @@ export default function SwapForm({ web3, onboard, wallet }) {
     Tokens.data[watchTokenOut.value],
     sellAmount
   );
+
   const { price, gasPrice, estimatedGas, exchanges } =
     zeroExQuote === undefined ? defaults : zeroExQuote;
-
-  // display tokens
-  const tokenArray = new Array(Tokens.tokens.length);
-
-  for (let i = 0; i < tokenArray.length; i += 1) {
-    tokenArray[i] = {
-      value: Tokens.tokens[i],
-      label: Tokens.tokens[i],
-      icon: 'public/static/token-icons/128/sushi.png',
-    };
-  }
 
   useEffect(() => {
     if (watchAmountIn && watchTokenIn && watchTokenOut && price !== defaults.price) {
@@ -96,7 +88,7 @@ export default function SwapForm({ web3, onboard, wallet }) {
     const { amountIn, tokenIn, tokenOut } = data;
     setIsLoading(true);
 
-    zeroXSwap(Tokens.data[tokenIn.label], Tokens.data[tokenOut.label], amountIn, web3)
+    zeroXSwap(Tokens.data[tokenIn.value], Tokens.data[tokenOut.value], amountIn, web3)
       .then(() => {
         setIsLoading(false);
         toast(Toasts.success);
@@ -111,6 +103,39 @@ export default function SwapForm({ web3, onboard, wallet }) {
   if (!onboard) {
     return <FullPageSpinner />;
   }
+
+  // display tokens
+  const tokenArray = Tokens.tokens.map((symbol) => ({
+    value: symbol,
+    label: symbol,
+    icon: getTokenIconPNG32(symbol),
+  }));
+
+  const { Option, SingleValue } = components;
+  const IconOption = (props) => {
+    const { data } = props;
+    return (
+      <Option {...props}>
+        <HStack>
+          <Image src={data.icon} />
+          <Text>{data.label}</Text>
+        </HStack>
+      </Option>
+    );
+  };
+
+  const ValueOption = (props) => {
+    const { data } = props;
+    return (
+      <SingleValue {...props}>
+        <HStack>
+          <Image src={data.icon} />
+          <Text>{data.label}</Text>
+        </HStack>
+      </SingleValue>
+    );
+  };
+
   return (
     <Box py={12} px={12} pb={6} boxShadow="lg" bgColor="#fff" borderRadius={20}>
       <Heading fontFamily="Poppins" fontWeight="700" mb={10}>
@@ -168,6 +193,7 @@ export default function SwapForm({ web3, onboard, wallet }) {
                     },
                   }}
                   options={tokenArray}
+                  components={{ Option: IconOption, SingleValue: ValueOption }}
                   inputRef={ref}
                   value={value}
                   name={name}
@@ -243,6 +269,7 @@ export default function SwapForm({ web3, onboard, wallet }) {
                     },
                   }}
                   options={tokenArray}
+                  components={{ Option: IconOption, SingleValue: ValueOption }}
                   inputRef={ref}
                   value={value}
                   name={name}
