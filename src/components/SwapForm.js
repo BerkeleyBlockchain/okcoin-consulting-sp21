@@ -34,7 +34,7 @@ import Exchanges from '../constants/exchanges';
 
 import { getTokenIconPNG32 } from '../utils/getTokenIcon';
 
-export default function SwapForm({ onboardState, web3, onboard, wallet }) {
+export default function SwapForm({ onboardState, web3, onboard }) {
   const { register, handleSubmit, watch, setValue, errors, control } = useForm();
 
   const [isLoading, setIsLoading] = useState();
@@ -73,7 +73,7 @@ export default function SwapForm({ onboardState, web3, onboard, wallet }) {
   }, [price, watchAmountIn, watchTokenIn, watchTokenOut]);
 
   async function readyToTransact() {
-    if (!wallet.provider) {
+    if (!onboardState.address) {
       const walletSelected = await onboard.walletSelect();
       if (!walletSelected) return false;
     }
