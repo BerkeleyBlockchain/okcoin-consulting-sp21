@@ -49,7 +49,9 @@ export default function SwapForm({ onboardState, web3, onboard }) {
   const { data: zeroExQuote } = use0xPrice(
     Tokens.data[watchTokenIn.value],
     Tokens.data[watchTokenOut.value],
-    sellAmount
+    sellAmount,
+    // eslint-disable-next-line no-use-before-define
+    (error) => handleError(error)
   );
 
   const { price, gasPrice, estimatedGas, exchanges } =
@@ -75,6 +77,17 @@ export default function SwapForm({ onboardState, web3, onboard }) {
     return ready;
   }
 
+  const handleError = (error) => {
+    console.log('🚀 ~ file: SwapForm.js ~ line 92 ~ handleError ~ error', error);
+    if (error?.code === 4001) {
+      toast(Toasts.transactionReject);
+    } else if (error?.message === 'Request failed with status code 400') {
+      toast(Toasts.apiError);
+    } else {
+      toast(Toasts.error);
+    }
+  };
+
   // Execute the swap
   const onSubmit = async (data) => {
     const ready = await readyToTransact();
@@ -88,10 +101,9 @@ export default function SwapForm({ onboardState, web3, onboard }) {
         setIsLoading(false);
         toast(Toasts.success);
       })
-      .catch((err) => {
+      .catch((error) => {
         setIsLoading(false);
-        console.log(err);
-        toast(Toasts.error);
+        handleError(error);
       });
   };
 

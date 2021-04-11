@@ -2,23 +2,23 @@
 import { ChevronDownIcon, ChevronRightIcon, CloseIcon, HamburgerIcon } from '@chakra-ui/icons';
 import {
   Box,
+  Button,
   Collapse,
   Flex,
   Icon,
   IconButton,
+  Image,
   Link,
   Popover,
   PopoverContent,
   PopoverTrigger,
+  Spinner,
   Stack,
   Text,
   useColorModeValue,
   useDisclosure,
-  Spinner,
-  Image,
 } from '@chakra-ui/react';
 import React from 'react';
-
 import AccountModal from './AccountModal';
 
 const NAV_ITEMS = [
@@ -85,6 +85,14 @@ export default function Navbar({ address, balance, onboard, web3 }) {
         {address && onboard && (
           <Stack flex={{ base: 1, md: 0 }} justify="flex-end" direction="row" spacing={2}>
             <Flex align="center">
+              <Button
+                size="md"
+                onClick={() => onboard.walletReset()}
+                variant="outline"
+                fontFamily="Poppins"
+              >
+                Reset Wallet State
+              </Button>
               <Text fontFamily="Poppins" fontWeight="600" color="gray.700" size="sm">
                 {typeof balance === 'string' ? (
                   `${parseFloat(web3.utils.fromWei(balance, 'ether')).toPrecision(6)}`
