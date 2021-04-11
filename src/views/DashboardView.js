@@ -1,4 +1,4 @@
-import { Box, Container, Grid, GridItem } from '@chakra-ui/react';
+import { Box, Container } from '@chakra-ui/react';
 import Web3 from 'web3';
 import React, { useEffect, useState } from 'react';
 import NavBar from '../components/NavBar';
@@ -40,17 +40,11 @@ export default function DashboardView() {
   }, [onboard]);
 
   return (
-    <Box bgColor="gray.100" height="100vh" width="100%">
+    <Box height="100vh" width="100%">
       <NavBar address={address} balance={balance} onboard={onboard} web3={web3} />
-      <Grid templateColumns="repeat(7, 1fr)">
-        <GridItem colSpan={12}>
-          <Container minWidth={500}>
-            <Box mt="100px">
-              <SwapForm web3={web3} wallet={wallet} onboard={onboard} />
-            </Box>
-          </Container>
-        </GridItem>
-      </Grid>
+      <Container mt="10vh">
+        <SwapForm web3={web3} wallet={wallet} onboard={onboard} />
+      </Container>
     </Box>
   );
 }

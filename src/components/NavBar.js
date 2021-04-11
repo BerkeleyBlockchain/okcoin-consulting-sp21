@@ -84,14 +84,14 @@ export default function Navbar({ address, balance, onboard, web3 }) {
         {address && onboard && (
           <Stack flex={{ base: 1, md: 0 }} justify="flex-end" direction="row" spacing={2}>
             <Flex align="center">
-              <Text fontFamily="Poppins" fontWeight="600" size="sm">
+              <Text fontFamily="Poppins" fontWeight="600" color="gray.700" size="sm">
                 {typeof balance === 'string' ? (
                   `${parseFloat(web3.utils.fromWei(balance, 'ether')).toPrecision(6)}`
                 ) : (
                   <Spinner size="xs" />
                 )}
               </Text>
-              <Text fontFamily="Poppins" fontWeight="700" size="sm" ml={1}>
+              <Text fontFamily="Poppins" fontWeight="700" color="gray.700" size="sm" ml={1}>
                 ETH
               </Text>
             </Flex>
