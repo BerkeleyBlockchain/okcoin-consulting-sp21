@@ -6,6 +6,7 @@ import {
   Divider,
   Flex,
   Heading,
+  HStack,
   Input,
   Spacer,
   Text,
@@ -19,7 +20,7 @@ import debounce from 'debounce';
 import { Controller, useForm } from 'react-hook-form';
 import React, { useEffect, useState } from 'react';
 
-import Select from 'react-select';
+import Select, { components } from 'react-select';
 import FullPageSpinner from './FullPageSpinner';
 
 import zeroXSwap from '../hooks/use0xSwap';
@@ -28,6 +29,8 @@ import use0xPrice from '../hooks/use0xPrice';
 import Tokens from '../constants/tokens';
 import Toasts from '../constants/toasts';
 import Exchanges from '../constants/exchanges';
+
+import { getTokenIconPNG32 } from '../utils/getTokenIcon';
 
 export default function SwapForm({ web3, onboard, wallet }) {
   const { register, handleSubmit, watch, setValue, errors, control } = useForm();
@@ -53,19 +56,9 @@ export default function SwapForm({ web3, onboard, wallet }) {
     Tokens.data[watchTokenOut.value],
     sellAmount
   );
+
   const { price, gasPrice, estimatedGas, exchanges } =
     zeroExQuote === undefined ? defaults : zeroExQuote;
-
-  // display tokens
-  const tokenArray = new Array(Tokens.tokens.length);
-
-  for (let i = 0; i < tokenArray.length; i += 1) {
-    tokenArray[i] = {
-      value: Tokens.tokens[i],
-      label: Tokens.tokens[i],
-      icon: `/static/token-icons/128/${Tokens.tokens[i].toLowerCase()}.png`,
-    };
-  }
 
   useEffect(() => {
     if (watchAmountIn && watchTokenIn && watchTokenOut && price !== defaults.price) {
@@ -111,30 +104,35 @@ export default function SwapForm({ web3, onboard, wallet }) {
     return <FullPageSpinner />;
   }
 
+  // display tokens
+  const tokenArray = Tokens.tokens.map((symbol) => ({
+    value: symbol,
+    label: symbol,
+    icon: getTokenIconPNG32(symbol),
+  }));
+
+  const { Option, SingleValue } = components;
   const IconOption = (props) => {
-    const { innerProps, innerRef, data } = props;
+    const { data } = props;
     return (
-      <div
-        {...innerProps}
-        ref={innerRef}
-        style={{
-          display: 'flex',
-          flexDirection: 'row',
-          margin: 10,
-          marginLeft: 15,
-          alignItems: 'center',
-        }}
-      >
-        <img
-          style={{
-            width: 20,
-            marginRight: 8,
-          }}
-          alt=""
-          src={data.icon}
-        />
-        {data.label}
-      </div>
+      <Option {...props}>
+        <HStack>
+          <Image src={data.icon} />
+          <Text>{data.label}</Text>
+        </HStack>
+      </Option>
+    );
+  };
+
+  const ValueOption = (props) => {
+    const { data } = props;
+    return (
+      <SingleValue {...props}>
+        <HStack>
+          <Image src={data.icon} />
+          <Text>{data.label}</Text>
+        </HStack>
+      </SingleValue>
     );
   };
 
@@ -195,7 +193,7 @@ export default function SwapForm({ web3, onboard, wallet }) {
                     },
                   }}
                   options={tokenArray}
-                  components={{ Option: IconOption }}
+                  components={{ Option: IconOption, SingleValue: ValueOption }}
                   inputRef={ref}
                   value={value}
                   name={name}
@@ -271,7 +269,7 @@ export default function SwapForm({ web3, onboard, wallet }) {
                     },
                   }}
                   options={tokenArray}
-                  components={{ Option: IconOption }}
+                  components={{ Option: IconOption, SingleValue: ValueOption }}
                   inputRef={ref}
                   value={value}
                   name={name}
