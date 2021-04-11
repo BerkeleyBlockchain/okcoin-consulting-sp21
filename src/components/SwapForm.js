@@ -119,7 +119,7 @@ export default function SwapForm({ web3, onboard, wallet }) {
     return (
       <Option {...props}>
         <HStack>
-          <Image src={data.icon} />
+          <img src={data.icon} defaultSource={data.icon} alt={data.label} />
           <Text>{data.label}</Text>
         </HStack>
       </Option>
@@ -131,7 +131,7 @@ export default function SwapForm({ web3, onboard, wallet }) {
     return (
       <SingleValue {...props}>
         <HStack>
-          <Image src={data.icon} />
+          <img src={data.icon} defaultSource={data.icon} alt={data.label} />
           <Text>{data.label}</Text>
         </HStack>
       </SingleValue>
