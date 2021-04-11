@@ -208,7 +208,6 @@ export default function SwapForm({ web3, onboard, wallet }) {
               placeholder="Enter Amount"
               name="amountIn"
               type="number"
-              pattern="\d*\.?\d+"
               fontFamily="Poppins"
               step="0.000000000000000001"
               size="lg"
