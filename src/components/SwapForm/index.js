@@ -81,8 +81,6 @@ export default function SwapForm({ onboardState, web3, onboard }) {
     console.log('🚀 ~ file: SwapForm.js ~ line 92 ~ handleError ~ error', error);
     if (error?.code === 4001) {
       toast(Toasts.transactionReject);
-    } else if (error?.message === 'Request failed with status code 400') {
-      toast(Toasts.apiError);
     } else {
       toast(Toasts.error);
     }
