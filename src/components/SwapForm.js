@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-props-no-spreading */
 /* eslint-disable no-console */
 import {
   Box,
@@ -6,6 +7,7 @@ import {
   Divider,
   Flex,
   Heading,
+  HStack,
   Input,
   Spacer,
   Text,
@@ -13,14 +15,14 @@ import {
   Tooltip,
   Image,
   IconButton,
+  Spinner,
 } from '@chakra-ui/react';
 import { IoAlertCircle } from 'react-icons/io5';
 import debounce from 'debounce';
 import { Controller, useForm } from 'react-hook-form';
 import React, { useEffect, useState } from 'react';
 
-import Select from 'react-select';
-
+import Select, { components } from 'react-select';
 import FullPageSpinner from './FullPageSpinner';
 
 import zeroXSwap from '../hooks/use0xSwap';
@@ -29,6 +31,8 @@ import use0xPrice from '../hooks/use0xPrice';
 import Tokens from '../constants/tokens';
 import Toasts from '../constants/toasts';
 import Exchanges from '../constants/exchanges';
+
+import { getTokenIconPNG32 } from '../utils/getTokenIcon';
 
 export default function SwapForm({ onboardState, web3, onboard, wallet }) {
   const { register, handleSubmit, watch, setValue, errors, control } = useForm();
@@ -42,10 +46,10 @@ export default function SwapForm({ onboardState, web3, onboard, wallet }) {
   const watchAmountIn = watch('amountIn', 0);
 
   const defaults = {
-    price: '🔄',
-    gasPrice: '🔄',
-    exchanges: '🔄',
-    estimatedGas: '🔄',
+    price: <Spinner size="xs" />,
+    gasPrice: <Spinner size="xs" />,
+    exchanges: <Spinner size="xs" />,
+    estimatedGas: <Spinner size="xs" />,
     sources: [],
   };
 
@@ -54,29 +58,14 @@ export default function SwapForm({ onboardState, web3, onboard, wallet }) {
     Tokens.data[watchTokenOut.value],
     sellAmount
   );
+
   const { price, gasPrice, estimatedGas, exchanges } =
     zeroExQuote === undefined ? defaults : zeroExQuote;
-
-  // display tokens
-  const tokenArray = new Array(Tokens.tokens.length);
-
-  for (let i = 0; i < tokenArray.length; i += 1) {
-    tokenArray[i] = {
-      value: Tokens.tokens[i],
-      label: Tokens.tokens[i],
-      icon: 'public/static/token-icons/128/sushi.png',
-    };
-  }
-
-  if (onboard != null) {
-    console.log('onboard state');
-    console.log(onboardState);
-  }
 
   useEffect(() => {
     if (watchAmountIn && watchTokenIn && watchTokenOut && price !== defaults.price) {
       const n = watchAmountIn * price;
-      setValue('amountOut', n.toFixed(Tokens.data[watchTokenOut.value].decimals));
+      setValue('amountOut', n.toFixed(6));
     }
     if (!watchAmountIn) {
       setValue('amountOut', '');
@@ -101,7 +90,7 @@ export default function SwapForm({ onboardState, web3, onboard, wallet }) {
     const { amountIn, tokenIn, tokenOut } = data;
     setIsLoading(true);
 
-    zeroXSwap(Tokens.data[tokenIn.label], Tokens.data[tokenOut.label], amountIn, web3)
+    zeroXSwap(Tokens.data[tokenIn.value], Tokens.data[tokenOut.value], amountIn, web3)
       .then(() => {
         setIsLoading(false);
         toast(Toasts.success);
@@ -116,9 +105,42 @@ export default function SwapForm({ onboardState, web3, onboard, wallet }) {
   if (!onboard) {
     return <FullPageSpinner />;
   }
+
+  // display tokens
+  const tokenArray = Tokens.tokens.map((symbol) => ({
+    value: symbol,
+    label: symbol,
+    icon: getTokenIconPNG32(symbol),
+  }));
+
+  const { Option, SingleValue } = components;
+  const IconOption = (props) => {
+    const { data } = props;
+    return (
+      <Option {...props}>
+        <HStack>
+          <Image src={data.icon} />
+          <Text>{data.label}</Text>
+        </HStack>
+      </Option>
+    );
+  };
+
+  const ValueOption = (props) => {
+    const { data } = props;
+    return (
+      <SingleValue {...props}>
+        <HStack>
+          <Image src={data.icon} />
+          <Text>{data.label}</Text>
+        </HStack>
+      </SingleValue>
+    );
+  };
+
   return (
-    <Box py={12} px={12} pb={6} boxShadow="lg" bgColor="#fff" borderRadius={20}>
-      <Heading fontFamily="Poppins" fontWeight="700" mb={10}>
+    <Box py={10} px={8} pb={0} boxShadow="lg" bgColor="#fff" borderRadius={30}>
+      <Heading fontFamily="Poppins" fontWeight="700" color="gray.700" mb={10}>
         Swap
       </Heading>
       <form onSubmit={handleSubmit(onSubmit)}>
@@ -147,11 +169,11 @@ export default function SwapForm({ onboardState, web3, onboard, wallet }) {
                     }),
 
                     control: () => ({
-                      width: 170,
+                      width: 160,
                       height: 52,
                       display: 'flex',
                       flexDirection: 'row',
-                      marginLeft: 6,
+                      marginLeft: 4,
                       color: '#A0AEBF',
                       fontFamily: 'Poppins',
                       fontWeight: '600',
@@ -173,6 +195,7 @@ export default function SwapForm({ onboardState, web3, onboard, wallet }) {
                     },
                   }}
                   options={tokenArray}
+                  components={{ Option: IconOption, SingleValue: ValueOption }}
                   inputRef={ref}
                   value={value}
                   name={name}
@@ -222,11 +245,11 @@ export default function SwapForm({ onboardState, web3, onboard, wallet }) {
                     }),
 
                     control: () => ({
-                      width: 170,
+                      width: 160,
                       height: 52,
                       display: 'flex',
                       flexDirection: 'row',
-                      marginLeft: 6,
+                      marginLeft: 4,
                       color: '#A0AEBF',
                       fontFamily: 'Poppins',
                       fontWeight: '600',
@@ -248,6 +271,7 @@ export default function SwapForm({ onboardState, web3, onboard, wallet }) {
                     },
                   }}
                   options={tokenArray}
+                  components={{ Option: IconOption, SingleValue: ValueOption }}
                   inputRef={ref}
                   value={value}
                   name={name}
@@ -280,14 +304,24 @@ export default function SwapForm({ onboardState, web3, onboard, wallet }) {
                 Rate
               </Text>
               <Spacer />
-              <Text fontFamily="Poppins">{`1 ${watchTokenIn.value} = ${price} ${watchTokenOut.value}`}</Text>
+              {price === defaults.price ? (
+                <>
+                  <Text fontFamily="Poppins">{`1 ${watchTokenIn.value} = `}</Text>
+                  <Text mx={1}>{price}</Text>
+                  <Text fontFamily="Poppins">{` ${watchTokenOut.value}`}</Text>
+                </>
+              ) : (
+                <Text fontFamily="Poppins">{`1 ${watchTokenIn.value} = ${parseFloat(price).toFixed(
+                  6
+                )} ${watchTokenOut.value}`}</Text>
+              )}
             </Flex>
             <Flex>
               <Text fontFamily="Poppins" fontWeight="600">
                 Source
               </Text>
               <Spacer />
-              {typeof exchanges === 'object' ? (
+              {exchanges !== defaults.exchanges ? (
                 <>
                   <Text fontFamily="Poppins" style={{ fontWeight: 'bold' }}>
                     {exchanges.length === 1
@@ -299,14 +333,13 @@ export default function SwapForm({ onboardState, web3, onboard, wallet }) {
                     bgColor="#333333"
                     padding="10px"
                     label={
-                      typeof exchanges === 'object' &&
+                      exchanges !== defaults.exchanges &&
                       exchanges
                         .sort((a, b) => parseFloat(b.proportion) - parseFloat(a.proportion))
                         .map((item) => (
                           <Flex alignItems="center">
                             <Image
                               src={Exchanges.data[item.name].iconSVG}
-                              alt={item.name}
                               width="25px"
                               height="25px"
                               m={1}
@@ -315,7 +348,7 @@ export default function SwapForm({ onboardState, web3, onboard, wallet }) {
                               style={{ fontWeight: 'bold', marginLeft: 5, fontFamily: 'Poppins' }}
                             >
                               {Exchanges.data[item.name].name}
-                              {` (${parseFloat(item.proportion * 100).toFixed(2)}%)`}
+                              {` (${parseFloat(item.proportion * 100).toFixed(3)}%)`}
                             </Text>
                           </Flex>
                         ))

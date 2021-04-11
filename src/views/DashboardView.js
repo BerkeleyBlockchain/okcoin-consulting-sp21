@@ -1,4 +1,4 @@
-import { Box, Container, Grid, GridItem } from '@chakra-ui/react';
+import { Box, Container } from '@chakra-ui/react';
 import Web3 from 'web3';
 import React, { useEffect, useState } from 'react';
 import NavBar from '../components/NavBar';
@@ -7,12 +7,13 @@ import initOnboard from '../utils/initOnboard';
 
 export default function DashboardView() {
   const [address, setAddress] = useState(null);
+  const [balance, setBalance] = useState(null);
   const [, setNetwork] = useState(null);
-  const [, setBalance] = useState(null);
 
   const [wallet, setWallet] = useState({});
   const [onboard, setOnboard] = useState(null);
 
+  const web3 = new Web3(wallet.provider);
   useEffect(() => {
     const ob = initOnboard({
       address: setAddress,
@@ -33,29 +34,22 @@ export default function DashboardView() {
 
   useEffect(() => {
     const previouslySelectedWallet = window.localStorage.getItem('selectedWallet');
-
     if (previouslySelectedWallet && onboard) {
       onboard.walletSelect(previouslySelectedWallet);
     }
   }, [onboard]);
 
   return (
-    <Box bgColor="gray.100" height="100vh" width="100%">
-      <NavBar address={address} />
-      <Grid templateColumns="repeat(7, 1fr)">
-        <GridItem colSpan={12}>
-          <Container minWidth={500}>
-            <Box mt="100px">
-              <SwapForm
-                onboardState={onboard ? onboard.getState() : null}
-                web3={new Web3(wallet.provider)}
-                wallet={wallet}
-                onboard={onboard}
-              />
-            </Box>
-          </Container>
-        </GridItem>
-      </Grid>
+    <Box height="100vh" width="100%">
+      <NavBar address={address} balance={balance} onboard={onboard} web3={web3} />
+      <Container mt="10vh">
+        <SwapForm
+          onboardState={onboard ? onboard.getState() : null}
+          web3={web3}
+          wallet={wallet}
+          onboard={onboard}
+        />
+      </Container>
     </Box>
   );
 }

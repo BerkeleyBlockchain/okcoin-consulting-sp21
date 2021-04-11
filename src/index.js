@@ -14,9 +14,16 @@ const queryClient = new QueryClient();
 const config = {
   useSystemColorMode: false,
   initialColorMode: 'light',
+  styles: {
+    global: {
+      body: {
+        bg: 'gray.100',
+      },
+    },
+  },
 };
 
-const customTheme = extendTheme({ config });
+const customTheme = extendTheme(config);
 
 ReactDOM.render(
   <React.StrictMode>
