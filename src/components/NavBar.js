@@ -83,16 +83,22 @@ export default function Navbar({ address, balance, onboard, web3 }) {
         </Flex>
 
         {address && onboard && (
-          <Stack flex={{ base: 1, md: 0 }} justify="flex-end" direction="row" spacing={2}>
-            <Flex align="center">
-              <Button
-                size="md"
-                onClick={() => onboard.walletReset()}
-                variant="outline"
-                fontFamily="Poppins"
-              >
-                Reset Wallet State
-              </Button>
+          <Stack
+            flex={{ base: 1, md: 0 }}
+            justify="flex-end"
+            direction="row"
+            spacing={2}
+            align="center"
+          >
+            <Button
+              size="sm"
+              onClick={() => onboard.walletReset()}
+              variant="outline"
+              fontFamily="Poppins"
+            >
+              Reset Wallet State
+            </Button>
+            <>
               <Text fontFamily="Poppins" fontWeight="600" color="gray.700" size="sm">
                 {typeof balance === 'string' ? (
                   `${parseFloat(web3.utils.fromWei(balance, 'ether')).toPrecision(6)}`
@@ -103,7 +109,7 @@ export default function Navbar({ address, balance, onboard, web3 }) {
               <Text fontFamily="Poppins" fontWeight="700" color="gray.700" size="sm" ml={1}>
                 ETH
               </Text>
-            </Flex>
+            </>
             <AccountModal address={address} onboard={onboard} />
           </Stack>
         )}
