@@ -65,7 +65,7 @@ export default function SwapForm({ web3, onboard, wallet }) {
   useEffect(() => {
     if (watchAmountIn && watchTokenIn && watchTokenOut && price !== defaults.price) {
       const n = watchAmountIn * price;
-      setValue('amountOut', n.toFixed(Tokens.data[watchTokenOut.value].decimals));
+      setValue('amountOut', n.toFixed(6));
     }
     if (!watchAmountIn) {
       setValue('amountOut', '');
@@ -311,7 +311,9 @@ export default function SwapForm({ web3, onboard, wallet }) {
                   <Text fontFamily="Poppins">{` ${watchTokenOut.value}`}</Text>
                 </>
               ) : (
-                <Text fontFamily="Poppins">{`1 ${watchTokenIn.value} = ${price} ${watchTokenOut.value}`}</Text>
+                <Text fontFamily="Poppins">{`1 ${watchTokenIn.value} = ${parseFloat(price).toFixed(
+                  6
+                )} ${watchTokenOut.value}`}</Text>
               )}
             </Flex>
             <Flex>
