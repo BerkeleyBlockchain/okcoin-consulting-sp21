@@ -33,8 +33,9 @@ import Toasts from '../constants/toasts';
 import Exchanges from '../constants/exchanges';
 
 import { getTokenIconPNG32 } from '../utils/getTokenIcon';
+import queryBalance from '../utils/queryBalance';
 
-export default function SwapForm({ web3, onboard, wallet }) {
+export default function SwapForm({ onboardState, web3, onboard }) {
   const { register, handleSubmit, watch, setValue, errors, control } = useForm();
 
   const [isLoading, setIsLoading] = useState();
@@ -64,6 +65,8 @@ export default function SwapForm({ web3, onboard, wallet }) {
 
   useEffect(() => {
     if (watchAmountIn && watchTokenIn && watchTokenOut && price !== defaults.price) {
+      queryBalance(watchTokenIn.value, watchAmountIn);
+
       const n = watchAmountIn * price;
       setValue('amountOut', n.toFixed(6));
     }
@@ -73,7 +76,7 @@ export default function SwapForm({ web3, onboard, wallet }) {
   }, [price, watchAmountIn, watchTokenIn, watchTokenOut]);
 
   async function readyToTransact() {
-    if (!wallet.provider) {
+    if (!onboardState.address) {
       const walletSelected = await onboard.walletSelect();
       if (!walletSelected) return false;
     }
@@ -119,7 +122,7 @@ export default function SwapForm({ web3, onboard, wallet }) {
     return (
       <Option {...props}>
         <HStack>
-          <Image src={data.icon} />
+          <img src={data.icon} defaultSource={data.icon} alt={data.label} />
           <Text>{data.label}</Text>
         </HStack>
       </Option>
@@ -131,7 +134,7 @@ export default function SwapForm({ web3, onboard, wallet }) {
     return (
       <SingleValue {...props}>
         <HStack>
-          <Image src={data.icon} />
+          <img src={data.icon} defaultSource={data.icon} alt={data.label} />
           <Text>{data.label}</Text>
         </HStack>
       </SingleValue>
@@ -194,7 +197,7 @@ export default function SwapForm({ web3, onboard, wallet }) {
                       return { ...provided, opacity, transition };
                     },
                   }}
-                  options={tokenArray}
+                  options={tokenArray.filter((item) => item.value !== watchTokenOut.value)}
                   components={{ Option: IconOption, SingleValue: ValueOption }}
                   inputRef={ref}
                   value={value}
@@ -388,7 +391,7 @@ export default function SwapForm({ web3, onboard, wallet }) {
         ) : null}
 
         <Center>
-          {wallet.provider ? (
+          {onboardState.address ? (
             <Button
               w="100%"
               h="60px"
@@ -405,7 +408,7 @@ export default function SwapForm({ web3, onboard, wallet }) {
               fontWeight="600"
               isLoading={isLoading}
             >
-              Swap Tokens
+              {errors.amountIn ? 'Input Amount required' : 'Swap Tokens'}
             </Button>
           ) : (
             <Button
@@ -420,14 +423,13 @@ export default function SwapForm({ web3, onboard, wallet }) {
               fontFamily="Poppins"
               fontWeight="600"
               disabled={Object.keys(errors).length !== 0}
-              onClick={() => onboard.walletSelect()}
+              onClick={() => readyToTransact()}
             >
               Connect Wallet
             </Button>
           )}
         </Center>
-        <Text color="tomato">{errors.amountIn ? 'Input amount is required' : null}</Text>
-        <Text color="tomato">{errors.tokenOut ? 'Cannot swap to the same token' : null}</Text>
+        {/* <Text color="tomato">{errors.amountIn ? 'Input amount is required' : null}</Text> */}
       </form>
     </Box>
   );

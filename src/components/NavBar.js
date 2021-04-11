@@ -15,13 +15,17 @@ import {
   useColorModeValue,
   useDisclosure,
   Spinner,
+  Image,
 } from '@chakra-ui/react';
 import React from 'react';
 
+import { useAtom } from 'jotai';
 import AccountModal from './AccountModal';
+import { tabIndexAtom } from '../utils/atoms';
 
 const NAV_ITEMS = [
   {
+    index: 0,
     label: 'Home',
     href: 'https://www.okcoin.com',
   },
@@ -45,10 +49,16 @@ const NAV_ITEMS = [
       },
     ],
   },
+  {
+    index: 1,
+    label: 'Docs',
+    href: '#',
+  },
 ];
 
 export default function Navbar({ address, balance, onboard, web3 }) {
   const { isOpen, onToggle } = useDisclosure();
+  const [, setTabIndex] = useAtom(tabIndexAtom);
 
   return (
     <Box>
@@ -77,7 +87,7 @@ export default function Navbar({ address, balance, onboard, web3 }) {
         </Flex>
         <Flex flex={{ base: 1 }} justify={{ base: 'center', md: 'start' }}>
           <Flex display={{ base: 'none', md: 'flex' }} ml={6}>
-            <DesktopNav />
+            <DesktopNav setTabIndex={setTabIndex} />
           </Flex>
         </Flex>
 
@@ -107,23 +117,26 @@ export default function Navbar({ address, balance, onboard, web3 }) {
   );
 }
 
-const DesktopNav = () => {
+const DesktopNav = ({ setTabIndex }) => {
   return (
-    <Stack direction="row" spacing={4}>
+    <Stack direction="row" spacing={4} alignItems="center">
+      <Image src="/static/okcoin_icon.png" style={{ height: '30px', width: '130px' }} />
       {NAV_ITEMS.map((navItem) => (
         <Box key={navItem.label}>
           <Popover trigger="hover" placement="bottom-start">
             <PopoverTrigger>
               <Link
-                p={2}
-                href={navItem.href ?? '#'}
-                fontSize="sm"
+                p={4}
+                to={navItem.href ?? '#'}
+                fontSize="md"
                 fontWeight={500}
+                fontFamily="Poppins"
                 color={useColorModeValue('gray.600', 'gray.200')}
                 _hover={{
                   textDecoration: 'none',
                   color: useColorModeValue('gray.800', 'white'),
                 }}
+                onClick={() => setTabIndex(navItem.index)}
               >
                 {navItem.label}
               </Link>
@@ -167,7 +180,7 @@ const DesktopSubNav = ({ label, href, subLabel }) => {
           <Text transition="all .3s ease" _groupHover={{ color: 'pink.400' }} fontWeight={500}>
             {label}
           </Text>
-          <Text fontSize="sm">{subLabel}</Text>
+          <Text fontSize="md">{subLabel}</Text>
         </Box>
         <Flex
           transition="all .3s ease"

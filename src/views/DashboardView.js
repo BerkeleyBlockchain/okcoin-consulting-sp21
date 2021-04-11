@@ -1,14 +1,18 @@
 import { Box, Container } from '@chakra-ui/react';
 import Web3 from 'web3';
+import { useAtom } from 'jotai';
 import React, { useEffect, useState } from 'react';
+import { tabIndexAtom } from '../utils/atoms';
 import NavBar from '../components/NavBar';
 import SwapForm from '../components/SwapForm';
 import initOnboard from '../utils/initOnboard';
+import DocsView from './DocsView';
 
 export default function DashboardView() {
   const [address, setAddress] = useState(null);
   const [balance, setBalance] = useState(null);
   const [, setNetwork] = useState(null);
+  const [tabIndex] = useAtom(tabIndexAtom);
 
   const [wallet, setWallet] = useState({});
   const [onboard, setOnboard] = useState(null);
@@ -42,9 +46,21 @@ export default function DashboardView() {
   return (
     <Box height="100vh" width="100%">
       <NavBar address={address} balance={balance} onboard={onboard} web3={web3} />
-      <Container mt="10vh">
-        <SwapForm web3={web3} wallet={wallet} onboard={onboard} />
-      </Container>
+      {tabIndex === 0 ? (
+        <Container mt="10vh">
+          <SwapForm
+            onboardState={onboard ? onboard.getState() : null}
+            web3={web3}
+            wallet={wallet}
+            onboard={onboard}
+          />
+        </Container>
+      ) : null}
+      {tabIndex === 1 ? (
+        <Container maxW="8xl">
+          <DocsView />
+        </Container>
+      ) : null}
     </Box>
   );
 }
