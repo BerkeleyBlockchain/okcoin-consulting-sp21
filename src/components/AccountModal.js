@@ -39,7 +39,7 @@ export default function AccountModal({ address, onboard }) {
                 Connected Wallet: {`${walletState.wallet.name}`}
               </Text>
               <Text fontSize="1.6em" fontFamily="Poppins" fontWeight="500">
-                {`${address?.substr(0, 10)}...${address?.substr(address.length - 8)}`}
+                {`${address?.substr(0, 8)}...${address?.substr(address.length - 6)}`}
               </Text>
               <Button fontSize="sm" fontFamily="Poppins" variant="link" onClick={onCopy}>
                 <CopyIcon mr={1} /> Copy Address

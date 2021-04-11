@@ -139,8 +139,8 @@ export default function SwapForm({ web3, onboard, wallet }) {
   };
 
   return (
-    <Box py={12} px={12} pb={6} boxShadow="lg" bgColor="#fff" borderRadius={20}>
-      <Heading fontFamily="Poppins" fontWeight="700" mb={10}>
+    <Box py={10} px={8} pb={0} boxShadow="lg" bgColor="#fff" borderRadius={30}>
+      <Heading fontFamily="Poppins" fontWeight="700" color="gray.700" mb={10}>
         Swap
       </Heading>
       <form onSubmit={handleSubmit(onSubmit)}>
@@ -169,11 +169,11 @@ export default function SwapForm({ web3, onboard, wallet }) {
                     }),
 
                     control: () => ({
-                      width: 170,
+                      width: 160,
                       height: 52,
                       display: 'flex',
                       flexDirection: 'row',
-                      marginLeft: 6,
+                      marginLeft: 4,
                       color: '#A0AEBF',
                       fontFamily: 'Poppins',
                       fontWeight: '600',
@@ -245,11 +245,11 @@ export default function SwapForm({ web3, onboard, wallet }) {
                     }),
 
                     control: () => ({
-                      width: 170,
+                      width: 160,
                       height: 52,
                       display: 'flex',
                       flexDirection: 'row',
-                      marginLeft: 6,
+                      marginLeft: 4,
                       color: '#A0AEBF',
                       fontFamily: 'Poppins',
                       fontWeight: '600',
