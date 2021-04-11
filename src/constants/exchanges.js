@@ -1,5 +1,9 @@
 export default {
   data: {
+    '0x': {
+      name: '0x Mesh',
+      iconSVG: '/static/exchange-icons/svg/0x.svg',
+    },
     Balancer: {
       name: 'Balancer',
       iconSVG: '/static/exchange-icons/svg/balancer.svg',
@@ -56,10 +60,6 @@ export default {
       name: '0x MultiHop',
       iconSVG: '/static/exchange-icons/svg/0x.svg',
     },
-    Native: {
-      name: '0x Mesh',
-      iconSVG: '/static/exchange-icons/svg/0x.svg',
-    },
     Shell: {
       name: 'Shell',
       iconSVG: '/static/exchange-icons/svg/shell.svg',
@@ -90,6 +90,7 @@ export default {
     },
   },
   exchanges: [
+    '0x',
     'Balancer',
     'Bancor',
     'CREAM',
@@ -104,7 +105,6 @@ export default {
     'Mooniswap',
     'MultiBridge',
     'MultiHop',
-    'Native',
     'Shell',
     'SnowSwap',
     'SushiSwap',
