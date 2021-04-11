@@ -17,7 +17,7 @@ import {
   IconButton,
   Spinner,
 } from '@chakra-ui/react';
-import { IoAlertCircle } from 'react-icons/io5';
+import { IoSwapVertical, IoAlertCircle } from 'react-icons/io5';
 import debounce from 'debounce';
 import { Controller, useForm } from 'react-hook-form';
 import React, { useEffect, useState } from 'react';
@@ -34,12 +34,19 @@ import Exchanges from '../constants/exchanges';
 
 import { getTokenIconPNG32 } from '../utils/getTokenIcon';
 
+function useForceUpdate() {
+  const [, setValue] = useState(0); // integer state
+  return () => setValue((value) => value + 1); // update the state to force render
+}
+
 export default function SwapForm({ web3, onboard, wallet }) {
-  const { register, handleSubmit, watch, setValue, errors, control } = useForm();
+  const { register, handleSubmit, watch, setValue, getValues, errors, control } = useForm();
 
   const [isLoading, setIsLoading] = useState();
   const [sellAmount, setSellAmount] = useState();
   const toast = useToast();
+
+  const forceUpdate = useForceUpdate();
 
   const watchTokenIn = watch('tokenIn', '');
   const watchTokenOut = watch('tokenOut', '');
@@ -140,14 +147,14 @@ export default function SwapForm({ web3, onboard, wallet }) {
 
   return (
     <Box py={10} px={8} pb={0} boxShadow="lg" bgColor="#fff" borderRadius={30}>
-      <Heading fontFamily="Poppins" fontWeight="700" color="gray.700" mb={10}>
+      <Heading fontFamily="Poppins" fontSize="xx-large" fontWeight="700" color="gray.700" mb={6}>
         Swap
       </Heading>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <Text fontFamily="Poppins" opacity={0.7} mb={2} ml={0.5}>
+        <Text fontFamily="Poppins" fontSize="sm" opacity={0.7} mb={1} ml={1}>
           PAY
         </Text>
-        <Box borderWidth="1px" borderRadius="lg" mb={6}>
+        <Box borderWidth="1px" borderRadius="lg">
           <Flex>
             <Controller
               name="tokenIn"
@@ -220,7 +227,26 @@ export default function SwapForm({ web3, onboard, wallet }) {
             />
           </Flex>
         </Box>
-        <Text fontFamily="Poppins" opacity={0.7} mb={2} ml={0.5}>
+
+        <Center mt={6}>
+          <IconButton
+            variant="outline"
+            isRound
+            borderColor="transparent"
+            size="xs"
+            icon={<IoSwapVertical size="20" opacity={0.7} />}
+            onClick={() => {
+              const values = getValues();
+              setValue('amountIn', values.amountOut);
+              setValue('amountOut', '');
+              setValue('tokenIn', values.tokenOut);
+              setValue('tokenOut', values.tokenIn);
+              forceUpdate();
+            }}
+          />
+        </Center>
+
+        <Text fontFamily="Poppins" fontSize="sm" opacity={0.7} mb={1} ml={1}>
           RECEIVE
         </Text>
         <Box borderWidth="1px" borderRadius="lg" mb={6}>
@@ -282,7 +308,7 @@ export default function SwapForm({ web3, onboard, wallet }) {
 
             <Input
               isReadOnly
-              placeholder="To"
+              placeholder="0.0"
               name="amountOut"
               type="number"
               step="0.000000000000000001"
