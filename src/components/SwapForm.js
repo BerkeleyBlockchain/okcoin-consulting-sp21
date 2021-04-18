@@ -205,6 +205,14 @@ export default function SwapForm({ onboardState, web3, onboard }) {
             />
 
             <Input
+              onKeyDown={(e) => {
+                const char = e.key;
+                if (char === 'e' || char === '-' || char === '+') {
+                  console.log('youre in');
+                  e.preventDefault();
+                  console.log(e);
+                }
+              }}
               placeholder="Enter Amount"
               name="amountIn"
               type="number"
