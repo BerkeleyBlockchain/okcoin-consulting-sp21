@@ -46,7 +46,6 @@ export default function DashboardView() {
         <SwapForm
           onboardState={onboard ? onboard.getState() : null}
           web3={web3}
-          wallet={wallet}
           onboard={onboard}
         />
       </Container>

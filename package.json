@@ -15,6 +15,7 @@
     "@ethersproject/solidity": "^5.0.6",
     "@uniswap/sdk": "^3.0.3",
     "axios": "^0.21.1",
+    "bignumber.js": "^9.0.1",
     "bnc-onboard": "^1.20.0",
     "buffer": "^6.0.3",
     "chakra-ui-autocomplete": "^1.2.6",

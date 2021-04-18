@@ -22,6 +22,8 @@ import debounce from 'debounce';
 import { Controller, useForm } from 'react-hook-form';
 import React, { useEffect, useState } from 'react';
 
+import BigNumber from 'bignumber.js';
+
 import Select, { components } from 'react-select';
 import FullPageSpinner from './FullPageSpinner';
 
@@ -65,8 +67,6 @@ export default function SwapForm({ onboardState, web3, onboard }) {
 
   useEffect(() => {
     if (watchAmountIn && watchTokenIn && watchTokenOut && price !== defaults.price) {
-      queryBalance(watchTokenIn.value, watchAmountIn);
-
       const n = watchAmountIn * price;
       setValue('amountOut', n.toFixed(6));
     }
@@ -80,6 +80,16 @@ export default function SwapForm({ onboardState, web3, onboard }) {
       const walletSelected = await onboard.walletSelect();
       if (!walletSelected) return false;
     }
+    console.log(onboard);
+    console.log(onboardState);
+    const balanceData = {
+      wallet: {
+        provider: onboardState.wallet.provider,
+      },
+      address: onboardState.address,
+      BigNumber,
+    };
+    queryBalance(watchTokenIn.value, watchAmountIn)(balanceData);
 
     const ready = await onboard.walletCheck();
     return ready;

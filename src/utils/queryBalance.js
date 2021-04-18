@@ -19,7 +19,8 @@ function getTokenBalance({ tokenAddress, minimumBalance, tokenName }) {
       tokenContract = new ethers.Contract(tokenAddress, erc20, ethersProvider);
     }
 
-    const tokenDecimals = await tokenContract.decimals();
+    const tokenDecimals = tokens.data[tokenName].decimals;
+    console.log(tokenDecimals);
     const divideBy = new BigNumber(10).pow(tokenDecimals);
     const tokenBalanceResult = await tokenContract.balanceOf(address).then((res) => res.toString());
     const tokenBalance = new BigNumber(tokenBalanceResult).div(divideBy);
