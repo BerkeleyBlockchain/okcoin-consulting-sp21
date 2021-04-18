@@ -405,7 +405,7 @@ export default function SwapForm({ onboardState, web3, onboard }) {
               fontWeight="600"
               isLoading={isLoading}
             >
-              Swap Tokens
+              {errors.amountIn ? 'Input Amount required' : 'Swap Tokens'}
             </Button>
           ) : (
             <Button
@@ -426,8 +426,7 @@ export default function SwapForm({ onboardState, web3, onboard }) {
             </Button>
           )}
         </Center>
-        <Text color="tomato">{errors.amountIn ? 'Input amount is required' : null}</Text>
-        <Text color="tomato">{errors.tokenOut ? 'Cannot swap to the same token' : null}</Text>
+        {/* <Text color="tomato">{errors.amountIn ? 'Input amount is required' : null}</Text> */}
       </form>
     </Box>
   );
