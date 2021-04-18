@@ -37,7 +37,7 @@ export default async function swapTokens(tokenIn, tokenOut, sellAmount, web3) {
     const approvalRawTx = {
       from: accountAddress,
       gasPrice: `0x${parseInt(quote.gasPrice, 10).toString(16)}`,
-      gasLimit: `0x${parseInt(estimatedGas * 1.1, 10).toString(16)}`,
+      gasLimit: `0x${parseInt(estimatedGas * 1.2, 10).toString(16)}`,
       to: tokenIn.address,
       value: '0x0',
       data: tokenContract.methods.approve(quote.allowanceTarget, quote.sellAmount).encodeABI(),
@@ -51,7 +51,7 @@ export default async function swapTokens(tokenIn, tokenOut, sellAmount, web3) {
   const swapRawTx = {
     from: accountAddress,
     gasPrice: `0x${parseInt(quote.gasPrice, 10).toString(16)}`,
-    gasLimit: `0x${parseInt(quote.estimatedGas * 1.1, 10).toString(16)}`,
+    gasLimit: `0x${parseInt(quote.estimatedGas * 1.2, 10).toString(16)}`,
     to: quote.to,
     value: `0x${parseInt(quote.value, 10).toString(16)}`,
     data: quote.data,

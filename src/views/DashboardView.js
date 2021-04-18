@@ -43,7 +43,12 @@ export default function DashboardView() {
     <Box height="100vh" width="100%">
       <NavBar address={address} balance={balance} onboard={onboard} web3={web3} />
       <Container mt="10vh">
-        <SwapForm web3={web3} wallet={wallet} onboard={onboard} />
+        <SwapForm
+          onboardState={onboard ? onboard.getState() : null}
+          web3={web3}
+          wallet={wallet}
+          onboard={onboard}
+        />
       </Container>
     </Box>
   );
