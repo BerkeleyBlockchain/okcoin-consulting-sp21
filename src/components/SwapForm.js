@@ -33,6 +33,7 @@ import Toasts from '../constants/toasts';
 import Exchanges from '../constants/exchanges';
 
 import { getTokenIconPNG32 } from '../utils/getTokenIcon';
+import queryBalance from '../utils/queryBalance';
 
 export default function SwapForm({ onboardState, web3, onboard }) {
   const { register, handleSubmit, watch, setValue, errors, control } = useForm();
@@ -64,6 +65,8 @@ export default function SwapForm({ onboardState, web3, onboard }) {
 
   useEffect(() => {
     if (watchAmountIn && watchTokenIn && watchTokenOut && price !== defaults.price) {
+      queryBalance(watchTokenIn.value, watchAmountIn);
+
       const n = watchAmountIn * price;
       setValue('amountOut', n.toFixed(6));
     }
