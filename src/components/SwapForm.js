@@ -37,7 +37,7 @@ import Exchanges from '../constants/exchanges';
 import { getTokenIconPNG32 } from '../utils/getTokenIcon';
 import queryBalance from '../utils/queryBalance';
 
-export default function SwapForm({ onboardState, web3, onboard }) {
+export default function SwapForm({ onboardState, web3, onboard, balance }) {
   const { register, handleSubmit, watch, setValue, errors, control } = useForm();
 
   const [isLoading, setIsLoading] = useState();
@@ -88,9 +88,20 @@ export default function SwapForm({ onboardState, web3, onboard }) {
       },
       address: onboardState.address,
       BigNumber,
+      ethAmount: web3.utils.fromWei(balance, 'ether'),
     };
-    queryBalance(watchTokenIn.value, watchAmountIn)(balanceData);
-
+    const walletBalanceResult = await queryBalance(
+      watchTokenIn.value,
+      watchAmountIn
+    )(balanceData).then((res) => {
+      return res;
+    });
+    console.log(walletBalanceResult);
+    if (walletBalanceResult.result === false) {
+      console.log('false');
+      toast(walletBalanceResult.balanceFailure);
+      return false;
+    }
     const ready = await onboard.walletCheck();
     return ready;
   }

@@ -47,6 +47,7 @@ export default function DashboardView() {
           onboardState={onboard ? onboard.getState() : null}
           web3={web3}
           onboard={onboard}
+          balance={balance}
         />
       </Container>
     </Box>

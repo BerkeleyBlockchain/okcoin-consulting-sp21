@@ -12,63 +12,49 @@ function getTokenBalance({ tokenAddress, minimumBalance, tokenName }) {
       wallet: { provider },
       address,
       BigNumber,
+      ethAmount,
     } = stateAndHelpers;
+
+    console.log(provider);
+    console.log(address, 'address!');
 
     if (!tokenContract) {
       ethersProvider = new ethers.providers.Web3Provider(provider);
       tokenContract = new ethers.Contract(tokenAddress, erc20, ethersProvider);
     }
 
+    console.log(tokenContract, 'tokenContract');
+    console.log(ethersProvider, 'ethersProvider');
+
     const tokenDecimals = tokens.data[tokenName].decimals;
     console.log(tokenDecimals);
     const divideBy = new BigNumber(10).pow(tokenDecimals);
-    const tokenBalanceResult = await tokenContract.balanceOf(address).then((res) => res.toString());
-    const tokenBalance = new BigNumber(tokenBalanceResult).div(divideBy);
-
-    console.log(tokenBalance.lt(minimumBalance));
-    console.log(minimumBalance);
+    let tokenBalance;
+    if (tokenName === 'ETH') {
+      console.log(ethAmount);
+      tokenBalance = new BigNumber(ethAmount);
+    } else {
+      const tokenBalanceResult = await tokenContract
+        .balanceOf(address)
+        .then((res) => res.toString());
+      tokenBalance = new BigNumber(tokenBalanceResult).div(divideBy);
+    }
+    // const tokenBalance = tokenBalanceResult/tokenDecimals;
 
     if (tokenBalance.lt(minimumBalance)) {
       return {
-        heading: `Get Some ${tokenName}`,
-        description: `You need to have at least ${minimumBalance} ${tokenName} to interact with this Dapp. Send some more ${tokenName} to this address or switch to another address that has a higher ${tokenName} balance.`,
-        eventCode: 'tokenBalance',
-        icon: `
-        	<svg 
-        		height="18" 
-        		viewBox="0 0 429 695" 
-        		width="18" xmlns="http://www.w3.org/2000/svg"
-        	>
-        		<g 
-        			fill="currentColor" 
-        			fill-rule="evenodd"
-            >
-        		 <path d="m0 394 213 126.228516 214-126.228516-214 301z"/>
-             <path d="m0 353.962264 213.5-353.962264 213.5 353.962264-213.5 126.037736z"/>
-            </g>
-           </svg>
-        `,
+        result: false,
+        balanceFailure: {
+          title: 'Unable to execute swap',
+          description: `You do not have enough ${tokenName} in your balance`,
+          status: 'error',
+          duration: 9000,
+          isClosable: true,
+        },
       };
     }
     return {
-      heading: `Success, you have enough ${tokenName}`,
-      description: 'You have the minimum balance required, or more',
-      eventCode: 'tokenBalance',
-      icon: `
-                <svg 
-                    height="18" 
-                    viewBox="0 0 429 695" 
-                    width="18" xmlns="http://www.w3.org/2000/svg"
-                >
-                    <g 
-                        fill="currentColor" 
-                        fill-rule="evenodd"
-                >
-                     <path d="m0 394 213 126.228516 214-126.228516-214 301z"/>
-                 <path d="m0 353.962264 213.5-353.962264 213.5 353.962264-213.5 126.037736z"/>
-                </g>
-               </svg>
-            `,
+      result: true,
     };
   };
 }
