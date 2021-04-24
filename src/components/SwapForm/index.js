@@ -17,16 +17,16 @@ import { Controller, useForm } from 'react-hook-form';
 import React, { useEffect, useState } from 'react';
 
 import Select, { components } from 'react-select';
-import FullPageSpinner from './FullPageSpinner';
+import FullPageSpinner from '../FullPageSpinner';
 
-import zeroXSwap from '../hooks/use0xSwap';
-import use0xPrice from '../hooks/use0xPrice';
+import zeroXSwap from '../../hooks/use0xSwap';
+import use0xPrice from '../../hooks/use0xPrice';
 
-import Tokens from '../constants/tokens';
-import Toasts from '../constants/toasts';
+import Tokens from '../../constants/tokens';
+import Toasts from '../../constants/toasts';
 
-import { getTokenIconPNG32 } from '../utils/getTokenIcon';
-import SourceDisplay from './SourceDisplay';
+import { getTokenIconPNG32 } from '../../utils/getTokenIcon';
+import SwapInfo from './SwapInfo';
 
 export default function SwapForm({ onboardState, web3, onboard }) {
   const { register, handleSubmit, watch, setValue, errors, control } = useForm();
@@ -59,7 +59,7 @@ export default function SwapForm({ onboardState, web3, onboard }) {
   useEffect(() => {
     if (watchAmountIn && watchTokenIn && watchTokenOut && price !== defaults.price) {
       const n = watchAmountIn * price;
-      setValue('amountOut', n.toFixed(6));
+      setValue('amountOut', n.toFixed(6).replace(/\.0+/, ''));
     }
     if (!watchAmountIn) {
       setValue('amountOut', '');
@@ -291,7 +291,7 @@ export default function SwapForm({ onboardState, web3, onboard }) {
           </Flex>
         </Box>
         {watchTokenIn && watchTokenOut && watchAmountIn && price ? (
-          <SourceDisplay
+          <SwapInfo
             watchTokenIn={watchTokenIn}
             watchTokenOut={watchTokenOut}
             price={price}
