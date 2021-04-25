@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import { Spacer, Divider, Flex, Text } from '@chakra-ui/react';
 import React from 'react';
 
