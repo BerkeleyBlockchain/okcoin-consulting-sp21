@@ -1,5 +1,4 @@
 /* eslint-disable react/jsx-props-no-spreading */
-/* eslint-disable no-console */
 import {
   Box,
   Button,
@@ -113,7 +112,7 @@ export default function SwapForm({ onboardState, web3, onboard }) {
     return (
       <Option {...props}>
         <HStack>
-          <img src={data.icon} defaultSource={data.icon} alt={data.label} />
+          <img src={data.icon} defaultsource={data.icon} alt={data.label} />
           <Text>{data.label}</Text>
         </HStack>
       </Option>
@@ -125,7 +124,7 @@ export default function SwapForm({ onboardState, web3, onboard }) {
     return (
       <SingleValue {...props}>
         <HStack>
-          <img src={data.icon} defaultSource={data.icon} alt={data.label} />
+          <img src={data.icon} defaultsource={data.icon} alt={data.label} />
           <Text>{data.label}</Text>
         </HStack>
       </SingleValue>
