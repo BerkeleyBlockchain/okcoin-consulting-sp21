@@ -8,6 +8,7 @@ import {
   Flex,
   Heading,
   HStack,
+  VStack,
   Input,
   Spacer,
   Text,
@@ -35,13 +36,14 @@ import Toasts from '../constants/toasts';
 import Exchanges from '../constants/exchanges';
 
 import { getTokenIconPNG32 } from '../utils/getTokenIcon';
-import queryBalance from '../utils/queryBalance';
+import { tokenBalanceCheck, getTokenBalance } from '../utils/queryBalance';
 
 export default function SwapForm({ onboardState, web3, onboard, balance }) {
   const { register, handleSubmit, watch, setValue, errors, control } = useForm();
 
   const [isLoading, setIsLoading] = useState();
   const [sellAmount, setSellAmount] = useState();
+  const [tokenBalance, setTokenBalance] = useState();
   const toast = useToast();
 
   const watchTokenIn = watch('tokenIn', '');
@@ -54,6 +56,7 @@ export default function SwapForm({ onboardState, web3, onboard, balance }) {
     exchanges: <Spinner size="xs" />,
     estimatedGas: <Spinner size="xs" />,
     sources: [],
+    tokenBalance: <Spinner size="xs" />,
   };
 
   const { data: zeroExQuote } = use0xPrice(
@@ -65,8 +68,35 @@ export default function SwapForm({ onboardState, web3, onboard, balance }) {
   const { price, gasPrice, estimatedGas, exchanges } =
     zeroExQuote === undefined ? defaults : zeroExQuote;
 
+  async function handleDropdownSelect(token) {
+    let tokenBal;
+    if (onboardState && balance) {
+      console.log(balance);
+      console.log(onboardState);
+      const balanceData = {
+        wallet: {
+          provider: onboardState.wallet.provider,
+        },
+        address: onboardState.address,
+        BigNumber,
+        ethAmount: web3.utils.fromWei(balance.toString(), 'ether'),
+      };
+      tokenBal = await getTokenBalance(token)(balanceData).then((res) => {
+        return res;
+      });
+      console.log(token, tokenBal);
+    }
+    return tokenBal;
+  }
+
   useEffect(() => {
     if (watchAmountIn && watchTokenIn && watchTokenOut && price !== defaults.price) {
+      (async () => {
+        const tb = await handleDropdownSelect(watchTokenIn.value).then((res) => {
+          return res;
+        });
+        setTokenBalance(tb.toNumber());
+      })();
       const n = watchAmountIn * price;
       setValue('amountOut', n.toFixed(6));
     }
@@ -90,7 +120,7 @@ export default function SwapForm({ onboardState, web3, onboard, balance }) {
       BigNumber,
       ethAmount: web3.utils.fromWei(balance, 'ether'),
     };
-    const walletBalanceResult = await queryBalance(
+    const walletBalanceResult = await tokenBalanceCheck(
       watchTokenIn.value,
       watchAmountIn
     )(balanceData).then((res) => {
@@ -140,11 +170,18 @@ export default function SwapForm({ onboardState, web3, onboard, balance }) {
   const { Option, SingleValue } = components;
   const IconOption = (props) => {
     const { data } = props;
+    // const bal = handleDropdownSelect(data.label).then((res) => {
+    //   return res;
+    // });
+    // console.log(bal); // returns empty array
     return (
       <Option {...props}>
         <HStack>
           <img src={data.icon} defaultSource={data.icon} alt={data.label} />
-          <Text>{data.label}</Text>
+          <VStack>
+            <Text>{data.label}</Text>
+            <Text fontSize="xs">HIHI</Text>
+          </VStack>
         </HStack>
       </Option>
     );
@@ -168,9 +205,18 @@ export default function SwapForm({ onboardState, web3, onboard, balance }) {
         Swap
       </Heading>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <Text fontFamily="Poppins" opacity={0.7} mb={2} ml={0.5}>
-          PAY
-        </Text>
+        <Flex direction="row" justify="space-between">
+          <Text fontFamily="Poppins" opacity={0.7} mb={2} ml={0.5}>
+            PAY
+          </Text>
+          {tokenBalance !== defaults.tokenBalance && watchTokenIn ? (
+            <Text fontFamily="Poppins" mb={2} ml={0.5}>
+              {`${tokenBalance} ${watchTokenIn.value} available`}
+            </Text>
+          ) : (
+            <div />
+          )}
+        </Flex>
         <Box borderWidth="1px" borderRadius="lg" mb={6}>
           <Flex>
             <Controller
