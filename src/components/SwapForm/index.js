@@ -88,9 +88,8 @@ export default function SwapForm({ onboardState, web3, onboard }) {
         setIsLoading(false);
         toast(Toasts.success);
       })
-      .catch((err) => {
+      .catch(() => {
         setIsLoading(false);
-        console.log(err);
         toast(Toasts.error);
       });
   };
@@ -198,6 +197,12 @@ export default function SwapForm({ onboardState, web3, onboard }) {
             />
 
             <Input
+              onKeyDown={(e) => {
+                const char = e.key;
+                if (char === 'e' || char === '-' || char === '+') {
+                  e.preventDefault();
+                }
+              }}
               placeholder="Enter Amount"
               name="amountIn"
               type="number"
@@ -281,6 +286,7 @@ export default function SwapForm({ onboardState, web3, onboard }) {
               type="number"
               step="0.000000000000000001"
               fontFamily="Poppins"
+              fontWeight="500"
               size="lg"
               ref={register}
               variant="unstyled"
@@ -289,7 +295,7 @@ export default function SwapForm({ onboardState, web3, onboard }) {
             />
           </Flex>
         </Box>
-        {watchTokenIn && watchTokenOut && watchAmountIn && price ? (
+        {watchTokenIn && watchTokenOut && watchAmountIn > 0 && price ? (
           <SwapInfo
             watchTokenIn={watchTokenIn}
             watchTokenOut={watchTokenOut}
@@ -312,7 +318,7 @@ export default function SwapForm({ onboardState, web3, onboard }) {
               type="submit"
               mt={6}
               mb={10}
-              disabled={isLoading || Object.keys(errors).length !== 0}
+              disabled={watchAmountIn <= 0 || isLoading || Object.keys(errors).length !== 0}
               loadingText="Executing Swap"
               fontFamily="Poppins"
               fontWeight="600"
