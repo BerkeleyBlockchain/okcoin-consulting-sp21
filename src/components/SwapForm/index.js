@@ -1,38 +1,31 @@
 /* eslint-disable react/jsx-props-no-spreading */
-/* eslint-disable no-console */
 import {
   Box,
   Button,
   Center,
-  Divider,
   Flex,
   Heading,
   HStack,
   Input,
-  Spacer,
   Text,
   useToast,
-  Tooltip,
-  Image,
-  IconButton,
   Spinner,
 } from '@chakra-ui/react';
-import { IoAlertCircle } from 'react-icons/io5';
 import debounce from 'debounce';
 import { Controller, useForm } from 'react-hook-form';
 import React, { useEffect, useState } from 'react';
 
 import Select, { components } from 'react-select';
-import FullPageSpinner from './FullPageSpinner';
+import FullPageSpinner from '../FullPageSpinner';
 
-import zeroXSwap from '../hooks/use0xSwap';
-import use0xPrice from '../hooks/use0xPrice';
+import zeroXSwap from '../../hooks/use0xSwap';
+import use0xPrice from '../../hooks/use0xPrice';
 
-import Tokens from '../constants/tokens';
-import Toasts from '../constants/toasts';
-import Exchanges from '../constants/exchanges';
+import Tokens from '../../constants/tokens';
+import Toasts from '../../constants/toasts';
 
-import { getTokenIconPNG32 } from '../utils/getTokenIcon';
+import { getTokenIconPNG32 } from '../../utils/getTokenIcon';
+import SwapInfo from './SwapInfo';
 
 export default function SwapForm({ onboardState, web3, onboard }) {
   const { register, handleSubmit, watch, setValue, errors, control } = useForm();
@@ -65,7 +58,7 @@ export default function SwapForm({ onboardState, web3, onboard }) {
   useEffect(() => {
     if (watchAmountIn && watchTokenIn && watchTokenOut && price !== defaults.price) {
       const n = watchAmountIn * price;
-      setValue('amountOut', n.toFixed(6));
+      setValue('amountOut', n.toFixed(6).replace(/\.0+/, ''));
     }
     if (!watchAmountIn) {
       setValue('amountOut', '');
@@ -119,7 +112,7 @@ export default function SwapForm({ onboardState, web3, onboard }) {
     return (
       <Option {...props}>
         <HStack>
-          <img src={data.icon} defaultSource={data.icon} alt={data.label} />
+          <img src={data.icon} defaultsource={data.icon} alt={data.label} />
           <Text>{data.label}</Text>
         </HStack>
       </Option>
@@ -131,7 +124,7 @@ export default function SwapForm({ onboardState, web3, onboard }) {
     return (
       <SingleValue {...props}>
         <HStack>
-          <img src={data.icon} defaultSource={data.icon} alt={data.label} />
+          <img src={data.icon} defaultsource={data.icon} alt={data.label} />
           <Text>{data.label}</Text>
         </HStack>
       </SingleValue>
@@ -296,98 +289,17 @@ export default function SwapForm({ onboardState, web3, onboard }) {
             />
           </Flex>
         </Box>
-
         {watchTokenIn && watchTokenOut && watchAmountIn && price ? (
-          <>
-            <Divider mb={3} />
-            <Flex>
-              <Text fontFamily="Poppins" fontWeight="600">
-                Rate
-              </Text>
-              <Spacer />
-              {price === defaults.price ? (
-                <>
-                  <Text fontFamily="Poppins">{`1 ${watchTokenIn.value} = `}</Text>
-                  <Text mx={1}>{price}</Text>
-                  <Text fontFamily="Poppins">{` ${watchTokenOut.value}`}</Text>
-                </>
-              ) : (
-                <Text fontFamily="Poppins">{`1 ${watchTokenIn.value} = ${parseFloat(price).toFixed(
-                  6
-                )} ${watchTokenOut.value}`}</Text>
-              )}
-            </Flex>
-            <Flex>
-              <Text fontFamily="Poppins" fontWeight="600">
-                Source
-              </Text>
-              <Spacer />
-              {exchanges !== defaults.exchanges ? (
-                <>
-                  <Text fontFamily="Poppins" style={{ fontWeight: 'bold' }}>
-                    {exchanges.length === 1
-                      ? Exchanges.data[exchanges[0].name].name
-                      : 'Split Routing'}
-                  </Text>
-                  <Tooltip
-                    hasArrow
-                    bgColor="#333333"
-                    padding="10px"
-                    label={
-                      exchanges !== defaults.exchanges &&
-                      exchanges
-                        .sort((a, b) => parseFloat(b.proportion) - parseFloat(a.proportion))
-                        .map((item) => (
-                          <Flex alignItems="center">
-                            <Image
-                              src={Exchanges.data[item.name].iconSVG}
-                              width="25px"
-                              height="25px"
-                              m={1}
-                            />
-                            <Text
-                              style={{ fontWeight: 'bold', marginLeft: 5, fontFamily: 'Poppins' }}
-                            >
-                              {Exchanges.data[item.name].name}
-                              {` (${parseFloat(item.proportion * 100).toFixed(3)}%)`}
-                            </Text>
-                          </Flex>
-                        ))
-                    }
-                    placement="bottom"
-                  >
-                    <IconButton
-                      variant="outline"
-                      isRound
-                      borderColor="transparent"
-                      size="xs"
-                      icon={<IoAlertCircle size="20" />}
-                    />
-                  </Tooltip>
-                </>
-              ) : (
-                <Text fontFamily="Poppins">{defaults.exchanges}</Text>
-              )}
-            </Flex>
-            <Flex>
-              <Text fontFamily="Poppins" fontWeight="600">
-                Gas Price
-              </Text>
-              <Spacer />
-              <Text fontFamily="Poppins">{gasPrice} Gwei</Text>
-            </Flex>
-            <Flex>
-              <Text fontFamily="Poppins" fontWeight="600">
-                Gas Estimate
-              </Text>
-              <Spacer />
-              <Text fontFamily="Poppins">{estimatedGas}</Text>
-            </Flex>
-
-            <Divider mt={3} />
-          </>
+          <SwapInfo
+            watchTokenIn={watchTokenIn}
+            watchTokenOut={watchTokenOut}
+            price={price}
+            defaults={defaults}
+            exchanges={exchanges}
+            gasPrice={gasPrice}
+            estimatedGas={estimatedGas}
+          />
         ) : null}
-
         <Center>
           {onboardState.address ? (
             <Button
