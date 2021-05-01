@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable react/jsx-props-no-spreading */
 import {
   Box,
@@ -211,7 +212,12 @@ export default function SwapForm({ onboardState, web3, onboard }) {
               fontFamily="Poppins"
               step="0.000000000000000001"
               size="lg"
-              ref={register({ required: true })}
+              ref={register({
+                required: {
+                  value: true,
+                  message: 'Enter an amount',
+                },
+              })}
               textAlign="end"
               variant="unstyled"
               mr={6}
@@ -324,15 +330,10 @@ export default function SwapForm({ onboardState, web3, onboard }) {
               fontWeight="600"
               isLoading={isLoading}
             >
-              {errors.amountIn ? 'Input Amount required' : 'Swap Tokens'}
-              {apiError ? (
-                <>
-                  <IoAlertCircle size="25" style={{ marginRight: 10 }} />{' '}
-                  {tokenError ? tokenError.validationErrors[0].reason : 'Error Occurred'}
-                </>
-              ) : (
-                'Swap Token'
-              )}
+              {tokenError?.validationErrors[0].reason ? (
+                <IoAlertCircle size="25" style={{ marginRight: 10 }} />
+              ) : null}
+              {errors.amountIn?.message || tokenError?.validationErrors[0].reason || 'Swap Tokens'}
             </Button>
           ) : (
             <Button
