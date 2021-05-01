@@ -15,7 +15,7 @@ export default function SwapInfo({
 }) {
   const checkSource = () => {
     if (exchanges.length === 1) {
-      return Exchanges.data[exchanges[0].name].name;
+      return Exchanges.data[exchanges[0]?.name]?.name;
     }
     if (exchanges.length === 0) {
       return 'Weth <> Eth';

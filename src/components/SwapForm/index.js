@@ -193,6 +193,15 @@ export default function SwapForm({ onboardState, web3, onboard }) {
                   value={value}
                   name={name}
                   onChange={onChange}
+                  onKeyDown={(e) => {
+                    const c = e.key;
+                    const illegal = new RegExp(
+                      '[\\("\\?@#\\$\\%\\^\\&\\*\\-=;:<>,.+\\[\\{\\]\\}\\)\\/\\\\]'
+                    );
+                    if (illegal.test(c)) {
+                      e.preventDefault();
+                    }
+                  }}
                 />
               )}
             />
@@ -210,6 +219,12 @@ export default function SwapForm({ onboardState, web3, onboard }) {
               variant="unstyled"
               mr={6}
               isReadOnly={isLoading}
+              onKeyDown={(e) => {
+                const char = e.key;
+                if (char === 'e' || char === '-' || char === '+') {
+                  e.preventDefault();
+                }
+              }}
               onChange={debounce((event) => setSellAmount(event.target.value), 1500)}
             />
           </Flex>
@@ -270,6 +285,15 @@ export default function SwapForm({ onboardState, web3, onboard }) {
                   value={value}
                   name={name}
                   onChange={onChange}
+                  onKeyDown={(e) => {
+                    const c = e.key;
+                    const illegal = new RegExp(
+                      '[\\("\\?@#\\$\\%\\^\\&\\*\\-\\/\\\\=;:<>,.+\\[\\{\\]\\}\\)]'
+                    );
+                    if (illegal.test(c)) {
+                      e.preventDefault();
+                    }
+                  }}
                 />
               )}
             />
