@@ -1,4 +1,5 @@
 /* eslint-disable react/jsx-props-no-spreading */
+/* eslint-disable */
 import {
   Box,
   Button,
@@ -10,6 +11,7 @@ import {
   Text,
   useToast,
   Spinner,
+  useDisclosure,
 } from '@chakra-ui/react';
 import debounce from 'debounce';
 import { Controller, useForm } from 'react-hook-form';
@@ -17,6 +19,7 @@ import React, { useEffect, useState } from 'react';
 
 import Select, { components } from 'react-select';
 import FullPageSpinner from '../FullPageSpinner';
+import SwapModal from '../SwapModal';
 
 import zeroXSwap from '../../hooks/use0xSwap';
 import use0xPrice from '../../hooks/use0xPrice';
@@ -32,6 +35,8 @@ export default function SwapForm({ onboardState, web3, onboard }) {
 
   const [isLoading, setIsLoading] = useState();
   const [sellAmount, setSellAmount] = useState();
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [swapConfirmed, setSwapConfirmed] = useState(false);
   const toast = useToast();
 
   const watchTokenIn = watch('tokenIn', '');
@@ -77,22 +82,26 @@ export default function SwapForm({ onboardState, web3, onboard }) {
 
   // Execute the swap
   const onSubmit = async (data) => {
-    const ready = await readyToTransact();
-    if (!ready) return;
+    onOpen()
+    const closed = await isOpen;
+    console.log(closed)
+      const ready = await readyToTransact();
+      if (!ready) return;
 
-    const { amountIn, tokenIn, tokenOut } = data;
-    setIsLoading(true);
+      const { amountIn, tokenIn, tokenOut } = data;
+      setIsLoading(true);
 
-    zeroXSwap(Tokens.data[tokenIn.value], Tokens.data[tokenOut.value], amountIn, web3)
-      .then(() => {
-        setIsLoading(false);
-        toast(Toasts.success);
-      })
-      .catch((err) => {
-        setIsLoading(false);
-        console.log(err);
-        toast(Toasts.error);
-      });
+      zeroXSwap(Tokens.data[tokenIn.value], Tokens.data[tokenOut.value], amountIn, web3)
+        .then(() => {
+          setIsLoading(false);
+          toast(Toasts.success);
+        })
+        .catch((err) => {
+          setIsLoading(false);
+          console.log(err);
+          toast(Toasts.error);
+        });
+    
   };
 
   if (!onboard) {
@@ -302,24 +311,44 @@ export default function SwapForm({ onboardState, web3, onboard }) {
         ) : null}
         <Center>
           {onboardState.address ? (
-            <Button
-              w="100%"
-              h="60px"
-              _hover={{ backgroundColor: '#194BB6' }}
-              backgroundColor="#205FEC"
-              color="white"
-              size="lg"
-              type="submit"
-              mt={6}
-              mb={10}
-              disabled={isLoading || Object.keys(errors).length !== 0}
-              loadingText="Executing Swap"
-              fontFamily="Poppins"
-              fontWeight="600"
-              isLoading={isLoading}
-            >
-              {errors.amountIn ? 'Input Amount required' : 'Swap Tokens'}
-            </Button>
+            <>
+                <Button
+                  w="100%"
+                  h="60px"
+                  _hover={{ backgroundColor: '#194BB6' }}
+                  backgroundColor="#205FEC"
+                  color="white"
+                  size="lg"
+                  type="submit"
+                  mt={6}
+                  mb={10}
+                  disabled={isLoading || Object.keys(errors).length !== 0}
+                  loadingText="Executing Swap"
+                  fontFamily="Poppins"
+                  fontWeight="600"
+                  isLoading={isLoading}
+                >
+                  {errors.amountIn ? 'Input Amount required' : 'Swap Tokens'}
+                </Button>
+                <SwapModal 
+                  errors={errors} 
+                  address={onboardState.address} 
+                  onboard={onboard} 
+                  isOpen={isOpen} 
+                  onClose={onClose} 
+                  setSwapConfirmed={setSwapConfirmed}
+                  watchAmountIn={watchAmountIn}
+                  watchTokenIn={watchTokenIn}
+                  watchTokenOut={watchTokenOut}
+                  price={price}
+                  defaults={defaults}
+                  exchanges={exchanges}
+                  gasPrice={gasPrice}
+                  estimatedGas={estimatedGas}
+                  getPicture={getTokenIconPNG32}
+
+                />        
+            </>
           ) : (
             <Button
               w="100%"
