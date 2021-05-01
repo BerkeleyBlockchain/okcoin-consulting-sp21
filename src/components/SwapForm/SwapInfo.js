@@ -47,7 +47,8 @@ export default function SwapInfo({
         ) : (
           <Text fontFamily="Poppins">{`1 ${watchTokenIn.value} = ${parseFloat(price)
             .toFixed(6)
-            .replace(/\.0+/, '')} ${watchTokenOut.value}`}</Text>
+            .replace(/(0+)$/, '')
+            .replace(/\.$/, '')} ${watchTokenOut.value}`}</Text>
         )}
       </Flex>
       <Flex>

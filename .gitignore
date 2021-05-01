@@ -1,6 +1,7 @@
 .idea
 .vscode
 .eslintcache
+.env
 
 # dependencies
 /node_modules

@@ -58,7 +58,7 @@ export default function SwapForm({ onboardState, web3, onboard }) {
   useEffect(() => {
     if (watchAmountIn && watchTokenIn && watchTokenOut && price !== defaults.price) {
       const n = watchAmountIn * price;
-      setValue('amountOut', n.toFixed(6).replace(/\.0+/, ''));
+      setValue('amountOut', n.toFixed(6).replace(/(0+)$/, '').replace(/\.$/, ''));
     }
     if (!watchAmountIn) {
       setValue('amountOut', '');
