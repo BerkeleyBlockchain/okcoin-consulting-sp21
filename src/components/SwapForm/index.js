@@ -54,7 +54,9 @@ export default function SwapForm({ onboardState, web3, onboard }) {
   const { data: zeroExQuote } = use0xPrice(
     Tokens.data[watchTokenIn.value],
     Tokens.data[watchTokenOut.value],
-    sellAmount
+    sellAmount,
+    // eslint-disable-next-line no-use-before-define
+    (error) => handleError(error)
   );
 
   const { price, gasPrice, estimatedGas, exchanges } =
@@ -80,28 +82,36 @@ export default function SwapForm({ onboardState, web3, onboard }) {
     return ready;
   }
 
+  const handleError = (error) => {
+    console.log('🚀 ~ file: SwapForm.js ~ line 92 ~ handleError ~ error', error);
+    if (error?.code === 4001) {
+      toast(Toasts.transactionReject);
+    } else {
+      toast(Toasts.error);
+    }
+  };
+
   // Execute the swap
   const onSubmit = async (data) => {
-    onOpen()
+    onOpen();
     const closed = await isOpen;
-    console.log(closed)
-      const ready = await readyToTransact();
-      if (!ready) return;
+    console.log(closed);
+    const ready = await readyToTransact();
+    if (!ready) return;
 
-      const { amountIn, tokenIn, tokenOut } = data;
-      setIsLoading(true);
+    const { amountIn, tokenIn, tokenOut } = data;
+    setIsLoading(true);
 
-      zeroXSwap(Tokens.data[tokenIn.value], Tokens.data[tokenOut.value], amountIn, web3)
-        .then(() => {
-          setIsLoading(false);
-          toast(Toasts.success);
-        })
-        .catch((err) => {
-          setIsLoading(false);
-          console.log(err);
-          toast(Toasts.error);
-        });
-    
+    zeroXSwap(Tokens.data[tokenIn.value], Tokens.data[tokenOut.value], amountIn, web3)
+      .then(() => {
+        setIsLoading(false);
+        toast(Toasts.success);
+      })
+      .catch((err) => {
+        setIsLoading(false);
+        console.log(err);
+        toast(Toasts.error);
+      });
   };
 
   if (!onboard) {
@@ -312,42 +322,41 @@ export default function SwapForm({ onboardState, web3, onboard }) {
         <Center>
           {onboardState.address ? (
             <>
-                <Button
-                  w="100%"
-                  h="60px"
-                  _hover={{ backgroundColor: '#194BB6' }}
-                  backgroundColor="#205FEC"
-                  color="white"
-                  size="lg"
-                  type="submit"
-                  mt={6}
-                  mb={10}
-                  disabled={isLoading || Object.keys(errors).length !== 0}
-                  loadingText="Executing Swap"
-                  fontFamily="Poppins"
-                  fontWeight="600"
-                  isLoading={isLoading}
-                >
-                  {errors.amountIn ? 'Input Amount required' : 'Swap Tokens'}
-                </Button>
-                <SwapModal 
-                  errors={errors} 
-                  address={onboardState.address} 
-                  onboard={onboard} 
-                  isOpen={isOpen} 
-                  onClose={onClose} 
-                  setSwapConfirmed={setSwapConfirmed}
-                  watchAmountIn={watchAmountIn}
-                  watchTokenIn={watchTokenIn}
-                  watchTokenOut={watchTokenOut}
-                  price={price}
-                  defaults={defaults}
-                  exchanges={exchanges}
-                  gasPrice={gasPrice}
-                  estimatedGas={estimatedGas}
-                  getPicture={getTokenIconPNG32}
-
-                />        
+              <Button
+                w="100%"
+                h="60px"
+                _hover={{ backgroundColor: '#194BB6' }}
+                backgroundColor="#205FEC"
+                color="white"
+                size="lg"
+                type="submit"
+                mt={6}
+                mb={10}
+                disabled={isLoading || Object.keys(errors).length !== 0}
+                loadingText="Executing Swap"
+                fontFamily="Poppins"
+                fontWeight="600"
+                isLoading={isLoading}
+              >
+                {errors.amountIn ? 'Input Amount required' : 'Swap Tokens'}
+              </Button>
+              <SwapModal
+                errors={errors}
+                address={onboardState.address}
+                onboard={onboard}
+                isOpen={isOpen}
+                onClose={onClose}
+                setSwapConfirmed={setSwapConfirmed}
+                watchAmountIn={watchAmountIn}
+                watchTokenIn={watchTokenIn}
+                watchTokenOut={watchTokenOut}
+                price={price}
+                defaults={defaults}
+                exchanges={exchanges}
+                gasPrice={gasPrice}
+                estimatedGas={estimatedGas}
+                getPicture={getTokenIconPNG32}
+              />
             </>
           ) : (
             <Button

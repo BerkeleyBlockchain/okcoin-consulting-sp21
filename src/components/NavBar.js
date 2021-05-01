@@ -6,19 +6,18 @@ import {
   Flex,
   Icon,
   IconButton,
+  Image,
   Link,
   Popover,
   PopoverContent,
   PopoverTrigger,
+  Spinner,
   Stack,
   Text,
   useColorModeValue,
   useDisclosure,
-  Spinner,
-  Image,
 } from '@chakra-ui/react';
 import React from 'react';
-
 import AccountModal from './AccountModal';
 
 const NAV_ITEMS = [
@@ -83,8 +82,14 @@ export default function Navbar({ address, balance, onboard, web3 }) {
         </Flex>
 
         {address && onboard && (
-          <Stack flex={{ base: 1, md: 0 }} justify="flex-end" direction="row" spacing={2}>
-            <Flex align="center">
+          <Stack
+            flex={{ base: 1, md: 0 }}
+            justify="flex-end"
+            direction="row"
+            spacing={2}
+            align="center"
+          >
+            <>
               <Text fontFamily="Poppins" fontWeight="600" color="gray.700" size="sm">
                 {typeof balance === 'string' ? (
                   `${parseFloat(web3.utils.fromWei(balance, 'ether')).toPrecision(6)}`
@@ -95,7 +100,7 @@ export default function Navbar({ address, balance, onboard, web3 }) {
               <Text fontFamily="Poppins" fontWeight="700" color="gray.700" size="sm" ml={1}>
                 ETH
               </Text>
-            </Flex>
+            </>
             <AccountModal address={address} onboard={onboard} />
           </Stack>
         )}
