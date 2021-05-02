@@ -28,6 +28,7 @@ import { getTokenIconPNG32 } from '../../utils/getTokenIcon';
 import SwapInfo from './SwapInfo';
 
 export default function SwapForm({ onboardState, web3, onboard }) {
+  const justZeros = new RegExp('^(0+)$');
   const { register, handleSubmit, watch, setValue, errors, control } = useForm();
 
   const [isLoading, setIsLoading] = useState();
@@ -56,7 +57,7 @@ export default function SwapForm({ onboardState, web3, onboard }) {
     zeroExQuote === undefined ? defaults : zeroExQuote;
 
   useEffect(() => {
-    if (watchAmountIn && watchTokenIn && watchTokenOut && price !== defaults.price) {
+    if (watchAmountIn > 0 && watchTokenIn && watchTokenOut && price !== defaults.price) {
       const n = watchAmountIn * price;
       setValue('amountOut', n.toFixed(6).replace(/(0+)$/, '').replace(/\.$/, ''));
     }
@@ -88,9 +89,8 @@ export default function SwapForm({ onboardState, web3, onboard }) {
         setIsLoading(false);
         toast(Toasts.success);
       })
-      .catch((err) => {
+      .catch(() => {
         setIsLoading(false);
-        console.log(err);
         toast(Toasts.error);
       });
   };
@@ -221,7 +221,7 @@ export default function SwapForm({ onboardState, web3, onboard }) {
               isReadOnly={isLoading}
               onKeyDown={(e) => {
                 const char = e.key;
-                if (char === 'e' || char === '-' || char === '+') {
+                if (char === 'e' || char === '-' || char === '+' || justZeros.test(e)) {
                   e.preventDefault();
                 }
               }}
@@ -290,6 +290,7 @@ export default function SwapForm({ onboardState, web3, onboard }) {
                     const illegal = new RegExp(
                       '[\\("\\?@#\\$\\%\\^\\&\\*\\-\\/\\\\=;:<>,.+\\[\\{\\]\\}\\)]'
                     );
+
                     if (illegal.test(c)) {
                       e.preventDefault();
                     }
@@ -313,7 +314,7 @@ export default function SwapForm({ onboardState, web3, onboard }) {
             />
           </Flex>
         </Box>
-        {watchTokenIn && watchTokenOut && watchAmountIn && price ? (
+        {watchTokenIn && watchTokenOut && watchAmountIn > 0 && price ? (
           <SwapInfo
             watchTokenIn={watchTokenIn}
             watchTokenOut={watchTokenOut}
@@ -336,7 +337,7 @@ export default function SwapForm({ onboardState, web3, onboard }) {
               type="submit"
               mt={6}
               mb={10}
-              disabled={isLoading || Object.keys(errors).length !== 0}
+              disabled={isLoading || Object.keys(errors).length !== 0 || watchAmountIn <= 0}
               loadingText="Executing Swap"
               fontFamily="Poppins"
               fontWeight="600"
