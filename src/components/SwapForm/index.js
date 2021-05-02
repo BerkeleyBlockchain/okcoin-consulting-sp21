@@ -10,7 +10,9 @@ import {
   Text,
   useToast,
   Spinner,
+  IconButton,
 } from '@chakra-ui/react';
+import { IoSwapVertical } from 'react-icons/io5';
 import debounce from 'debounce';
 import { Controller, useForm } from 'react-hook-form';
 import React, { useEffect, useState } from 'react';
@@ -27,8 +29,13 @@ import Toasts from '../../constants/toasts';
 import { getTokenIconPNG32 } from '../../utils/getTokenIcon';
 import SwapInfo from './SwapInfo';
 
+function useForceUpdate() {
+  const [, setValue] = useState(0); // integer state
+  return () => setValue((value) => value + 1); // update the state to force render
+}
+
 export default function SwapForm({ onboardState, web3, onboard }) {
-  const { register, handleSubmit, watch, setValue, errors, control } = useForm();
+  const { register, handleSubmit, watch, setValue, getValues, errors, control } = useForm();
 
   const [isLoading, setIsLoading] = useState();
   const [sellAmount, setSellAmount] = useState();
@@ -37,6 +44,8 @@ export default function SwapForm({ onboardState, web3, onboard }) {
   const watchTokenIn = watch('tokenIn', '');
   const watchTokenOut = watch('tokenOut', '');
   const watchAmountIn = watch('amountIn', 0);
+
+  const forceUpdate = useForceUpdate();
 
   const defaults = {
     price: <Spinner size="xs" />,
@@ -214,6 +223,23 @@ export default function SwapForm({ onboardState, web3, onboard }) {
             />
           </Flex>
         </Box>
+        <Center mt={6}>
+          <IconButton
+            variant="outline"
+            isRound
+            borderColor="transparent"
+            size="xs"
+            icon={<IoSwapVertical size="20" opacity={0.7} />}
+            onClick={() => {
+              const values = getValues();
+              setValue('amountIn', values.amountOut);
+              setValue('amountOut', '');
+              setValue('tokenIn', values.tokenOut);
+              setValue('tokenOut', values.tokenIn);
+              forceUpdate();
+            }}
+          />
+        </Center>
         <Text fontFamily="Poppins" opacity={0.7} mb={2} ml={0.5}>
           RECEIVE
         </Text>
