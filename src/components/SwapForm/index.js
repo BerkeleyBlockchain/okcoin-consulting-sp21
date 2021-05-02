@@ -26,11 +26,11 @@ import Tokens from '../../constants/tokens';
 import Toasts from '../../constants/toasts';
 
 import { getTokenIconPNG32 } from '../../utils/getTokenIcon';
+import { cleanText } from '../../utils/misc';
 import SwapInfo from './SwapInfo';
 
-export default function SwapForm({ onboardState, web3, onboard }) {
+export default function SwapForm({ onboard, onboardState, web3 }) {
   const { register, handleSubmit, watch, setValue, errors, control } = useForm();
-  const [apiError, setApiError] = useState(false);
   const [isLoading, setIsLoading] = useState();
   const [sellAmount, setSellAmount] = useState();
   const toast = useToast();
@@ -52,15 +52,13 @@ export default function SwapForm({ onboardState, web3, onboard }) {
     Tokens.data[watchTokenOut.value],
     sellAmount
   );
-  const { price, gasPrice, estimatedGas, exchanges, tokenError } =
+  const { price, gasPrice, estimatedGas, exchanges, apiError } =
     zeroExQuote === undefined ? defaults : zeroExQuote;
 
   useEffect(() => {
-    if (tokenError) {
-      setApiError(true);
+    if (apiError) {
       setValue('amountOut', '');
     } else {
-      setApiError(false);
       if (watchAmountIn && watchTokenIn && watchTokenOut && price !== defaults.price) {
         const n = watchAmountIn * price;
         setValue('amountOut', n.toFixed(Tokens.data[watchTokenOut.value].decimals));
@@ -314,8 +312,8 @@ export default function SwapForm({ onboardState, web3, onboard }) {
         <Center>
           {onboardState.address ? (
             <Button
-              w="100%"
-              h="60px"
+              minW="100%"
+              minH="3.5em"
               _hover={apiError ? { background: '#E53E3E' } : { background: '#194BB6' }}
               backgroundColor={apiError ? '#E53E3E' : '#205FEC'}
               color="white"
@@ -329,15 +327,17 @@ export default function SwapForm({ onboardState, web3, onboard }) {
               fontWeight="600"
               isLoading={isLoading}
             >
-              {tokenError?.validationErrors[0].reason ? (
+              {apiError?.validationErrors[0].reason ? (
                 <IoAlertCircle size="25" style={{ marginRight: 10 }} />
               ) : null}
-              {errors.amountIn?.message || tokenError?.validationErrors[0].reason || 'Swap Tokens'}
+              {cleanText(
+                errors.amountIn?.message || apiError?.validationErrors[0].reason || 'Swap Tokens'
+              )}
             </Button>
           ) : (
             <Button
-              w="100%"
-              h="60px"
+              minW="100%"
+              minH="3.5em"
               _hover={{ backgroundColor: '#194BB6' }}
               backgroundColor="#205FEC"
               color="white"
@@ -353,7 +353,6 @@ export default function SwapForm({ onboardState, web3, onboard }) {
             </Button>
           )}
         </Center>
-        {/* <Text color="tomato">{errors.amountIn ? 'Input amount is required' : null}</Text> */}
       </form>
     </Box>
   );

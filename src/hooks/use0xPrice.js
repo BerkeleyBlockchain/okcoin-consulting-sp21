@@ -39,13 +39,15 @@ const getPrice = async (tokenIn, tokenOut, sellAmount) => {
     };
   } catch (err) {
     return {
-      tokenError: err.response.data,
+      apiError: err.response.data,
     };
   }
 };
 
 export default function use0xPrice(tokenIn, tokenOut, sellAmount) {
-  return useQuery(['price', '0x', tokenIn, tokenOut, sellAmount], () =>
-    getPrice(tokenIn, tokenOut, sellAmount)
+  return useQuery(
+    ['price', '0x', tokenIn, tokenOut, sellAmount],
+    () => getPrice(tokenIn, tokenOut, sellAmount),
+    { retry: false }
   );
 }
