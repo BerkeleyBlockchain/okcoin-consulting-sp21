@@ -93,6 +93,7 @@ const getTokenBalance = (tokenChoice) => {
     } else {
       const tokenBalanceResult = await tokenContract
         .balanceOf(address)
+        .catch((error) => console.log(error))
         .then((res) => res.toString());
       tokenBalance = new BigNumber(tokenBalanceResult).div(divideBy);
     }

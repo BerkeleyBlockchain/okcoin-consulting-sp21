@@ -91,12 +91,6 @@ export default function SwapForm({ onboardState, web3, onboard, balance }) {
 
   useEffect(() => {
     if (watchAmountIn && watchTokenIn && watchTokenOut && price !== defaults.price) {
-      (async () => {
-        const tb = await handleDropdownSelect(watchTokenIn.value).then((res) => {
-          return res;
-        });
-        setTokenBalance(tb.toNumber());
-      })();
       const n = watchAmountIn * price;
       setValue('amountOut', n.toFixed(6));
     }
@@ -110,6 +104,16 @@ export default function SwapForm({ onboardState, web3, onboard, balance }) {
       const walletSelected = await onboard.walletSelect();
       if (!walletSelected) return false;
     }
+    const ready = await onboard.walletCheck();
+    return ready;
+  }
+
+  // Execute the swap
+  const onSubmit = async (data) => {
+    const ready = await readyToTransact();
+    if (!ready) return;
+
+    const { amountIn, tokenIn, tokenOut } = data;
     console.log(onboard);
     console.log(onboardState);
     const balanceData = {
@@ -118,7 +122,7 @@ export default function SwapForm({ onboardState, web3, onboard, balance }) {
       },
       address: onboardState.address,
       BigNumber,
-      ethAmount: web3.utils.fromWei(balance, 'ether'),
+      ethAmount: new BigNumber(web3.utils.fromWei(balance, 'ether')),
     };
     const walletBalanceResult = await tokenBalanceCheck(
       watchTokenIn.value,
@@ -130,18 +134,8 @@ export default function SwapForm({ onboardState, web3, onboard, balance }) {
     if (walletBalanceResult.result === false) {
       console.log('false');
       toast(walletBalanceResult.balanceFailure);
-      return false;
+      return;
     }
-    const ready = await onboard.walletCheck();
-    return ready;
-  }
-
-  // Execute the swap
-  const onSubmit = async (data) => {
-    const ready = await readyToTransact();
-    if (!ready) return;
-
-    const { amountIn, tokenIn, tokenOut } = data;
     setIsLoading(true);
 
     zeroXSwap(Tokens.data[tokenIn.value], Tokens.data[tokenOut.value], amountIn, web3)
@@ -168,7 +162,34 @@ export default function SwapForm({ onboardState, web3, onboard, balance }) {
   }));
 
   const { Option, SingleValue } = components;
-  const IconOption = (props) => {
+  const IconOptionIn = (props) => {
+    const { data } = props;
+    // const bal = handleDropdownSelect(data.label).then((res) => {
+    //   return res;
+    // });
+    // console.log(bal); // returns empty array
+    return (
+      <Option {...props}>
+        <HStack
+          onClick={async () => {
+            console.log(watchTokenIn);
+            const tb = await handleDropdownSelect(data.value).then((res) => {
+              return res;
+            });
+            setTokenBalance(tb);
+          }}
+        >
+          <img src={data.icon} defaultSource={data.icon} alt={data.label} />
+          <VStack>
+            <Text>{data.label}</Text>
+            <Text fontSize="xs">HIHI</Text>
+          </VStack>
+        </HStack>
+      </Option>
+    );
+  };
+
+  const IconOptionOut = (props) => {
     const { data } = props;
     // const bal = handleDropdownSelect(data.label).then((res) => {
     //   return res;
@@ -210,7 +231,7 @@ export default function SwapForm({ onboardState, web3, onboard, balance }) {
             PAY
           </Text>
           {tokenBalance !== defaults.tokenBalance && watchTokenIn ? (
-            <Text fontFamily="Poppins" mb={2} ml={0.5}>
+            <Text fontFamily="Poppins" opacity={0.7} mb={2} ml={0.5}>
               {`${tokenBalance} ${watchTokenIn.value} available`}
             </Text>
           ) : (
@@ -265,7 +286,7 @@ export default function SwapForm({ onboardState, web3, onboard, balance }) {
                     },
                   }}
                   options={tokenArray.filter((item) => item.value !== watchTokenOut.value)}
-                  components={{ Option: IconOption, SingleValue: ValueOption }}
+                  components={{ Option: IconOptionIn, SingleValue: ValueOption }}
                   inputRef={ref}
                   value={value}
                   name={name}
@@ -341,7 +362,7 @@ export default function SwapForm({ onboardState, web3, onboard, balance }) {
                     },
                   }}
                   options={tokenArray.filter((item) => item.value !== watchTokenIn.value)}
-                  components={{ Option: IconOption, SingleValue: ValueOption }}
+                  components={{ Option: IconOptionOut, SingleValue: ValueOption }}
                   inputRef={ref}
                   value={value}
                   name={name}
