@@ -15,7 +15,7 @@ export default function SwapInfo({
 }) {
   const checkSource = () => {
     if (exchanges.length === 1) {
-      return Exchanges.data[exchanges[0].name].name;
+      return Exchanges.data[exchanges[0]?.name]?.name;
     }
     if (exchanges.length === 0) {
       return 'Weth <> Eth';
@@ -47,7 +47,8 @@ export default function SwapInfo({
         ) : (
           <Text fontFamily="Poppins">{`1 ${watchTokenIn.value} = ${parseFloat(price)
             .toFixed(6)
-            .replace(/\.0+/, '')} ${watchTokenOut.value}`}</Text>
+            .replace(/(0+)$/, '')
+            .replace(/\.$/, '')} ${watchTokenOut.value}`}</Text>
         )}
       </Flex>
       <Flex>
