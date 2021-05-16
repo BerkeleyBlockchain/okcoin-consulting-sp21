@@ -337,7 +337,13 @@ export default function SwapForm({ onboardState, web3, onboard }) {
               type="submit"
               mt={6}
               mb={10}
-              disabled={isLoading || Object.keys(errors).length !== 0 || watchAmountIn <= 0}
+              disabled={
+                isLoading ||
+                Object.keys(errors).length !== 0 ||
+                watchAmountIn <= 0 ||
+                !watchTokenIn ||
+                !watchTokenOut
+              }
               loadingText="Executing Swap"
               fontFamily="Poppins"
               fontWeight="600"
