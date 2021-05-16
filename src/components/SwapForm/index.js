@@ -28,6 +28,7 @@ import { getTokenIconPNG32 } from '../../utils/getTokenIcon';
 import SwapInfo from './SwapInfo';
 
 export default function SwapForm({ onboardState, web3, onboard }) {
+  const justZeros = new RegExp('^(0+)$');
   const { register, handleSubmit, watch, setValue, errors, control } = useForm();
 
   const [isLoading, setIsLoading] = useState();
@@ -49,18 +50,16 @@ export default function SwapForm({ onboardState, web3, onboard }) {
   const { data: zeroExQuote } = use0xPrice(
     Tokens.data[watchTokenIn.value],
     Tokens.data[watchTokenOut.value],
-    sellAmount,
-    // eslint-disable-next-line no-use-before-define
-    (error) => handleError(error)
+    sellAmount
   );
 
   const { price, gasPrice, estimatedGas, exchanges } =
     zeroExQuote === undefined ? defaults : zeroExQuote;
 
   useEffect(() => {
-    if (watchAmountIn && watchTokenIn && watchTokenOut && price !== defaults.price) {
+    if (watchAmountIn > 0 && watchTokenIn && watchTokenOut && price !== defaults.price) {
       const n = watchAmountIn * price;
-      setValue('amountOut', n.toFixed(6).replace(/\.0+/, ''));
+      setValue('amountOut', n.toFixed(6).replace(/(0+)$/, '').replace(/\.$/, ''));
     }
     if (!watchAmountIn) {
       setValue('amountOut', '');
@@ -77,15 +76,6 @@ export default function SwapForm({ onboardState, web3, onboard }) {
     return ready;
   }
 
-  const handleError = (error) => {
-    console.log('🚀 ~ file: SwapForm.js ~ line 92 ~ handleError ~ error', error);
-    if (error?.code === 4001) {
-      toast(Toasts.transactionReject);
-    } else {
-      toast(Toasts.error);
-    }
-  };
-
   // Execute the swap
   const onSubmit = async (data) => {
     const ready = await readyToTransact();
@@ -99,9 +89,9 @@ export default function SwapForm({ onboardState, web3, onboard }) {
         setIsLoading(false);
         toast(Toasts.success);
       })
-      .catch((error) => {
+      .catch(() => {
         setIsLoading(false);
-        handleError(error);
+        toast(Toasts.error);
       });
   };
 
@@ -203,6 +193,15 @@ export default function SwapForm({ onboardState, web3, onboard }) {
                   value={value}
                   name={name}
                   onChange={onChange}
+                  onKeyDown={(e) => {
+                    const c = e.key;
+                    const illegal = new RegExp(
+                      '[\\("\\?@#\\$\\%\\^\\&\\*\\-=;:<>,.+\\[\\{\\]\\}\\)\\/\\\\]'
+                    );
+                    if (illegal.test(c)) {
+                      e.preventDefault();
+                    }
+                  }}
                 />
               )}
             />
@@ -220,6 +219,12 @@ export default function SwapForm({ onboardState, web3, onboard }) {
               variant="unstyled"
               mr={6}
               isReadOnly={isLoading}
+              onKeyDown={(e) => {
+                const char = e.key;
+                if (char === 'e' || char === '-' || char === '+' || justZeros.test(e)) {
+                  e.preventDefault();
+                }
+              }}
               onChange={debounce((event) => setSellAmount(event.target.value), 1500)}
             />
           </Flex>
@@ -280,6 +285,16 @@ export default function SwapForm({ onboardState, web3, onboard }) {
                   value={value}
                   name={name}
                   onChange={onChange}
+                  onKeyDown={(e) => {
+                    const c = e.key;
+                    const illegal = new RegExp(
+                      '[\\("\\?@#\\$\\%\\^\\&\\*\\-\\/\\\\=;:<>,.+\\[\\{\\]\\}\\)]'
+                    );
+
+                    if (illegal.test(c)) {
+                      e.preventDefault();
+                    }
+                  }}
                 />
               )}
             />
@@ -299,7 +314,7 @@ export default function SwapForm({ onboardState, web3, onboard }) {
             />
           </Flex>
         </Box>
-        {watchTokenIn && watchTokenOut && watchAmountIn && price ? (
+        {watchTokenIn && watchTokenOut && watchAmountIn > 0 && price ? (
           <SwapInfo
             watchTokenIn={watchTokenIn}
             watchTokenOut={watchTokenOut}
@@ -322,7 +337,13 @@ export default function SwapForm({ onboardState, web3, onboard }) {
               type="submit"
               mt={6}
               mb={10}
-              disabled={isLoading || Object.keys(errors).length !== 0}
+              disabled={
+                isLoading ||
+                Object.keys(errors).length !== 0 ||
+                watchAmountIn <= 0 ||
+                !watchTokenIn ||
+                !watchTokenOut
+              }
               loadingText="Executing Swap"
               fontFamily="Poppins"
               fontWeight="600"
