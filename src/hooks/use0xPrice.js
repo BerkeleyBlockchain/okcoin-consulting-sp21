@@ -38,8 +38,10 @@ const getPrice = async (tokenIn, tokenOut, sellAmount) => {
   };
 };
 
-export default function use0xPrice(tokenIn, tokenOut, sellAmount) {
-  return useQuery(['price', '0x', tokenIn, tokenOut, sellAmount], () =>
-    getPrice(tokenIn, tokenOut, sellAmount)
+export default function use0xPrice(tokenIn, tokenOut, sellAmount, onError) {
+  return useQuery(
+    ['price', '0x', tokenIn, tokenOut, sellAmount],
+    () => getPrice(tokenIn, tokenOut, sellAmount),
+    { onError, retry: 3, retryDelay: (attempt) => attempt * 100 }
   );
 }
