@@ -90,14 +90,14 @@ export default function Navbar({ address, balance, onboard, web3 }) {
           >
             <>
               {typeof balance === 'string' ? (
-                <Text fontFamily="Poppins" fontWeight="600" color="gray.700" size="sm">
+                <Text fontWeight="600" color="gray.700" size="sm">
                   {parseFloat(web3.utils.fromWei(balance, 'ether')).toPrecision(6)}
                 </Text>
               ) : (
                 <Spinner size="xs" />
               )}
 
-              <Text fontFamily="Poppins" fontWeight="700" color="gray.700" size="sm" ml={1}>
+              <Text fontWeight="700" color="gray.700" size="sm" ml={1}>
                 ETH
               </Text>
             </>
@@ -125,7 +125,6 @@ const DesktopNav = () => {
                 href={navItem.href ?? '#'}
                 fontSize="md"
                 fontWeight={500}
-                fontFamily="Poppins"
                 color={useColorModeValue('gray.600', 'gray.200')}
                 _hover={{
                   textDecoration: 'none',

@@ -112,11 +112,11 @@ export default function SwapForm({ onboardState, web3, onboard }) {
 
   return (
     <Box py={10} px={8} pb={0} boxShadow="lg" bgColor="#fff" borderRadius={30}>
-      <Heading fontFamily="Poppins" fontWeight="700" color="gray.700" mb={10}>
+      <Heading fontWeight="700" color="gray.700" mb={10}>
         Swap
       </Heading>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <Text fontFamily="Poppins" opacity={0.7} mb={2} ml={0.5}>
+        <Text opacity={0.7} mb={2} ml={0.5}>
           PAY
         </Text>
         <Box borderWidth="1px" borderRadius="lg" mb={6}>
@@ -152,7 +152,6 @@ export default function SwapForm({ onboardState, web3, onboard }) {
               type="number"
               min="0"
               pattern="\d*\.?\d+"
-              fontFamily="Poppins"
               size="lg"
               ref={register({ required: true })}
               textAlign="end"
@@ -172,7 +171,7 @@ export default function SwapForm({ onboardState, web3, onboard }) {
             />
           </Flex>
         </Box>
-        <Text fontFamily="Poppins" opacity={0.7} mb={2} ml={0.5}>
+        <Text opacity={0.7} mb={2} ml={0.5}>
           RECEIVE
         </Text>
         <Box borderWidth="1px" borderRadius="lg" mb={6}>
@@ -207,7 +206,6 @@ export default function SwapForm({ onboardState, web3, onboard }) {
               placeholder="0.0"
               name="amountOut"
               type="number"
-              fontFamily="Poppins"
               size="lg"
               ref={register}
               variant="unstyled"

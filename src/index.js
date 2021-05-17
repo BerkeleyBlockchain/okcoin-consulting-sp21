@@ -8,12 +8,24 @@ import { BrowserRouter } from 'react-router-dom';
 import { ErrorBoundary } from 'react-error-boundary';
 import App from './App';
 import FullPageErrorFallback from './components/FullPageErrorFallback';
+import '@fontsource/poppins/400.css';
 
 const queryClient = new QueryClient();
 
 const config = {
   useSystemColorMode: false,
   initialColorMode: 'light',
+  components: {
+    Text: {
+      baseStyle: {
+        fontWeight: 'lighter',
+      },
+    },
+  },
+  fonts: {
+    heading: 'Poppins',
+    body: 'Poppins',
+  },
   styles: {
     global: {
       body: {
