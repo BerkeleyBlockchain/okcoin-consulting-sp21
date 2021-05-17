@@ -1,9 +1,7 @@
-/* eslint-disable no-console */
 import { Alert, AlertDescription, AlertIcon, AlertTitle } from '@chakra-ui/react';
 import React from 'react';
 
-export default function FullPageSpinner({ error }) {
-  console.log('🚀 ~ file: FullPageErrorFallback.js ~ line 5 ~ FullPageSpinner ~ error', error);
+export default function FullPageErrorFallback({ error }) {
   return (
     <>
       <Alert status="error">

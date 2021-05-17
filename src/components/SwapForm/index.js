@@ -18,7 +18,7 @@ import React, { useEffect, useState } from 'react';
 import Select, { components } from 'react-select';
 import FullPageSpinner from '../FullPageSpinner';
 
-import zeroXSwap from '../../hooks/use0xSwap';
+import use0xSwap from '../../hooks/use0xSwap';
 import use0xPrice from '../../hooks/use0xPrice';
 
 import Tokens from '../../constants/tokens';
@@ -84,7 +84,7 @@ export default function SwapForm({ onboardState, web3, onboard }) {
     const { amountIn, tokenIn, tokenOut } = data;
     setIsLoading(true);
 
-    zeroXSwap(Tokens.data[tokenIn.value], Tokens.data[tokenOut.value], amountIn, web3)
+    use0xSwap(Tokens.data[tokenIn.value], Tokens.data[tokenOut.value], amountIn, web3)
       .then(() => {
         setIsLoading(false);
         toast(Toasts.success);
