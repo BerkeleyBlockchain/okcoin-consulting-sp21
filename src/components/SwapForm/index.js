@@ -1,12 +1,9 @@
-/* eslint-disable react/jsx-props-no-spreading */
-/* eslint-disable */
 import {
   Box,
   Button,
   Center,
   Flex,
   Heading,
-  HStack,
   Input,
   Text,
   useToast,
@@ -17,7 +14,7 @@ import debounce from 'debounce';
 import { Controller, useForm } from 'react-hook-form';
 import React, { useEffect, useState } from 'react';
 
-import Select, { components } from 'react-select';
+import Select from 'react-select';
 import FullPageSpinner from '../FullPageSpinner';
 import SwapModal from '../SwapModal';
 
@@ -27,11 +24,10 @@ import use0xPrice from '../../hooks/use0xPrice';
 import Tokens from '../../constants/tokens';
 import Toasts from '../../constants/toasts';
 
-import { getTokenIconPNG32 } from '../../utils/getTokenIcon';
 import SwapInfo from './SwapInfo';
+import { IconOption, ValueOption, TokenArray, DropdownStyle } from './TokenDropdown';
 
 export default function SwapForm({ onboardState, web3, onboard }) {
-  const justZeros = new RegExp('^(0+)$');
   const { register, handleSubmit, watch, setValue, errors, control } = useForm();
 
   const [isLoading, setIsLoading] = useState();
@@ -45,7 +41,7 @@ export default function SwapForm({ onboardState, web3, onboard }) {
   const watchAmountIn = watch('amountIn', 0);
 
   const defaults = {
-    price: <Spinner size="xs" />,
+    price: <Spinner size="xs" mt={1.5} mx={1} />,
     gasPrice: <Spinner size="xs" />,
     exchanges: <Spinner size="xs" />,
     estimatedGas: <Spinner size="xs" />,
@@ -66,7 +62,7 @@ export default function SwapForm({ onboardState, web3, onboard }) {
       const n = watchAmountIn * price;
       setValue('amountOut', n.toFixed(6).replace(/(0+)$/, '').replace(/\.$/, ''));
     }
-    if (!watchAmountIn) {
+    if (!watchAmountIn || watchAmountIn <= 0) {
       setValue('amountOut', '');
     }
   }, [price, watchAmountIn, watchTokenIn, watchTokenOut]);
@@ -107,38 +103,6 @@ export default function SwapForm({ onboardState, web3, onboard }) {
     return <FullPageSpinner />;
   }
 
-  // display tokens
-  const tokenArray = Tokens.tokens.map((symbol) => ({
-    value: symbol,
-    label: symbol,
-    icon: getTokenIconPNG32(symbol),
-  }));
-
-  const { Option, SingleValue } = components;
-  const IconOption = (props) => {
-    const { data } = props;
-    return (
-      <Option {...props}>
-        <HStack>
-          <img src={data.icon} defaultsource={data.icon} alt={data.label} />
-          <Text>{data.label}</Text>
-        </HStack>
-      </Option>
-    );
-  };
-
-  const ValueOption = (props) => {
-    const { data } = props;
-    return (
-      <SingleValue {...props}>
-        <HStack>
-          <img src={data.icon} defaultsource={data.icon} alt={data.label} />
-          <Text>{data.label}</Text>
-        </HStack>
-      </SingleValue>
-    );
-  };
-
   return (
     <Box py={10} px={8} pb={0} boxShadow="lg" bgColor="#fff" borderRadius={30}>
       <Heading fontFamily="Poppins" fontWeight="700" color="gray.700" mb={10}>
@@ -155,47 +119,8 @@ export default function SwapForm({ onboardState, web3, onboard }) {
               control={control}
               render={({ onChange, name, value, ref }) => (
                 <Select
-                  styles={{
-                    menu: (provided) => ({
-                      ...provided,
-                      width: 150,
-                      margin: 0,
-                      fontFamily: 'Poppins',
-                      fontWeight: '600',
-                    }),
-
-                    dropdownIndicator: (provided) => ({
-                      ...provided,
-                      color: '#A0AEBF',
-                    }),
-
-                    control: () => ({
-                      width: 160,
-                      height: 52,
-                      display: 'flex',
-                      flexDirection: 'row',
-                      marginLeft: 4,
-                      color: '#A0AEBF',
-                      fontFamily: 'Poppins',
-                      fontWeight: '600',
-                    }),
-
-                    placeholder: (provided) => ({
-                      ...provided,
-                      color: '#A0AEBF',
-                      fontSize: 19,
-                      marginTop: 1,
-                      fontWeight: '400',
-                    }),
-
-                    singleValue: (provided, state) => {
-                      const opacity = state.isDisabled ? 0.5 : 1;
-                      const transition = 'opacity 300ms';
-
-                      return { ...provided, opacity, transition };
-                    },
-                  }}
-                  options={tokenArray.filter((item) => item.value !== watchTokenOut.value)}
+                  styles={DropdownStyle}
+                  options={TokenArray.filter((item) => item.value !== watchTokenOut.value)}
                   components={{ Option: IconOption, SingleValue: ValueOption }}
                   inputRef={ref}
                   value={value}
@@ -218,9 +143,9 @@ export default function SwapForm({ onboardState, web3, onboard }) {
               placeholder="Enter Amount"
               name="amountIn"
               type="number"
+              min="0"
               pattern="\d*\.?\d+"
               fontFamily="Poppins"
-              step="0.000000000000000001"
               size="lg"
               ref={register({ required: true })}
               textAlign="end"
@@ -229,9 +154,12 @@ export default function SwapForm({ onboardState, web3, onboard }) {
               isReadOnly={isLoading}
               onKeyDown={(e) => {
                 const char = e.key;
-                if (char === 'e' || char === '-' || char === '+' || justZeros.test(e)) {
+                if (char === 'e' || char === '-' || char === '+' || new RegExp('^(0+)$').test(e)) {
                   e.preventDefault();
                 }
+              }}
+              onWheel={(e) => {
+                e.currentTarget.blur();
               }}
               onChange={debounce((event) => setSellAmount(event.target.value), 1500)}
             />
@@ -247,47 +175,8 @@ export default function SwapForm({ onboardState, web3, onboard }) {
               control={control}
               render={({ onChange, name, value, ref }) => (
                 <Select
-                  styles={{
-                    menu: (provided) => ({
-                      ...provided,
-                      width: 150,
-                      margin: 0,
-                      fontFamily: 'Poppins',
-                      fontWeight: '600',
-                    }),
-
-                    dropdownIndicator: (provided) => ({
-                      ...provided,
-                      color: '#A0AEBF',
-                    }),
-
-                    control: () => ({
-                      width: 160,
-                      height: 52,
-                      display: 'flex',
-                      flexDirection: 'row',
-                      marginLeft: 4,
-                      color: '#A0AEBF',
-                      fontFamily: 'Poppins',
-                      fontWeight: '600',
-                    }),
-
-                    placeholder: (provided) => ({
-                      ...provided,
-                      color: '#A0AEBF',
-                      fontSize: 19,
-                      marginTop: 1,
-                      fontWeight: '400',
-                    }),
-
-                    singleValue: (provided, state) => {
-                      const opacity = state.isDisabled ? 0.5 : 1;
-                      const transition = 'opacity 300ms';
-
-                      return { ...provided, opacity, transition };
-                    },
-                  }}
-                  options={tokenArray.filter((item) => item.value !== watchTokenIn.value)}
+                  styles={DropdownStyle}
+                  options={TokenArray.filter((item) => item.value !== watchTokenIn.value)}
                   components={{ Option: IconOption, SingleValue: ValueOption }}
                   inputRef={ref}
                   value={value}
@@ -312,7 +201,6 @@ export default function SwapForm({ onboardState, web3, onboard }) {
               placeholder="0.0"
               name="amountOut"
               type="number"
-              step="0.000000000000000001"
               fontFamily="Poppins"
               size="lg"
               ref={register}
@@ -378,7 +266,6 @@ export default function SwapForm({ onboardState, web3, onboard }) {
             </Button>
           )}
         </Center>
-        {/* <Text color="tomato">{errors.amountIn ? 'Input amount is required' : null}</Text> */}
       </form>
     </Box>
   );
