@@ -6,7 +6,6 @@ import {
   Flex,
   Icon,
   IconButton,
-  Image,
   Link,
   Popover,
   PopoverContent,
@@ -18,12 +17,12 @@ import {
   useDisclosure,
 } from '@chakra-ui/react';
 import React from 'react';
-import AccountModal from './AccountModal';
+import AccountModal from '../AccountModal';
 
 const NAV_ITEMS = [
   {
     label: 'Home',
-    href: 'https://www.okcoin.com',
+    href: 'https://okcoin-landing.vercel.app',
   },
   {
     label: 'Apps',
@@ -116,7 +115,6 @@ export default function Navbar({ address, balance, onboard, web3 }) {
 const DesktopNav = () => {
   return (
     <Stack direction="row" spacing={4} alignItems="center">
-      <Image src="/static/okcoin_icon.png" style={{ height: '30px', width: '130px' }} />
       {NAV_ITEMS.map((navItem) => (
         <Box key={navItem.label}>
           <Popover trigger="hover" placement="bottom-start">
