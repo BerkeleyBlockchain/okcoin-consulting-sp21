@@ -1,4 +1,5 @@
-import { ChakraProvider, extendTheme } from '@chakra-ui/react';
+// eslint-disable import/no-extraneous-dependencies
+import { ChakraProvider, extendTheme, ColorModeScript } from '@chakra-ui/react';
 import { Provider } from 'jotai';
 import React from 'react';
 import ReactDOM from 'react-dom';
@@ -6,6 +7,7 @@ import { QueryClient, QueryClientProvider } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
 import { BrowserRouter } from 'react-router-dom';
 import { ErrorBoundary } from 'react-error-boundary';
+import { mode } from '@chakra-ui/theme-tools';
 import App from './App';
 import FullPageErrorFallback from './components/FullPageErrorFallback';
 import '@fontsource/poppins/400.css';
@@ -27,11 +29,11 @@ const config = {
     body: 'Poppins',
   },
   styles: {
-    global: {
+    global: (props) => ({
       body: {
-        bg: 'gray.100',
+        bg: mode('gray.100', 'gray.800')(props),
       },
-    },
+    }),
   },
 };
 
@@ -45,6 +47,7 @@ ReactDOM.render(
           <QueryClientProvider client={queryClient}>
             <ErrorBoundary FallbackComponent={FullPageErrorFallback}>
               <App />
+              <ColorModeScript initialColorMode={customTheme.config.initialColorMode} />
             </ErrorBoundary>
             <ReactQueryDevtools initialIsOpen={false} />
           </QueryClientProvider>

@@ -2,6 +2,7 @@
 import { ChevronDownIcon, ChevronRightIcon, CloseIcon, HamburgerIcon } from '@chakra-ui/icons';
 import {
   Box,
+  Button,
   Collapse,
   Flex,
   Icon,
@@ -13,6 +14,7 @@ import {
   Spinner,
   Stack,
   Text,
+  useColorMode,
   useColorModeValue,
   useDisclosure,
 } from '@chakra-ui/react';
@@ -48,6 +50,7 @@ const NAV_ITEMS = [
 
 export default function Navbar({ address, balance, onboard, web3 }) {
   const { isOpen, onToggle } = useDisclosure();
+  const { colorMode, toggleColorMode } = useColorMode();
 
   return (
     <Box>
@@ -79,6 +82,7 @@ export default function Navbar({ address, balance, onboard, web3 }) {
             <DesktopNav />
           </Flex>
         </Flex>
+        <Button onClick={toggleColorMode}>Toggle {colorMode === 'light' ? 'Dark' : 'Light'}</Button>
 
         {address && onboard && (
           <Stack
