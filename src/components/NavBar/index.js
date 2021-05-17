@@ -89,13 +89,14 @@ export default function Navbar({ address, balance, onboard, web3 }) {
             align="center"
           >
             <>
-              <Text fontFamily="Poppins" fontWeight="600" color="gray.700" size="sm">
-                {typeof balance === 'string' ? (
-                  `${parseFloat(web3.utils.fromWei(balance, 'ether')).toPrecision(6)}`
-                ) : (
-                  <Spinner size="xs" />
-                )}
-              </Text>
+              {typeof balance === 'string' ? (
+                <Text fontFamily="Poppins" fontWeight="600" color="gray.700" size="sm">
+                  {parseFloat(web3.utils.fromWei(balance, 'ether')).toPrecision(6)}
+                </Text>
+              ) : (
+                <Spinner size="xs" />
+              )}
+
               <Text fontFamily="Poppins" fontWeight="700" color="gray.700" size="sm" ml={1}>
                 ETH
               </Text>
