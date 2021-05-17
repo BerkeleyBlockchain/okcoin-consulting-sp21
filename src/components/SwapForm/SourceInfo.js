@@ -18,8 +18,7 @@ export default function SourceInfo({ exchanges, defaults }) {
             <Flex alignItems="center">
               <Image src={Exchanges.data[item.name]?.iconSVG} width="25px" height="25px" m={1} />
               <Text style={{ fontWeight: 'bold', marginLeft: 5, fontFamily: 'Poppins' }}>
-                {Exchanges.data[item?.name]?.name}
-                {` (${parseFloat(item.proportion * 100).toFixed(3)}%)`}
+                {Exchanges.data[item?.name]?.name} ({parseFloat(item.proportion * 100).toFixed(3)}%)
               </Text>
             </Flex>
           ))

@@ -40,7 +40,7 @@ export default function SwapForm({ onboardState, web3, onboard }) {
   const watchAmountIn = watch('amountIn', 0);
 
   const defaults = {
-    price: <Spinner size="xs" />,
+    price: <Spinner size="xs" mt={1.5} mx={1} />,
     gasPrice: <Spinner size="xs" />,
     exchanges: <Spinner size="xs" />,
     estimatedGas: <Spinner size="xs" />,
