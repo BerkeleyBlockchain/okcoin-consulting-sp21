@@ -41,7 +41,7 @@ export default function SwapInfo({
         {price === defaults.price ? (
           <>
             <Text fontFamily="Poppins">{`1 ${watchTokenIn.value} = `}</Text>
-            <Text mx={1}>{price}</Text>
+            {price}
             <Text fontFamily="Poppins">{` ${watchTokenOut.value}`}</Text>
           </>
         ) : (

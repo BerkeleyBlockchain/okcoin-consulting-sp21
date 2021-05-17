@@ -21,8 +21,8 @@ export default {
       iconSVG: '/static/exchange-icons/svg/cream.svg',
     },
     Component: {
-      name: '0x API',
-      iconSVG: '/static/exchange-icons/svg/0x.svg',
+      name: 'Component',
+      iconSVG: '/static/exchange-icons/svg/component.svg',
     },
     CryptoCom: {
       name: 'DeFi Swap',

@@ -301,7 +301,7 @@ export default function SwapForm({ onboardState, web3, onboard }) {
 
             <Input
               isReadOnly
-              placeholder="To"
+              placeholder="0.0"
               name="amountOut"
               type="number"
               step="0.000000000000000001"
