@@ -61,7 +61,7 @@ export default function SwapForm({ onboardState, web3, onboard }) {
       const n = watchAmountIn * price;
       setValue('amountOut', n.toFixed(6).replace(/(0+)$/, '').replace(/\.$/, ''));
     }
-    if (!watchAmountIn) {
+    if (!watchAmountIn || watchAmountIn <= 0) {
       setValue('amountOut', '');
     }
   }, [price, watchAmountIn, watchTokenIn, watchTokenOut]);
@@ -370,7 +370,6 @@ export default function SwapForm({ onboardState, web3, onboard }) {
             </Button>
           )}
         </Center>
-        {/* <Text color="tomato">{errors.amountIn ? 'Input amount is required' : null}</Text> */}
       </form>
     </Box>
   );
