@@ -23,7 +23,8 @@ import Tokens from '../../constants/tokens';
 import Toasts from '../../constants/toasts';
 
 import SwapInfo from './SwapInfo';
-import { IconOption, ValueOption, TokenArray, DropdownStyle } from './TokenDropdown';
+import { getTokenIconPNG32 } from '../../utils/getTokenIcon';
+import { IconOption, ValueOption, DropdownStyle } from './TokenDropdown';
 
 export default function SwapForm({ onboardState, web3, onboard }) {
   const { register, handleSubmit, watch, setValue, errors, control } = useForm();
@@ -43,6 +44,13 @@ export default function SwapForm({ onboardState, web3, onboard }) {
     estimatedGas: <Spinner size="xs" />,
     sources: [],
   };
+
+  // display tokens
+  const tokenArray = Tokens.tokens.map((symbol) => ({
+    value: symbol,
+    label: symbol,
+    icon: getTokenIconPNG32(symbol),
+  }));
 
   const { data: zeroExQuote } = use0xPrice(
     Tokens.data[watchTokenIn.value],
@@ -113,7 +121,7 @@ export default function SwapForm({ onboardState, web3, onboard }) {
               render={({ onChange, name, value, ref }) => (
                 <Select
                   styles={DropdownStyle}
-                  options={TokenArray.filter((item) => item.value !== watchTokenOut.value)}
+                  options={tokenArray.filter((item) => item.value !== watchTokenOut.value)}
                   components={{ Option: IconOption, SingleValue: ValueOption }}
                   inputRef={ref}
                   value={value}
@@ -169,7 +177,7 @@ export default function SwapForm({ onboardState, web3, onboard }) {
               render={({ onChange, name, value, ref }) => (
                 <Select
                   styles={DropdownStyle}
-                  options={TokenArray.filter((item) => item.value !== watchTokenIn.value)}
+                  options={tokenArray.filter((item) => item.value !== watchTokenIn.value)}
                   components={{ Option: IconOption, SingleValue: ValueOption }}
                   inputRef={ref}
                   value={value}
