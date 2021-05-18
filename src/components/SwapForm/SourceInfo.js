@@ -15,7 +15,7 @@ export default function SourceInfo({ exchanges, defaults }) {
         exchanges
           .sort((a, b) => parseFloat(b.proportion) - parseFloat(a.proportion))
           .map((item) => (
-            <Flex alignItems="center">
+            <Flex alignItems="center" key={item.name}>
               <Image src={Exchanges.data[item.name]?.iconSVG} width="25px" height="25px" m={1} />
               <Text style={{ fontWeight: 'bold', marginLeft: 5, fontFamily: 'Poppins' }}>
                 {Exchanges.data[item?.name]?.name} ({parseFloat(item.proportion * 100).toFixed(3)}%)
