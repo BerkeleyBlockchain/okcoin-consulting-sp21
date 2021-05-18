@@ -43,9 +43,9 @@ export default function SwapForm({ onboardState, web3, onboard }) {
   // Placeholder values
   const defaults = {
     price: <Spinner size="xs" mt={1.5} mx={1} />,
-    gasPrice: <Spinner size="xs" />,
-    exchanges: <Spinner size="xs" />,
-    estimatedGas: <Spinner size="xs" />,
+    gasPrice: <Spinner size="xs" mt={1.5} mx={1} />,
+    exchanges: <Spinner size="xs" mt={1.5} mx={1} />,
+    estimatedGas: <Spinner size="xs" mt={1.5} mx={1} />,
     sources: [],
   };
 

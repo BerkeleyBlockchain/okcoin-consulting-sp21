@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { Spacer, Divider, Flex, Text } from '@chakra-ui/react';
 import React from 'react';
 
@@ -21,13 +22,6 @@ export default function SwapInfo({
       return 'ETH <> WETH';
     }
     return 'Split Routing';
-  };
-
-  const checkLoading = () => {
-    if (typeof defaults.exchanges === 'string') {
-      return <Text fontFamily="Poppins">{defaults.exchanges}</Text>;
-    }
-    return defaults.exchanges;
   };
 
   return (
@@ -66,7 +60,7 @@ export default function SwapInfo({
             ) : null}
           </>
         ) : (
-          <>{checkLoading()}</>
+          defaults.exchanges
         )}
       </Flex>
       <Flex>
@@ -74,14 +68,21 @@ export default function SwapInfo({
           Gas Price
         </Text>
         <Spacer />
-        <Text fontFamily="Poppins">{gasPrice} Gwei</Text>
+        {gasPrice === defaults.gasPrice ? gasPrice : <Text fontFamily="Poppins">{gasPrice}</Text>}
+        <Text fontFamily="Poppins" ml={1}>
+          Gwei
+        </Text>
       </Flex>
       <Flex>
         <Text fontFamily="Poppins" fontWeight="600">
           Gas Estimate
         </Text>
         <Spacer />
-        <Text fontFamily="Poppins">{estimatedGas}</Text>
+        {estimatedGas === defaults.estimatedGas ? (
+          estimatedGas
+        ) : (
+          <Text fontFamily="Poppins">{estimatedGas}</Text>
+        )}
       </Flex>
 
       <Divider mt={3} />
