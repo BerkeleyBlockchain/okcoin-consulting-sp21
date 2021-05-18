@@ -38,13 +38,18 @@ const getPrice = async (tokenIn, tokenOut, sellAmount) => {
       estimatedGas: new BD(estimatedGas).getPrettyValue(),
     };
   } catch (err) {
+    // Default message
+    let reason = 'INTERAL_ERROR';
+    // Input out of range
     if (err.message && err.message === 'Cannot divide by 0') {
-      return {
-        apiError: 'INPUT_TOO_LARGE',
-      };
+      reason = 'INPUT_TOO_LARGE';
+    }
+    // API Error
+    if (err.response) {
+      reason = err.response.data.validationErrors[0].reason;
     }
     return {
-      apiError: err.response.data.validationErrors[0].reason,
+      apiError: reason,
     };
   }
 };
