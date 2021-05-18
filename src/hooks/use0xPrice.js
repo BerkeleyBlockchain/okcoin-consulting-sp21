@@ -3,7 +3,25 @@ import axios from 'axios';
 import BD from 'js-big-decimal';
 import Web3 from 'web3';
 
-const getPrice = async (tokenIn, tokenOut, sellAmount) => {
+function handleError(err) {
+  // Default message
+  let reason = 'Server error';
+
+  // Input out of range
+  if (err.message && err.message === 'Cannot divide by 0') {
+    reason = 'Input too large';
+  }
+
+  // Validation Error
+  if (err.response && err.response.data.code === 100) {
+    reason = err.response.data.validationErrors[0].reason;
+    reason = reason.charAt(0) + reason.slice(1).toLowerCase().replaceAll('_', ' ');
+  }
+
+  return reason;
+}
+
+async function getPrice(tokenIn, tokenOut, sellAmount) {
   if (!tokenIn || !tokenOut || !sellAmount || sellAmount <= 0) {
     return [];
   }
@@ -38,21 +56,9 @@ const getPrice = async (tokenIn, tokenOut, sellAmount) => {
       estimatedGas: new BD(estimatedGas).getPrettyValue(),
     };
   } catch (err) {
-    // Default message
-    let reason = 'INTERAL_ERROR';
-    // Input out of range
-    if (err.message && err.message === 'Cannot divide by 0') {
-      reason = 'INPUT_TOO_LARGE';
-    }
-    // API Error
-    if (err.response) {
-      reason = err.response.data.validationErrors[0].reason;
-    }
-    return {
-      apiError: reason,
-    };
+    return { apiError: handleError(err) };
   }
-};
+}
 
 export default function use0xPrice(tokenIn, tokenOut, sellAmount, onError) {
   return useQuery(
