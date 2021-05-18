@@ -3,10 +3,10 @@ import { Spinner, Center, Text, VStack } from '@chakra-ui/react';
 
 export default function FullPageSpinner() {
   return (
-    <Center h="100vh">
+    <Center mt="50%">
       <VStack spacing={6}>
         <Spinner />
-        <Text>Connecting to Metamask</Text>
+        <Text>Loading Application</Text>
       </VStack>
     </Center>
   );

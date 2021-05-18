@@ -2,8 +2,6 @@
 import React from 'react';
 import { HStack, Text } from '@chakra-ui/react';
 import { components } from 'react-select';
-import Tokens from '../../constants/tokens';
-import { getTokenIconPNG32 } from '../../utils/getTokenIcon';
 
 const { Option, SingleValue } = components;
 
@@ -30,13 +28,6 @@ export const ValueOption = (props) => {
     </SingleValue>
   );
 };
-
-// display tokens
-export const TokenArray = Tokens.tokens.map((symbol) => ({
-  value: symbol,
-  label: symbol,
-  icon: getTokenIconPNG32(symbol),
-}));
 
 export const DropdownStyle = {
   menu: (provided) => ({

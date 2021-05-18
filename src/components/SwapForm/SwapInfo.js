@@ -18,7 +18,7 @@ export default function SwapInfo({
       return Exchanges.data[exchanges[0]?.name]?.name;
     }
     if (exchanges.length === 0) {
-      return 'Weth <> Eth';
+      return 'ETH <> WETH';
     }
     return 'Split Routing';
   };
