@@ -31,6 +31,9 @@ import Tokens from '../../constants/tokens';
 import use0xSwap from '../../hooks/use0xSwap';
 import use0xPrice from '../../hooks/use0xPrice';
 
+import Theme from '../../theme';
+
+const illegal = new RegExp('[\\("\\?@#\\$\\%\\^\\&\\*\\-=;:<>,.+\\[\\{\\]\\}\\)\\/\\\\]');
 export default function SwapForm({ onboardState, web3, onboard }) {
   const { register, handleSubmit, watch, setValue, errors, control } = useForm();
   const [isLoading, setIsLoading] = useState();
@@ -158,11 +161,7 @@ export default function SwapForm({ onboardState, web3, onboard }) {
                   name={name}
                   onChange={onChange}
                   onKeyDown={(e) => {
-                    const c = e.key;
-                    const illegal = new RegExp(
-                      '[\\("\\?@#\\$\\%\\^\\&\\*\\-=;:<>,.+\\[\\{\\]\\}\\)\\/\\\\]'
-                    );
-                    if (illegal.test(c)) {
+                    if (illegal.test(e.key)) {
                       e.preventDefault();
                     }
                   }}
@@ -213,11 +212,7 @@ export default function SwapForm({ onboardState, web3, onboard }) {
                   name={name}
                   onChange={onChange}
                   onKeyDown={(e) => {
-                    const c = e.key;
-                    const illegal = new RegExp(
-                      '[\\("\\?@#\\$\\%\\^\\&\\*\\-\\/\\\\=;:<>,.+\\[\\{\\]\\}\\)]'
-                    );
-                    if (illegal.test(c)) {
+                    if (illegal.test(e.key)) {
                       e.preventDefault();
                     }
                   }}

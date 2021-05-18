@@ -1,8 +1,13 @@
 /* eslint-disable react/jsx-props-no-spreading */
-import { ChevronDownIcon, ChevronRightIcon, CloseIcon, HamburgerIcon } from '@chakra-ui/icons';
+import {
+  ChevronDownIcon,
+  ChevronRightIcon,
+  CloseIcon,
+  HamburgerIcon,
+  MoonIcon,
+} from '@chakra-ui/icons';
 import {
   Box,
-  Button,
   Collapse,
   Flex,
   Icon,
@@ -50,7 +55,7 @@ const NAV_ITEMS = [
 
 export default function Navbar({ address, balance, onboard, web3 }) {
   const { isOpen, onToggle } = useDisclosure();
-  const { colorMode, toggleColorMode } = useColorMode();
+  const { toggleColorMode } = useColorMode();
 
   return (
     <Box>
@@ -82,14 +87,13 @@ export default function Navbar({ address, balance, onboard, web3 }) {
             <DesktopNav />
           </Flex>
         </Flex>
-        <Button onClick={toggleColorMode}>Toggle {colorMode === 'light' ? 'Dark' : 'Light'}</Button>
 
         {address && onboard && (
           <Stack
             flex={{ base: 1, md: 0 }}
             justify="flex-end"
             direction="row"
-            spacing={2}
+            spacing={3}
             align="center"
           >
             <>
@@ -108,6 +112,7 @@ export default function Navbar({ address, balance, onboard, web3 }) {
             <AccountModal address={address} onboard={onboard} />
           </Stack>
         )}
+        <IconButton onClick={toggleColorMode} icon={<MoonIcon />} ml={3} />
       </Flex>
 
       <Collapse in={isOpen} animateOpacity>

@@ -9,10 +9,8 @@ const overrides = {
     heading: 'Poppins',
     body: 'Poppins',
   },
-  // Other foundational style overrides go here
   components: {
     Text,
-    // Other components go here
   },
   styles: {
     global: (props) => ({
