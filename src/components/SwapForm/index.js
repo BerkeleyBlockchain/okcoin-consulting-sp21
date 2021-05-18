@@ -1,35 +1,21 @@
-import {
-  Box,
-  Button,
-  Center,
-  Flex,
-  Heading,
-  Input,
-  Text,
-  useToast,
-  Spinner,
-  useDisclosure,
-} from '@chakra-ui/react';
-import debounce from 'debounce';
+import { Box, Center, Flex, Heading, Input, Text, useToast, Spinner } from '@chakra-ui/react';
+import { WarningIcon } from '@chakra-ui/icons';
 import { Controller, useForm } from 'react-hook-form';
 import React, { useEffect, useState } from 'react';
-
+import debounce from 'debounce';
 import Select from 'react-select';
+import { IconOption, ValueOption, DropdownStyle } from './TokenDropdown';
+import { getTokenIconPNG32 } from '../../utils/getTokenIcon';
 import FullPageSpinner from '../FullPageSpinner';
-import SwapModal from '../SwapModal';
-
+import SwapInfo from './SwapInfo';
+import SwapButton from './SwapButton';
+import Toasts from '../../constants/toasts';
+import Tokens from '../../constants/tokens';
 import use0xSwap from '../../hooks/use0xSwap';
 import use0xPrice from '../../hooks/use0xPrice';
 
-import Tokens from '../../constants/tokens';
-import Toasts from '../../constants/toasts';
-
-import SwapInfo from './SwapInfo';
-import { IconOption, ValueOption, TokenArray, DropdownStyle } from './TokenDropdown';
-
 export default function SwapForm({ onboardState, web3, onboard }) {
   const { register, handleSubmit, watch, setValue, errors, control } = useForm();
-
   const [isLoading, setIsLoading] = useState();
   const [sellAmount, setSellAmount] = useState();
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -40,6 +26,21 @@ export default function SwapForm({ onboardState, web3, onboard }) {
   const watchTokenOut = watch('tokenOut', '');
   const watchAmountIn = watch('amountIn', 0);
 
+  // Token dropdown values
+  const tokenArray = Tokens.tokens.map((symbol) => ({
+    value: symbol,
+    label: symbol,
+    icon: getTokenIconPNG32(symbol),
+  }));
+
+  // 0x API quote
+  const { data: zeroExQuote } = use0xPrice(
+    Tokens.data[watchTokenIn.value],
+    Tokens.data[watchTokenOut.value],
+    sellAmount
+  );
+
+  // Placeholder values
   const defaults = {
     price: <Spinner size="xs" mt={1.5} mx={1} />,
     gasPrice: <Spinner size="xs" />,
@@ -48,25 +49,11 @@ export default function SwapForm({ onboardState, web3, onboard }) {
     sources: [],
   };
 
-  const { data: zeroExQuote } = use0xPrice(
-    Tokens.data[watchTokenIn.value],
-    Tokens.data[watchTokenOut.value],
-    sellAmount
-  );
-
-  const { price, gasPrice, estimatedGas, exchanges } =
+  // Set quote values
+  const { price, gasPrice, estimatedGas, exchanges, apiError } =
     zeroExQuote === undefined ? defaults : zeroExQuote;
 
-  useEffect(() => {
-    if (watchAmountIn > 0 && watchTokenIn && watchTokenOut && price !== defaults.price) {
-      const n = watchAmountIn * price;
-      setValue('amountOut', n.toFixed(6).replace(/(0+)$/, '').replace(/\.$/, ''));
-    }
-    if (!watchAmountIn || watchAmountIn <= 0) {
-      setValue('amountOut', '');
-    }
-  }, [price, watchAmountIn, watchTokenIn, watchTokenOut]);
-
+  // Connect wallet function
   async function readyToTransact() {
     if (!onboardState.address) {
       const walletSelected = await onboard.walletSelect();
@@ -76,6 +63,35 @@ export default function SwapForm({ onboardState, web3, onboard }) {
     const ready = await onboard.walletCheck();
     return ready;
   }
+
+  // SwapButton text function
+  const getButtonText = () => {
+    if (!watchAmountIn || watchAmountIn <= 0) return 'Enter amount in';
+    if (!watchTokenIn || !watchTokenOut) return 'Select tokens';
+    if (apiError) {
+      return (
+        <>
+          <WarningIcon mr={2} />
+          {apiError}
+        </>
+      );
+    }
+    return 'Swap Tokens';
+  };
+
+  // Set amount out
+  useEffect(() => {
+    if (watchAmountIn > 0 && watchTokenIn && watchTokenOut && price !== defaults.price) {
+      const n = watchAmountIn * price;
+      setValue('amountOut', n.toFixed(6).replace(/(0+)$/, '').replace(/\.$/, ''));
+    }
+    if (!watchAmountIn || watchAmountIn <= 0 || apiError) {
+      setValue('amountOut', '');
+    }
+  }, [price, watchAmountIn, watchTokenIn, watchTokenOut]);
+
+  // Loading screen
+  if (!onboard) return <FullPageSpinner />;
 
   // Execute the swap
   const onSubmit = async (data) => {
@@ -99,10 +115,6 @@ export default function SwapForm({ onboardState, web3, onboard }) {
       });
   };
 
-  if (!onboard) {
-    return <FullPageSpinner />;
-  }
-
   return (
     <Box py={10} px={8} pb={0} boxShadow="lg" bgColor="#fff" borderRadius={30}>
       <Heading fontFamily="Poppins" fontWeight="700" color="gray.700" mb={10}>
@@ -120,7 +132,7 @@ export default function SwapForm({ onboardState, web3, onboard }) {
               render={({ onChange, name, value, ref }) => (
                 <Select
                   styles={DropdownStyle}
-                  options={TokenArray.filter((item) => item.value !== watchTokenOut.value)}
+                  options={tokenArray.filter((item) => item.value !== watchTokenOut.value)}
                   components={{ Option: IconOption, SingleValue: ValueOption }}
                   inputRef={ref}
                   value={value}
@@ -140,7 +152,7 @@ export default function SwapForm({ onboardState, web3, onboard }) {
             />
 
             <Input
-              placeholder="Enter Amount"
+              placeholder="0.0"
               name="amountIn"
               type="number"
               min="0"
@@ -161,7 +173,7 @@ export default function SwapForm({ onboardState, web3, onboard }) {
               onWheel={(e) => {
                 e.currentTarget.blur();
               }}
-              onChange={debounce((event) => setSellAmount(event.target.value), 1500)}
+              onChange={debounce((event) => setSellAmount(event.target.value), 1000)}
             />
           </Flex>
         </Box>
@@ -176,7 +188,7 @@ export default function SwapForm({ onboardState, web3, onboard }) {
               render={({ onChange, name, value, ref }) => (
                 <Select
                   styles={DropdownStyle}
-                  options={TokenArray.filter((item) => item.value !== watchTokenIn.value)}
+                  options={tokenArray.filter((item) => item.value !== watchTokenIn.value)}
                   components={{ Option: IconOption, SingleValue: ValueOption }}
                   inputRef={ref}
                   value={value}
@@ -187,7 +199,6 @@ export default function SwapForm({ onboardState, web3, onboard }) {
                     const illegal = new RegExp(
                       '[\\("\\?@#\\$\\%\\^\\&\\*\\-\\/\\\\=;:<>,.+\\[\\{\\]\\}\\)]'
                     );
-
                     if (illegal.test(c)) {
                       e.preventDefault();
                     }
@@ -223,47 +234,22 @@ export default function SwapForm({ onboardState, web3, onboard }) {
         ) : null}
         <Center>
           {onboardState.address ? (
-            <Button
-              w="100%"
-              h="60px"
-              _hover={{ backgroundColor: '#194BB6' }}
-              backgroundColor="#205FEC"
-              color="white"
-              size="lg"
+            <SwapButton
               type="submit"
-              mt={6}
-              mb={10}
+              buttonText={getButtonText()}
+              isLoading={isLoading}
+              loadingText="Executing Swap"
               disabled={
-                isLoading ||
                 Object.keys(errors).length !== 0 ||
+                isLoading ||
                 watchAmountIn <= 0 ||
                 !watchTokenIn ||
-                !watchTokenOut
+                !watchTokenOut ||
+                apiError
               }
-              loadingText="Executing Swap"
-              fontFamily="Poppins"
-              fontWeight="600"
-              isLoading={isLoading}
-            >
-              {errors.amountIn ? 'Input Amount required' : 'Swap Tokens'}
-            </Button>
+            />
           ) : (
-            <Button
-              w="100%"
-              h="60px"
-              _hover={{ backgroundColor: '#194BB6' }}
-              backgroundColor="#205FEC"
-              color="white"
-              size="lg"
-              mt={6}
-              mb={10}
-              fontFamily="Poppins"
-              fontWeight="600"
-              disabled={Object.keys(errors).length !== 0}
-              onClick={() => readyToTransact()}
-            >
-              Connect Wallet
-            </Button>
+            <SwapButton onClick={readyToTransact} buttonText="Connect Wallet" />
           )}
         </Center>
       </form>
