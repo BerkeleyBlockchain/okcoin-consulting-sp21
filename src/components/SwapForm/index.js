@@ -1,5 +1,22 @@
-import { Box, Center, Flex, Heading, Input, Text, useToast, Spinner } from '@chakra-ui/react';
+import { Box, Center, Flex, Heading, Input, Text, useToast, Spinner, useColorModeValue} from '@chakra-ui/react';
 import { WarningIcon } from '@chakra-ui/icons';
+=======
+/* eslint-disable react/jsx-props-no-spreading */
+import {
+  useColorModeValue,
+  Box,
+  Button,
+  Center,
+  Flex,
+  Heading,
+  HStack,
+  Input,
+  Text,
+  useToast,
+  Spinner,
+} from '@chakra-ui/react';
+import debounce from 'debounce';
+>>>>>>> e09ef0c (move theme to folder)
 import { Controller, useForm } from 'react-hook-form';
 import React, { useEffect, useState } from 'react';
 import debounce from 'debounce';
@@ -111,15 +128,22 @@ export default function SwapForm({ onboardState, web3, onboard }) {
   };
 
   return (
-    <Box py={10} px={8} pb={0} boxShadow="lg" bgColor="#fff" borderRadius={30}>
-      <Heading fontWeight="700" color="gray.700" mb={10}>
+    <Box
+      py={10}
+      px={8}
+      pb={0}
+      boxShadow="lg"
+      bgColor={useColorModeValue('white', 'gray.700')}
+      borderRadius={30}
+    >
+      <Heading fontWeight="700" color={useColorModeValue('gray.700', 'white')} mb={10}>
         Swap
       </Heading>
       <form onSubmit={handleSubmit(onSubmit)}>
         <Text opacity={0.7} mb={2} ml={0.5}>
           PAY
         </Text>
-        <Box borderWidth="1px" borderRadius="lg" mb={6}>
+        <Box borderWidth="1px" borderRadius="lg" bg={useColorModeValue('white', 'gray.800')} mb={6}>
           <Flex>
             <Controller
               name="tokenIn"
@@ -174,7 +198,7 @@ export default function SwapForm({ onboardState, web3, onboard }) {
         <Text opacity={0.7} mb={2} ml={0.5}>
           RECEIVE
         </Text>
-        <Box borderWidth="1px" borderRadius="lg" mb={6}>
+        <Box borderWidth="1px" borderRadius="lg" bg={useColorModeValue('white', 'gray.800')} mb={6}>
           <Flex>
             <Controller
               name="tokenOut"
