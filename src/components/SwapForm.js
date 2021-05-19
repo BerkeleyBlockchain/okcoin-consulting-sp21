@@ -70,6 +70,8 @@ export default function SwapForm({ onboardState, web3, onboard, balance }) {
 
   async function handleDropdownSelect(token) {
     let tokenBal;
+    console.log(onboardState, balance);
+
     if (onboardState && balance) {
       console.log(balance);
       console.log(onboardState);
@@ -86,6 +88,7 @@ export default function SwapForm({ onboardState, web3, onboard, balance }) {
       });
       console.log(token, tokenBal);
     }
+    console.log('hi', tokenBal);
     return tokenBal;
   }
 
@@ -172,11 +175,22 @@ export default function SwapForm({ onboardState, web3, onboard, balance }) {
       <Option {...props}>
         <HStack
           onClick={async () => {
-            console.log(watchTokenIn);
-            const tb = await handleDropdownSelect(data.value).then((res) => {
-              return res;
-            });
-            setTokenBalance(tb);
+            console.log(onboardState.network);
+            console.log(process.env.REACT_APP_ENV);
+            let dexNet;
+            if (process.env.REACT_APP_ENV === 'production') {
+              dexNet = 1;
+            } else {
+              dexNet = 42;
+            }
+            if (onboardState.network === dexNet) {
+              const tb = await handleDropdownSelect(data.value).then((res) => {
+                return res;
+              });
+              setTokenBalance(tb);
+            } else {
+              toast(Toasts.networkMismatch);
+            }
           }}
         >
           <img src={data.icon} defaultSource={data.icon} alt={data.label} />
@@ -230,7 +244,7 @@ export default function SwapForm({ onboardState, web3, onboard, balance }) {
           <Text fontFamily="Poppins" opacity={0.7} mb={2} ml={0.5}>
             PAY
           </Text>
-          {tokenBalance !== defaults.tokenBalance && watchTokenIn ? (
+          {tokenBalance && watchTokenIn ? (
             <Text fontFamily="Poppins" opacity={0.7} mb={2} ml={0.5}>
               {`${tokenBalance} ${watchTokenIn.value} available`}
             </Text>

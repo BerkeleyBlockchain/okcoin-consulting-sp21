@@ -9,18 +9,16 @@ const TOKENS = require('../shared/tokens');
  * should be valid tickers defined in shared/tokens.js
  */
 router.get('/:tokenFrom/:tokenTo', (req, res) => {
-
   const tokenFrom = TOKENS[req.params.tokenFrom];
   const tokenTo = TOKENS[req.params.tokenTo];
 
   if (tokenFrom == undefined || tokenTo == undefined) {
-    res.json({ error : 'UNDEFINED TOKENS' });
+    res.json({ error: 'UNDEFINED TOKENS' });
   }
 
-  EXCHANGES.getAllPrices(tokenFrom, tokenTo).then(result => {
+  EXCHANGES.getAllPrices(tokenFrom, tokenTo).then((result) => {
     res.json(result);
   });
-
 });
 
 /**
@@ -28,18 +26,16 @@ router.get('/:tokenFrom/:tokenTo', (req, res) => {
  * tokenTo should be valid tickers defined in shared/tokens.js
  */
 router.get('/lowest/:tokenFrom/:tokenTo', (req, res) => {
-
   const tokenFrom = TOKENS[req.params.tokenFrom];
   const tokenTo = TOKENS[req.params.tokenTo];
 
   if (tokenFrom == undefined || tokenTo == undefined) {
-    res.json({ error : 'UNDEFINED TOKENS' });
+    res.json({ error: 'UNDEFINED TOKENS' });
   }
 
-  EXCHANGES.getLowestPrice(tokenFrom, tokenTo).then(result => {
+  EXCHANGES.getLowestPrice(tokenFrom, tokenTo).then((result) => {
     res.json(result);
   });
-
 });
 
 module.exports = router;

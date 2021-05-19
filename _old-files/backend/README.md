@@ -1,6 +1,7 @@
 # Pricing Backend Design Document
 
 Backend Structure:
+
 ```
 src
 ├── exchanges
@@ -49,7 +50,7 @@ The shared folder contains information shared accross the other backend files.
 `tokens.js` contains information about the supported tokens. Each token in the file is a json
 object with the following fields:
 
-* mainnet: the mainnet contract address of the token
-* ropsten: the ropsten contract address of the token for testing purposes
-* ticker: the ticker of the token ("ETH", "USDC", etc.)
-* decimals: the number of decimals for that token (the decimals of the smallest unit)
+- mainnet: the mainnet contract address of the token
+- ropsten: the ropsten contract address of the token for testing purposes
+- ticker: the ticker of the token ("ETH", "USDC", etc.)
+- decimals: the number of decimals for that token (the decimals of the smallest unit)

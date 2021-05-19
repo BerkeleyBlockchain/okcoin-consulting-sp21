@@ -1,19 +1,9 @@
 /* Tokens supported by each exchange. */
 
 module.exports = {
+  KYBER: new Set([]),
 
-  KYBER: new Set([
+  UNISWAP: new Set(['DAI', 'USDC', 'USDT']),
 
-  ]),
-
-  UNISWAP: new Set([
-    "DAI", 
-    "USDC", 
-    "USDT"
-  ]),
-
-  ZERO_X: new Set([
-
-  ]),
-
-}
+  ZERO_X: new Set([]),
+};

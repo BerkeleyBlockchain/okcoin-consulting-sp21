@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { ethers } from 'ethers';
 import erc20 from './erc20';
 import tokens from '../constants/tokens';
@@ -60,9 +61,10 @@ function checkTokenBalance({ tokenAddress, minimumBalance, tokenName }) {
 }
 
 const getTokenBalance = (tokenChoice) => {
-  const tokenAddress = tokens.data[tokenChoice].address;
+  const tokenAddress = tokens.data[tokenChoice].address.toLowerCase();
   let ethersProvider;
   let tokenContract;
+  console.log(tokenAddress);
 
   return async (stateAndHelpers) => {
     const {
@@ -95,8 +97,10 @@ const getTokenBalance = (tokenChoice) => {
         .balanceOf(address)
         .catch((error) => console.log(error))
         .then((res) => res.toString());
+      console.log(tokenBalanceResult, 'tokenBalanceResult');
       tokenBalance = new BigNumber(tokenBalanceResult).div(divideBy);
     }
+    console.log('tokenBalance', tokenBalance);
     return tokenBalance;
   };
 };
