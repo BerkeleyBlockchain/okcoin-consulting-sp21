@@ -6,7 +6,6 @@ import {
   Center,
   Flex,
   Heading,
-  HStack,
   Input,
   Text,
   useToast,
@@ -23,18 +22,11 @@ import SwapModal from '../SwapModal';
 
 import zeroXSwap from '../../hooks/use0xSwap';
 import use0xPrice from '../../hooks/use0xPrice';
-
-import Tokens from '../../constants/tokens';
-import Toasts from '../../constants/toasts';
-
 import { getTokenIconPNG32 } from '../../utils/getTokenIcon';
-import FullPageSpinner from '../FullPageSpinner';
 import SwapInfo from './SwapInfo';
 import SwapButton from './SwapButton';
 import Toasts from '../../constants/toasts';
 import Tokens from '../../constants/tokens';
-import use0xSwap from '../../hooks/use0xSwap';
-import use0xPrice from '../../hooks/use0xPrice';
 
 export default function SwapForm({ onboardState, web3, onboard }) {
   const { register, handleSubmit, watch, setValue, errors, control } = useForm();
