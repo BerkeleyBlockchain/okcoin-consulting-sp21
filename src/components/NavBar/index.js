@@ -56,6 +56,7 @@ const NAV_ITEMS = [
 export default function Navbar({ address, balance, onboard, web3 }) {
   const { isOpen, onToggle } = useDisclosure();
   const { toggleColorMode } = useColorMode();
+  const color = useColorModeValue('gray.600', 'gray.200');
 
   return (
     <Box>
@@ -98,19 +99,14 @@ export default function Navbar({ address, balance, onboard, web3 }) {
           >
             <>
               {typeof balance === 'string' ? (
-                <Text fontWeight="600" color={useColorModeValue('gray.600', 'gray.200')} size="sm">
+                <Text fontWeight="600" color={color} size="sm">
                   {parseFloat(web3.utils.fromWei(balance, 'ether')).toPrecision(6)}
                 </Text>
               ) : (
                 <Spinner size="xs" />
               )}
 
-              <Text
-                fontWeight="700"
-                color={useColorModeValue('gray.600', 'gray.200')}
-                size="sm"
-                ml={1}
-              >
+              <Text fontWeight="700" color={color} size="sm" ml={1}>
                 ETH
               </Text>
             </>
@@ -128,6 +124,7 @@ export default function Navbar({ address, balance, onboard, web3 }) {
 }
 
 const DesktopNav = () => {
+  const color = useColorModeValue('gray.600', 'gray.200');
   return (
     <Stack direction="row" spacing={4} alignItems="center">
       {NAV_ITEMS.map((navItem) => (
@@ -150,14 +147,7 @@ const DesktopNav = () => {
             </PopoverTrigger>
 
             {navItem.children && (
-              <PopoverContent
-                border={0}
-                boxShadow="xl"
-                bg={useColorModeValue('white', 'gray.800')}
-                p={4}
-                rounded="xl"
-                minW="sm"
-              >
+              <PopoverContent border={0} boxShadow="xl" bg={color} p={4} rounded="xl" minW="sm">
                 <Stack>
                   {navItem.children.map((child) => (
                     <DesktopSubNav key={child.label} {...child} />

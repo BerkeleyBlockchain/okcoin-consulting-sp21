@@ -47,6 +47,8 @@ export default function SwapForm({ onboardState, web3, onboard, balance }) {
   setUserOnboard(onboardState);
   setWeb3(web3);
   setUserBalance(balance);
+  const bg = useColorModeValue('white', 'gray.700');
+  const color = useColorModeValue('gray.700', 'white');
 
   // Token dropdown values
   const tokenArray = Tokens.tokens.map((symbol) => ({
@@ -157,31 +159,24 @@ export default function SwapForm({ onboardState, web3, onboard, balance }) {
   };
 
   return (
-    <Box
-      py={10}
-      px={8}
-      pb={0}
-      boxShadow="lg"
-      bgColor={useColorModeValue('white', 'gray.700')}
-      borderRadius={30}
-    >
-      <Heading fontWeight="700" color={useColorModeValue('gray.700', 'white')} mb={10}>
+    <Box py={10} px={8} pb={0} boxShadow="lg" bgColor={bg} borderRadius={30}>
+      <Heading fontWeight="700" color={color} mb={10}>
         Swap
       </Heading>
       <form onSubmit={handleSubmit(onSubmit)}>
         <Flex direction="row" justify="space-between">
-          <Text fontFamily="Poppins" opacity={0.7} mb={2} ml={0.5}>
+          <Text opacity={0.7} mb={2} ml={0.5}>
             PAY
           </Text>
           {tokenBalance && watchTokenIn ? (
-            <Text fontFamily="Poppins" opacity={0.7} mb={2} ml={0.5}>
+            <Text opacity={0.7} mb={2} ml={0.5}>
               {`${tokenBalance.toFixed(6)} ${watchTokenIn.value} available`}
             </Text>
           ) : (
             <div />
           )}
         </Flex>
-        <Box borderWidth="1px" borderRadius="lg" bg={useColorModeValue('white', 'gray.800')} mb={6}>
+        <Box borderWidth="1px" borderRadius="lg" bg={bg} mb={6}>
           <Flex>
             <Controller
               name="tokenIn"
@@ -233,7 +228,7 @@ export default function SwapForm({ onboardState, web3, onboard, balance }) {
         <Text opacity={0.7} mb={2} ml={0.5}>
           RECEIVE
         </Text>
-        <Box borderWidth="1px" borderRadius="lg" bg={useColorModeValue('white', 'gray.800')} mb={6}>
+        <Box borderWidth="1px" borderRadius="lg" bg={bg} mb={6}>
           <Flex>
             <Controller
               name="tokenOut"
