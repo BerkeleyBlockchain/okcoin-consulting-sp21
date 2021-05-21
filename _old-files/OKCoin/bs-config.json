@@ -1,7 +1,0 @@
-{
-  "server": {
-    "baseDir": ["./src", "./build/contracts"],
-    "routes": { "npm": "node_modules/" },
-    "map": { "@uniswap/sdk": "npm:@uniswap/sdk" }
-  }
-}
