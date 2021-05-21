@@ -35,6 +35,7 @@ export default function SwapForm({ onboardState, web3, onboard }) {
   const [sellAmount, setSellAmount] = useState();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [swapConfirmed, setSwapConfirmed] = useState(false);
+  const [formData, setFormData] = useState({});
   const toast = useToast();
 
   const watchTokenIn = watch('tokenIn', '');
@@ -105,6 +106,24 @@ export default function SwapForm({ onboardState, web3, onboard }) {
     }
   }, [price, watchAmountIn, watchTokenIn, watchTokenOut]);
 
+  useEffect(() => {
+    if (!swapConfirmed) {
+      return;
+    }
+    const { amountIn, tokenIn, tokenOut } = formData;
+    zeroXSwap(Tokens.data[tokenIn.value], Tokens.data[tokenOut.value], amountIn, web3)
+      .then(() => {
+        setIsLoading(false);
+        toast(Toasts.success);
+        setSwapConfirmed(false);
+      })
+      .catch((err) => {
+        setIsLoading(false);
+        console.log(err);
+        toast(Toasts.error);
+      });
+  });
+
   // Loading screen
   if (!onboard) return <FullPageSpinner />;
 
@@ -116,19 +135,8 @@ export default function SwapForm({ onboardState, web3, onboard }) {
     const ready = await readyToTransact();
     if (!ready) return;
 
-    const { amountIn, tokenIn, tokenOut } = data;
+    setFormData(data);
     setIsLoading(true);
-
-    zeroXSwap(Tokens.data[tokenIn.value], Tokens.data[tokenOut.value], amountIn, web3)
-      .then(() => {
-        setIsLoading(false);
-        toast(Toasts.success);
-      })
-      .catch((err) => {
-        setIsLoading(false);
-        console.log(err);
-        toast(Toasts.error);
-      });
   };
 
   return (
