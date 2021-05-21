@@ -1,37 +1,29 @@
-import { Box, Center, Flex, Heading, Input, Text, useToast, Spinner, useColorModeValue} from '@chakra-ui/react';
-import { WarningIcon } from '@chakra-ui/icons';
-=======
 /* eslint-disable react/jsx-props-no-spreading */
+import { WarningIcon } from '@chakra-ui/icons';
 import {
-  useColorModeValue,
   Box,
-  Button,
   Center,
   Flex,
   Heading,
-  HStack,
   Input,
-  Text,
-  useToast,
   Spinner,
+  Text,
+  useColorModeValue,
+  useToast,
 } from '@chakra-ui/react';
 import debounce from 'debounce';
->>>>>>> e09ef0c (move theme to folder)
-import { Controller, useForm } from 'react-hook-form';
 import React, { useEffect, useState } from 'react';
-import debounce from 'debounce';
+import { Controller, useForm } from 'react-hook-form';
 import Select from 'react-select';
-import { IconOption, ValueOption, DropdownStyle } from './TokenDropdown';
-import { getTokenIconPNG32 } from '../../utils/getTokenIcon';
-import FullPageSpinner from '../FullPageSpinner';
-import SwapInfo from './SwapInfo';
-import SwapButton from './SwapButton';
 import Toasts from '../../constants/toasts';
 import Tokens from '../../constants/tokens';
-import use0xSwap from '../../hooks/use0xSwap';
 import use0xPrice from '../../hooks/use0xPrice';
-
-import Theme from '../../theme';
+import use0xSwap from '../../hooks/use0xSwap';
+import { getTokenIconPNG32 } from '../../utils/getTokenIcon';
+import FullPageSpinner from '../FullPageSpinner';
+import SwapButton from './SwapButton';
+import SwapInfo from './SwapInfo';
+import { DropdownStyle, IconOption, ValueOption } from './TokenDropdown';
 
 const illegal = new RegExp('[\\("\\?@#\\$\\%\\^\\&\\*\\-=;:<>,.+\\[\\{\\]\\}\\)\\/\\\\]');
 export default function SwapForm({ onboardState, web3, onboard }) {
