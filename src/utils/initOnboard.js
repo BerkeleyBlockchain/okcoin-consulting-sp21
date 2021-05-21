@@ -7,12 +7,13 @@ const networkId =
 
 const dappId = process.env.REACT_APP_ONBOARD_DAPPID;
 
-export default function initOnboard(subscriptions) {
+export default function initOnboard(subscriptions, tokenBalanceCheck) {
   return Onboard({
     dappId,
     hideBranding: true,
     networkId,
     // darkMode: true,
     subscriptions,
+    walletCheck: tokenBalanceCheck,
   });
 }

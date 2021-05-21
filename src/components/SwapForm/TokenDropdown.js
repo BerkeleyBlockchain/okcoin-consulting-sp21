@@ -1,11 +1,88 @@
 /* eslint-disable react/jsx-props-no-spreading */
-import { HStack, Image, Text, useColorModeValue } from '@chakra-ui/react';
+import { HStack, Image, Text, useColorModeValue, useToast } from '@chakra-ui/react';
 import React from 'react';
 import { components } from 'react-select';
+import { useAtom } from 'jotai';
+import BigNumber from 'bignumber.js';
+import { balanceAtom, userOnboardAtom, tokenBalanceAtom, web3Atom } from '../../utils/atoms';
+import Toasts from '../../constants/toasts';
+import { getTokenBalance } from '../../utils/queryBalance';
 
 const { Option, SingleValue } = components;
 
-export const IconOption = (props) => {
+// Check token balances
+async function handleDropdownSelect(token, web3, userBalance, userOnboard) {
+  let tokenBal;
+  console.log(userOnboard, userBalance);
+  console.log(userOnboard && userBalance);
+  if (userOnboard) {
+    let balance = userBalance;
+    console.log(balance);
+    if (!userBalance) {
+      balance = 0;
+    }
+    console.log('hi');
+    const balanceData = {
+      wallet: {
+        provider: userOnboard.wallet.provider,
+      },
+      address: userOnboard.address,
+      BigNumber,
+      ethAmount: web3.utils.fromWei(balance.toString(), 'ether'),
+    };
+    tokenBal = await getTokenBalance(token)(balanceData).then((res) => {
+      return res;
+    });
+    console.log(token, tokenBal);
+  }
+  console.log('hi', tokenBal);
+  return tokenBal;
+}
+
+export const IconOptionIn = (props) => {
+  const [, setTokenBalance] = useAtom(tokenBalanceAtom);
+  const [userBalance] = useAtom(balanceAtom);
+  console.log(userBalance);
+  const [userOnboard] = useAtom(userOnboardAtom);
+  const [web3] = useAtom(web3Atom);
+  const toast = useToast();
+  const { data } = props;
+  return (
+    <Option {...props}>
+      <HStack
+        onClick={async () => {
+          console.log(process.env.REACT_APP_ENV);
+          let dexNet;
+          if (process.env.REACT_APP_ENV === 'production') {
+            dexNet = 1;
+          } else {
+            dexNet = 42;
+          }
+          if (userOnboard.address) {
+            if (userOnboard.network === dexNet) {
+              const tb = await handleDropdownSelect(
+                data.value,
+                web3,
+                userBalance,
+                userOnboard
+              ).then((res) => {
+                return res;
+              });
+              setTokenBalance(tb);
+            } else {
+              toast(Toasts.networkMismatch);
+            }
+          }
+        }}
+      >
+        <img src={data.icon} defaultsource={data.icon} alt={data.label} />
+        <Text>{data.label}</Text>
+      </HStack>
+    </Option>
+  );
+};
+
+export const IconOptionOut = (props) => {
   const { data } = props;
   return (
     <Option {...props}>
