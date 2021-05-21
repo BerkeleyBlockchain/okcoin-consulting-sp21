@@ -1,5 +1,11 @@
 /* eslint-disable react/jsx-props-no-spreading */
-import { ChevronDownIcon, ChevronRightIcon, CloseIcon, HamburgerIcon } from '@chakra-ui/icons';
+import {
+  ChevronDownIcon,
+  ChevronRightIcon,
+  CloseIcon,
+  HamburgerIcon,
+  MoonIcon,
+} from '@chakra-ui/icons';
 import {
   Box,
   Collapse,
@@ -13,6 +19,7 @@ import {
   Spinner,
   Stack,
   Text,
+  useColorMode,
   useColorModeValue,
   useDisclosure,
 } from '@chakra-ui/react';
@@ -48,6 +55,7 @@ const NAV_ITEMS = [
 
 export default function Navbar({ address, balance, onboard, web3 }) {
   const { isOpen, onToggle } = useDisclosure();
+  const { toggleColorMode } = useColorMode();
 
   return (
     <Box>
@@ -85,25 +93,31 @@ export default function Navbar({ address, balance, onboard, web3 }) {
             flex={{ base: 1, md: 0 }}
             justify="flex-end"
             direction="row"
-            spacing={2}
+            spacing={3}
             align="center"
           >
             <>
               {typeof balance === 'string' ? (
-                <Text fontFamily="Poppins" fontWeight="600" color="gray.700" size="sm">
+                <Text fontWeight="600" color={useColorModeValue('gray.600', 'gray.200')} size="sm">
                   {parseFloat(web3.utils.fromWei(balance, 'ether')).toPrecision(6)}
                 </Text>
               ) : (
                 <Spinner size="xs" />
               )}
 
-              <Text fontFamily="Poppins" fontWeight="700" color="gray.700" size="sm" ml={1}>
+              <Text
+                fontWeight="700"
+                color={useColorModeValue('gray.600', 'gray.200')}
+                size="sm"
+                ml={1}
+              >
                 ETH
               </Text>
             </>
             <AccountModal address={address} onboard={onboard} />
           </Stack>
         )}
+        <IconButton onClick={toggleColorMode} icon={<MoonIcon />} ml={3} />
       </Flex>
 
       <Collapse in={isOpen} animateOpacity>
@@ -125,7 +139,6 @@ const DesktopNav = () => {
                 href={navItem.href ?? '#'}
                 fontSize="md"
                 fontWeight={500}
-                fontFamily="Poppins"
                 color={useColorModeValue('gray.600', 'gray.200')}
                 _hover={{
                   textDecoration: 'none',

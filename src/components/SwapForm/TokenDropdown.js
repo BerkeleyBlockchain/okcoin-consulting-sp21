@@ -1,6 +1,6 @@
 /* eslint-disable react/jsx-props-no-spreading */
+import { HStack, Image, Text, useColorModeValue } from '@chakra-ui/react';
 import React from 'react';
-import { HStack, Text } from '@chakra-ui/react';
 import { components } from 'react-select';
 
 const { Option, SingleValue } = components;
@@ -10,8 +10,8 @@ export const IconOption = (props) => {
   return (
     <Option {...props}>
       <HStack>
-        <img src={data.icon} defaultsource={data.icon} alt={data.label} />
-        <Text>{data.label}</Text>
+        <Image src={data.icon} alt={data.label} />
+        <Text color="gray.800">{data.label}</Text>
       </HStack>
     </Option>
   );
@@ -22,8 +22,8 @@ export const ValueOption = (props) => {
   return (
     <SingleValue {...props}>
       <HStack>
-        <img src={data.icon} defaultsource={data.icon} alt={data.label} />
-        <Text>{data.label}</Text>
+        <Image src={data.icon} alt={data.label} />
+        <Text color={useColorModeValue('gray.900', 'gray.200')}>{data.label}</Text>
       </HStack>
     </SingleValue>
   );

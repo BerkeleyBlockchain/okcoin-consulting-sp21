@@ -1,19 +1,31 @@
-import { Box, Center, Flex, Heading, Input, Text, useToast, Spinner } from '@chakra-ui/react';
+/* eslint-disable react/jsx-props-no-spreading */
 import { WarningIcon } from '@chakra-ui/icons';
-import { Controller, useForm } from 'react-hook-form';
-import React, { useEffect, useState } from 'react';
+import {
+  Box,
+  Center,
+  Flex,
+  Heading,
+  Input,
+  Spinner,
+  Text,
+  useColorModeValue,
+  useToast,
+} from '@chakra-ui/react';
 import debounce from 'debounce';
+import React, { useEffect, useState } from 'react';
+import { Controller, useForm } from 'react-hook-form';
 import Select from 'react-select';
-import { IconOption, ValueOption, DropdownStyle } from './TokenDropdown';
-import { getTokenIconPNG32 } from '../../utils/getTokenIcon';
-import FullPageSpinner from '../FullPageSpinner';
-import SwapInfo from './SwapInfo';
-import SwapButton from './SwapButton';
 import Toasts from '../../constants/toasts';
 import Tokens from '../../constants/tokens';
-import use0xSwap from '../../hooks/use0xSwap';
 import use0xPrice from '../../hooks/use0xPrice';
+import use0xSwap from '../../hooks/use0xSwap';
+import { getTokenIconPNG32 } from '../../utils/getTokenIcon';
+import FullPageSpinner from '../FullPageSpinner';
+import SwapButton from './SwapButton';
+import SwapInfo from './SwapInfo';
+import { DropdownStyle, IconOption, ValueOption } from './TokenDropdown';
 
+const illegal = new RegExp('[\\("\\?@#\\$\\%\\^\\&\\*\\-=;:<>,.+\\[\\{\\]\\}\\)\\/\\\\]');
 export default function SwapForm({ onboardState, web3, onboard }) {
   const { register, handleSubmit, watch, setValue, errors, control } = useForm();
   const [isLoading, setIsLoading] = useState();
@@ -111,15 +123,22 @@ export default function SwapForm({ onboardState, web3, onboard }) {
   };
 
   return (
-    <Box py={10} px={8} pb={0} boxShadow="lg" bgColor="#fff" borderRadius={30}>
-      <Heading fontFamily="Poppins" fontWeight="700" color="gray.700" mb={10}>
+    <Box
+      py={10}
+      px={8}
+      pb={0}
+      boxShadow="lg"
+      bgColor={useColorModeValue('white', 'gray.700')}
+      borderRadius={30}
+    >
+      <Heading fontWeight="700" color={useColorModeValue('gray.700', 'white')} mb={10}>
         Swap
       </Heading>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <Text fontFamily="Poppins" opacity={0.7} mb={2} ml={0.5}>
+        <Text opacity={0.7} mb={2} ml={0.5}>
           PAY
         </Text>
-        <Box borderWidth="1px" borderRadius="lg" mb={6}>
+        <Box borderWidth="1px" borderRadius="lg" bg={useColorModeValue('white', 'gray.800')} mb={6}>
           <Flex>
             <Controller
               name="tokenIn"
@@ -134,11 +153,7 @@ export default function SwapForm({ onboardState, web3, onboard }) {
                   name={name}
                   onChange={onChange}
                   onKeyDown={(e) => {
-                    const c = e.key;
-                    const illegal = new RegExp(
-                      '[\\("\\?@#\\$\\%\\^\\&\\*\\-=;:<>,.+\\[\\{\\]\\}\\)\\/\\\\]'
-                    );
-                    if (illegal.test(c)) {
+                    if (illegal.test(e.key)) {
                       e.preventDefault();
                     }
                   }}
@@ -152,7 +167,6 @@ export default function SwapForm({ onboardState, web3, onboard }) {
               type="number"
               min="0"
               pattern="\d*\.?\d+"
-              fontFamily="Poppins"
               size="lg"
               ref={register({ required: true })}
               textAlign="end"
@@ -172,10 +186,10 @@ export default function SwapForm({ onboardState, web3, onboard }) {
             />
           </Flex>
         </Box>
-        <Text fontFamily="Poppins" opacity={0.7} mb={2} ml={0.5}>
+        <Text opacity={0.7} mb={2} ml={0.5}>
           RECEIVE
         </Text>
-        <Box borderWidth="1px" borderRadius="lg" mb={6}>
+        <Box borderWidth="1px" borderRadius="lg" bg={useColorModeValue('white', 'gray.800')} mb={6}>
           <Flex>
             <Controller
               name="tokenOut"
@@ -190,11 +204,7 @@ export default function SwapForm({ onboardState, web3, onboard }) {
                   name={name}
                   onChange={onChange}
                   onKeyDown={(e) => {
-                    const c = e.key;
-                    const illegal = new RegExp(
-                      '[\\("\\?@#\\$\\%\\^\\&\\*\\-\\/\\\\=;:<>,.+\\[\\{\\]\\}\\)]'
-                    );
-                    if (illegal.test(c)) {
+                    if (illegal.test(e.key)) {
                       e.preventDefault();
                     }
                   }}
@@ -207,7 +217,6 @@ export default function SwapForm({ onboardState, web3, onboard }) {
               placeholder="0.0"
               name="amountOut"
               type="number"
-              fontFamily="Poppins"
               size="lg"
               ref={register}
               variant="unstyled"

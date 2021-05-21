@@ -1,38 +1,30 @@
-import { ChakraProvider, extendTheme } from '@chakra-ui/react';
+// eslint-disable import/no-extraneous-dependencies
+import { ChakraProvider, ColorModeScript } from '@chakra-ui/react';
+import '@fontsource/poppins/400.css';
 import { Provider } from 'jotai';
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { ErrorBoundary } from 'react-error-boundary';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
 import { BrowserRouter } from 'react-router-dom';
-import { ErrorBoundary } from 'react-error-boundary';
 import App from './App';
 import FullPageErrorFallback from './components/FullPageErrorFallback';
+import Theme from './theme';
+
+console.log('🚀 ~ file: index.js ~ line 14 ~ Theme', Theme);
 
 const queryClient = new QueryClient();
-
-const config = {
-  useSystemColorMode: false,
-  initialColorMode: 'light',
-  styles: {
-    global: {
-      body: {
-        bg: 'gray.100',
-      },
-    },
-  },
-};
-
-const customTheme = extendTheme(config);
 
 ReactDOM.render(
   <React.StrictMode>
     <Provider>
       <BrowserRouter>
-        <ChakraProvider resetCSS theme={customTheme}>
+        <ChakraProvider resetCSS theme={Theme}>
           <QueryClientProvider client={queryClient}>
             <ErrorBoundary FallbackComponent={FullPageErrorFallback}>
               <App />
+              <ColorModeScript initialColorMode={Theme.config.initialColorMode} />
             </ErrorBoundary>
             <ReactQueryDevtools initialIsOpen={false} />
           </QueryClientProvider>
