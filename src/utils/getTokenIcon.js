@@ -5,7 +5,7 @@ const iconDirectory = '/static/token-icons';
  * @param tokenSymbol The symbol for the desired token
  */
 export function getTokenIconPNG32(tokenSymbol) {
-  const symbol = tokenSymbol.toLowerCase();
+  const symbol = tokenSymbol?.toLowerCase();
   return `${iconDirectory}/32/${symbol}.png`;
 }
 
