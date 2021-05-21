@@ -10,21 +10,19 @@ import {
   Popover,
   PopoverContent,
   PopoverTrigger,
+  Spinner,
   Stack,
   Text,
   useColorModeValue,
   useDisclosure,
-  Spinner,
-  Image,
 } from '@chakra-ui/react';
 import React from 'react';
-
-import AccountModal from './AccountModal';
+import AccountModal from '../AccountModal';
 
 const NAV_ITEMS = [
   {
     label: 'Home',
-    href: 'https://www.okcoin.com',
+    href: 'https://okcoin-landing.vercel.app',
   },
   {
     label: 'Apps',
@@ -83,19 +81,26 @@ export default function Navbar({ address, balance, onboard, web3 }) {
         </Flex>
 
         {address && onboard && (
-          <Stack flex={{ base: 1, md: 0 }} justify="flex-end" direction="row" spacing={2}>
-            <Flex align="center">
-              <Text fontFamily="Poppins" fontWeight="600" color="gray.700" size="sm">
-                {typeof balance === 'string' ? (
-                  `${parseFloat(web3.utils.fromWei(balance, 'ether')).toPrecision(6)}`
-                ) : (
-                  <Spinner size="xs" />
-                )}
-              </Text>
+          <Stack
+            flex={{ base: 1, md: 0 }}
+            justify="flex-end"
+            direction="row"
+            spacing={2}
+            align="center"
+          >
+            <>
+              {typeof balance === 'string' ? (
+                <Text fontFamily="Poppins" fontWeight="600" color="gray.700" size="sm">
+                  {parseFloat(web3.utils.fromWei(balance, 'ether')).toPrecision(6)}
+                </Text>
+              ) : (
+                <Spinner size="xs" />
+              )}
+
               <Text fontFamily="Poppins" fontWeight="700" color="gray.700" size="sm" ml={1}>
                 ETH
               </Text>
-            </Flex>
+            </>
             <AccountModal address={address} onboard={onboard} />
           </Stack>
         )}
@@ -111,7 +116,6 @@ export default function Navbar({ address, balance, onboard, web3 }) {
 const DesktopNav = () => {
   return (
     <Stack direction="row" spacing={4} alignItems="center">
-      <Image src="/static/okcoin_icon.png" style={{ height: '30px', width: '130px' }} />
       {NAV_ITEMS.map((navItem) => (
         <Box key={navItem.label}>
           <Popover trigger="hover" placement="bottom-start">
