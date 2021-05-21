@@ -58,15 +58,20 @@ export const IconOptionIn = (props) => {
           } else {
             dexNet = 42;
           }
-          if (userOnboard.network === dexNet) {
-            const tb = await handleDropdownSelect(data.value, web3, userBalance, userOnboard).then(
-              (res) => {
+          if (userOnboard.address) {
+            if (userOnboard.network === dexNet) {
+              const tb = await handleDropdownSelect(
+                data.value,
+                web3,
+                userBalance,
+                userOnboard
+              ).then((res) => {
                 return res;
-              }
-            );
-            setTokenBalance(tb);
-          } else {
-            toast(Toasts.networkMismatch);
+              });
+              setTokenBalance(tb);
+            } else {
+              toast(Toasts.networkMismatch);
+            }
           }
         }}
       >
