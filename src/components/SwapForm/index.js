@@ -175,7 +175,7 @@ export default function SwapForm({ onboardState, web3, onboard, balance }) {
           </Text>
           {tokenBalance && watchTokenIn ? (
             <Text fontFamily="Poppins" opacity={0.7} mb={2} ml={0.5}>
-              {`${tokenBalance} ${watchTokenIn.value} available`}
+              {`${tokenBalance.toFixed(6)} ${watchTokenIn.value} available`}
             </Text>
           ) : (
             <div />
