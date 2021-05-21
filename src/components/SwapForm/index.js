@@ -5,7 +5,7 @@ import { Controller, useForm } from 'react-hook-form';
 import React, { useEffect, useState } from 'react';
 import debounce from 'debounce';
 import Select from 'react-select';
-import { IconOption, ValueOption, DropdownStyle } from './TokenDropdown';
+import { IconOptionIn, IconOptionOut, ValueOption, DropdownStyle } from './TokenDropdown';
 import { getTokenIconPNG32 } from '../../utils/getTokenIcon';
 import FullPageSpinner from '../FullPageSpinner';
 import SwapInfo from './SwapInfo';
@@ -15,17 +15,27 @@ import Tokens from '../../constants/tokens';
 import use0xSwap from '../../hooks/use0xSwap';
 import use0xPrice from '../../hooks/use0xPrice';
 import BigNumber from 'bignumber.js';
-import { tokenBalanceCheck, getTokenBalance } from '../utils/queryBalance';
+import { tokenBalanceCheck } from '../../utils/queryBalance';
+import { useAtom } from 'jotai';
+import { balanceAtom, userOnboardAtom, tokenBalanceAtom, web3Atom } from '../../utils/atoms';
 
-export default function SwapForm({ onboardState, web3, onboard }) {
+export default function SwapForm({ onboardState, web3, onboard, balance }) {
   const { register, handleSubmit, watch, setValue, errors, control } = useForm();
   const [isLoading, setIsLoading] = useState();
   const [sellAmount, setSellAmount] = useState();
+  const [userBalance, setUserBalance] = useAtom(balanceAtom);
+  const [userOnboard, setUserOnboard] = useAtom(userOnboardAtom);
+  const [tokenBalance, setTokenBalance] = useAtom(tokenBalanceAtom);
+  const [userWeb3, setWeb3] = useAtom(web3Atom);
   const toast = useToast();
 
   const watchTokenIn = watch('tokenIn', '');
   const watchTokenOut = watch('tokenOut', '');
   const watchAmountIn = watch('amountIn', 0);
+
+  setUserOnboard(onboardState);
+  setWeb3(web3);
+  setUserBalance(balance);
 
   // Token dropdown values
   const tokenArray = Tokens.tokens.map((symbol) => ({
@@ -65,31 +75,6 @@ export default function SwapForm({ onboardState, web3, onboard }) {
     return ready;
   }
 
-  // Check token balances
-  async function handleDropdownSelect(token) {
-    let tokenBal;
-    console.log(onboardState, balance);
-
-    if (onboardState && balance) {
-      console.log(balance);
-      console.log(onboardState);
-      const balanceData = {
-        wallet: {
-          provider: onboardState.wallet.provider,
-        },
-        address: onboardState.address,
-        BigNumber,
-        ethAmount: web3.utils.fromWei(balance.toString(), 'ether'),
-      };
-      tokenBal = await getTokenBalance(token)(balanceData).then((res) => {
-        return res;
-      });
-      console.log(token, tokenBal);
-    }
-    console.log('hi', tokenBal);
-    return tokenBal;
-  }
-
   // SwapButton text function
   const getButtonText = () => {
     if (!watchAmountIn || watchAmountIn <= 0) return 'Enter amount in';
@@ -125,6 +110,28 @@ export default function SwapForm({ onboardState, web3, onboard }) {
     if (!ready) return;
 
     const { amountIn, tokenIn, tokenOut } = data;
+    console.log(onboard);
+    console.log(onboardState);
+    const balanceData = {
+      wallet: {
+        provider: onboardState.wallet.provider,
+      },
+      address: onboardState.address,
+      BigNumber,
+      ethAmount: new BigNumber(web3.utils.fromWei(balance, 'ether')),
+    };
+    const walletBalanceResult = await tokenBalanceCheck(
+      watchTokenIn.value,
+      watchAmountIn
+    )(balanceData).then((res) => {
+      return res;
+    });
+    console.log(walletBalanceResult);
+    if (walletBalanceResult.result === false) {
+      console.log('false');
+      toast(walletBalanceResult.balanceFailure);
+      return;
+    }
     setIsLoading(true);
 
     use0xSwap(Tokens.data[tokenIn.value], Tokens.data[tokenOut.value], amountIn, web3)
@@ -144,9 +151,18 @@ export default function SwapForm({ onboardState, web3, onboard }) {
         Swap
       </Heading>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <Text fontFamily="Poppins" opacity={0.7} mb={2} ml={0.5}>
-          PAY
-        </Text>
+        <Flex direction="row" justify="space-between">
+          <Text fontFamily="Poppins" opacity={0.7} mb={2} ml={0.5}>
+            PAY
+          </Text>
+          {tokenBalance && watchTokenIn ? (
+            <Text fontFamily="Poppins" opacity={0.7} mb={2} ml={0.5}>
+              {`${tokenBalance} ${watchTokenIn.value} available`}
+            </Text>
+          ) : (
+            <div />
+          )}
+        </Flex>
         <Box borderWidth="1px" borderRadius="lg" mb={6}>
           <Flex>
             <Controller
@@ -156,7 +172,7 @@ export default function SwapForm({ onboardState, web3, onboard }) {
                 <Select
                   styles={DropdownStyle}
                   options={tokenArray.filter((item) => item.value !== watchTokenOut.value)}
-                  components={{ Option: IconOption, SingleValue: ValueOption }}
+                  components={{ Option: IconOptionIn, SingleValue: ValueOption }}
                   inputRef={ref}
                   value={value}
                   name={name}
@@ -212,7 +228,7 @@ export default function SwapForm({ onboardState, web3, onboard }) {
                 <Select
                   styles={DropdownStyle}
                   options={tokenArray.filter((item) => item.value !== watchTokenIn.value)}
-                  components={{ Option: IconOption, SingleValue: ValueOption }}
+                  components={{ Option: IconOptionOut, SingleValue: ValueOption }}
                   inputRef={ref}
                   value={value}
                   name={name}
