@@ -115,13 +115,14 @@ export default function SwapForm({ onboardState, web3, onboard }) {
       .then(() => {
         setIsLoading(false);
         toast(Toasts.success);
-        setSwapConfirmed(false);
       })
       .catch((err) => {
         setIsLoading(false);
         console.log(err);
         toast(Toasts.error);
       });
+    setSwapConfirmed(false);
+    setIsLoading(false);
   });
 
   // Loading screen
