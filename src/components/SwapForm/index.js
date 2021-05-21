@@ -34,10 +34,10 @@ export default function SwapForm({ onboardState, web3, onboard, balance }) {
   const { register, handleSubmit, watch, setValue, errors, control } = useForm();
   const [isLoading, setIsLoading] = useState();
   const [sellAmount, setSellAmount] = useState();
-  const [userBalance, setUserBalance] = useAtom(balanceAtom);
-  const [userOnboard, setUserOnboard] = useAtom(userOnboardAtom);
-  const [tokenBalance, setTokenBalance] = useAtom(tokenBalanceAtom);
-  const [userWeb3, setWeb3] = useAtom(web3Atom);
+  const [, setUserBalance] = useAtom(balanceAtom);
+  const [, setUserOnboard] = useAtom(userOnboardAtom);
+  const [tokenBalance] = useAtom(tokenBalanceAtom);
+  const [, setWeb3] = useAtom(web3Atom);
   const toast = useToast();
 
   const watchTokenIn = watch('tokenIn', '');
