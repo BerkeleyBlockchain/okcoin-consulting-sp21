@@ -181,6 +181,7 @@ export default function SwapForm({ onboardState, web3, onboard, balance }) {
             <Controller
               name="tokenIn"
               control={control}
+              defaultValue=""
               render={({ onChange, name, value, ref }) => (
                 <Select
                   styles={DropdownStyle}
@@ -233,6 +234,7 @@ export default function SwapForm({ onboardState, web3, onboard, balance }) {
             <Controller
               name="tokenOut"
               control={control}
+              defaultValue=""
               render={({ onChange, name, value, ref }) => (
                 <Select
                   styles={DropdownStyle}
