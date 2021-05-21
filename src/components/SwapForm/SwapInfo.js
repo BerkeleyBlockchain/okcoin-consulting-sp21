@@ -28,33 +28,27 @@ export default function SwapInfo({
     <>
       <Divider mb={3} />
       <Flex>
-        <Text fontFamily="Poppins" fontWeight="600">
-          Rate
-        </Text>
+        <Text fontWeight="semibold">Rate</Text>
         <Spacer />
         {price === defaults.price ? (
           <>
-            <Text fontFamily="Poppins">{`1 ${watchTokenIn.value} = `}</Text>
+            <Text>{`1 ${watchTokenIn.value} = `}</Text>
             {price}
-            <Text fontFamily="Poppins">{` ${watchTokenOut.value}`}</Text>
+            <Text>{` ${watchTokenOut.value}`}</Text>
           </>
         ) : (
-          <Text fontFamily="Poppins">{`1 ${watchTokenIn.value} = ${parseFloat(price)
+          <Text>{`1 ${watchTokenIn.value} = ${parseFloat(price)
             .toFixed(6)
             .replace(/(0+)$/, '')
             .replace(/\.$/, '')} ${watchTokenOut.value}`}</Text>
         )}
       </Flex>
       <Flex>
-        <Text fontFamily="Poppins" fontWeight="600">
-          Source
-        </Text>
+        <Text fontWeight="semibold">Source</Text>
         <Spacer />
         {exchanges !== defaults.exchanges ? (
           <>
-            <Text fontFamily="Poppins" style={{ fontWeight: 'bold' }}>
-              {checkSource()}
-            </Text>
+            <Text style={{ fontWeight: 'bold' }}>{checkSource()}</Text>
             {exchanges.length !== 0 ? (
               <SourceInfo exchanges={exchanges} defaults={defaults} />
             ) : null}
@@ -64,25 +58,15 @@ export default function SwapInfo({
         )}
       </Flex>
       <Flex>
-        <Text fontFamily="Poppins" fontWeight="600">
-          Gas Price
-        </Text>
+        <Text fontWeight="semibold">Gas Price</Text>
         <Spacer />
-        {gasPrice === defaults.gasPrice ? gasPrice : <Text fontFamily="Poppins">{gasPrice}</Text>}
-        <Text fontFamily="Poppins" ml={1}>
-          Gwei
-        </Text>
+        {gasPrice === defaults.gasPrice ? gasPrice : <Text>{gasPrice}</Text>}
+        <Text ml={1}>Gwei</Text>
       </Flex>
       <Flex>
-        <Text fontFamily="Poppins" fontWeight="600">
-          Gas Estimate
-        </Text>
+        <Text fontWeight="semibold">Gas Estimate</Text>
         <Spacer />
-        {estimatedGas === defaults.estimatedGas ? (
-          estimatedGas
-        ) : (
-          <Text fontFamily="Poppins">{estimatedGas}</Text>
-        )}
+        {estimatedGas === defaults.estimatedGas ? estimatedGas : <Text>{estimatedGas}</Text>}
       </Flex>
 
       <Divider mt={3} />
