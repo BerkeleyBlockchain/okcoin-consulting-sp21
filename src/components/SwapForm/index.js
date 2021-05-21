@@ -37,6 +37,7 @@ export default function SwapForm({ onboardState, web3, onboard }) {
   const [swapConfirmed, setSwapConfirmed] = useState(false);
   const [formData, setFormData] = useState({});
   const toast = useToast();
+  const [liquid, setLiquid] = useState(false);
 
   const watchTokenIn = watch('tokenIn', '');
   const watchTokenOut = watch('tokenOut', '');
@@ -103,6 +104,14 @@ export default function SwapForm({ onboardState, web3, onboard }) {
     }
     if (!watchAmountIn || watchAmountIn <= 0 || apiError) {
       setValue('amountOut', '');
+      if (zeroExQuote?.apiError) {
+        setLiquid(true);
+        if (!liquid) {
+          toast(Toasts.liquidityError);
+          setLiquid(true);
+          setTimeout(() => setLiquid(false), 1500);
+        }
+      }
     }
   }, [price, watchAmountIn, watchTokenIn, watchTokenOut]);
 

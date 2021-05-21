@@ -15,6 +15,14 @@ export default {
     duration: 9000,
     isClosable: true,
   },
+  liquidityError: {
+    title: 'Insufficient Liquidity Error',
+    description: 'Insufficient Liquidity',
+    status: 'error',
+    position: 'bottom-left',
+    duration: 9000,
+    isClosable: true,
+  },
   transactionReject: {
     title: 'Swap Error',
     description: 'Transaction rejected.',
