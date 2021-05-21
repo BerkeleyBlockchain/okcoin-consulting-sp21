@@ -40,11 +40,11 @@ async function handleDropdownSelect(token, web3, userBalance, userOnboard) {
 }
 
 export const IconOptionIn = (props) => {
-  const [tokenBalance, setTokenBalance] = useAtom(tokenBalanceAtom);
-  const [userBalance, setUserBalance] = useAtom(balanceAtom);
+  const [, setTokenBalance] = useAtom(tokenBalanceAtom);
+  const [userBalance] = useAtom(balanceAtom);
   console.log(userBalance);
-  const [userOnboard, setUserOnboard] = useAtom(userOnboardAtom);
-  const [web3, setWeb3] = useAtom(web3Atom);
+  const [userOnboard] = useAtom(userOnboardAtom);
+  const [web3] = useAtom(web3Atom);
   const toast = useToast();
   const { data } = props;
   return (
