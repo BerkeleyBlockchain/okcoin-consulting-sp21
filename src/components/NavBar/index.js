@@ -17,10 +17,13 @@ import {
   useDisclosure,
 } from '@chakra-ui/react';
 import React from 'react';
+import { useAtom } from 'jotai';
 import AccountModal from '../AccountModal';
+import { tabIndexAtom } from '../../utils/atoms';
 
 const NAV_ITEMS = [
   {
+    index: 0,
     label: 'Home',
     href: 'https://okcoin-landing.vercel.app',
   },
@@ -44,10 +47,16 @@ const NAV_ITEMS = [
       },
     ],
   },
+  {
+    index: 1,
+    label: 'Docs',
+    href: '#',
+  },
 ];
 
 export default function Navbar({ address, balance, onboard, web3 }) {
   const { isOpen, onToggle } = useDisclosure();
+  const [, setTabIndex] = useAtom(tabIndexAtom);
 
   return (
     <Box>
@@ -76,7 +85,7 @@ export default function Navbar({ address, balance, onboard, web3 }) {
         </Flex>
         <Flex flex={{ base: 1 }} justify={{ base: 'center', md: 'start' }}>
           <Flex display={{ base: 'none', md: 'flex' }} ml={6}>
-            <DesktopNav />
+            <DesktopNav setTabIndex={setTabIndex} />
           </Flex>
         </Flex>
 
@@ -113,7 +122,7 @@ export default function Navbar({ address, balance, onboard, web3 }) {
   );
 }
 
-const DesktopNav = () => {
+const DesktopNav = ({ setTabIndex }) => {
   return (
     <Stack direction="row" spacing={4} alignItems="center">
       {NAV_ITEMS.map((navItem) => (
@@ -131,6 +140,7 @@ const DesktopNav = () => {
                   textDecoration: 'none',
                   color: useColorModeValue('gray.800', 'white'),
                 }}
+                onClick={() => setTabIndex(navItem.index)}
               >
                 {navItem.label}
               </Link>
