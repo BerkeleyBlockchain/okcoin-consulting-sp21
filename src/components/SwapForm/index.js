@@ -15,6 +15,7 @@ import {
 import debounce from 'debounce';
 import { Controller, useForm } from 'react-hook-form';
 import React, { useEffect, useState } from 'react';
+import { IconOption, ValueOption, DropdownStyle } from './TokenDropdown';
 
 import Select, { components } from 'react-select';
 import FullPageSpinner from '../FullPageSpinner';
