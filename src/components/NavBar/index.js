@@ -100,7 +100,14 @@ export default function Navbar() {
             <AccountModal address={address} onboard={onboard} />
           </Stack>
         )}
-        <IconButton onClick={toggleColorMode} icon={<MoonIcon />} ml={3} />
+        <IconButton
+          onClick={() => {
+            toggleColorMode();
+            onboard.config({ darkMode: colorMode !== 'dark' });
+          }}
+          icon={<MoonIcon />}
+          ml={3}
+        />
       </Flex>
 
       <Collapse in={isOpen} animateOpacity>
