@@ -15,14 +15,16 @@ import {
 } from '@chakra-ui/react';
 import { useAtom } from 'jotai';
 import React from 'react';
-import { addressAtom, onboardAtom } from '../../utils/atoms';
+import { onboardAtom } from '../../utils/atoms';
 
 export default function AccountModal() {
-  const { isOpen, onOpen, onClose } = useDisclosure();
-  const [address] = useAtom(addressAtom);
   const [onboard] = useAtom(onboardAtom);
-  const { onCopy } = useClipboard(address);
   const onboardState = onboard?.getState();
+  const address = onboardState?.address;
+  const walletName = onboardState?.wallet.name;
+
+  const { onCopy } = useClipboard(address);
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   return (
     <>
@@ -38,7 +40,7 @@ export default function AccountModal() {
           <ModalBody>
             <Box borderColor="grey.200" borderWidth={1} borderRadius={20} padding={6}>
               <Text fontSize="sm" fontWeight="500">
-                Connected Wallet: {`${onboardState?.wallet.name}`}
+                Connected Wallet: {`${walletName}`}
               </Text>
               <Text fontSize="1.6em" fontWeight="500">
                 {address?.substr(0, 8)}...{address?.substr(address.length - 6)}

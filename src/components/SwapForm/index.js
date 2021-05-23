@@ -21,23 +21,15 @@ import Toasts from '../../constants/toasts';
 import Tokens from '../../constants/tokens';
 import use0xPrice from '../../hooks/use0xPrice';
 import use0xSwap from '../../hooks/use0xSwap';
-import { onboardAtom, web3Atom } from '../../utils/atoms';
+import { onboardAtom } from '../../utils/atoms';
 import { getTokenIconPNG32 } from '../../utils/getTokenIcon';
 import FullPageSpinner from '../FullPageSpinner';
 import SwapButton from './SwapButton';
 import SwapInfo from './SwapInfo';
 import { DropdownStyle, IconOption, ValueOption } from './TokenDropdown';
 
-const onboardStateAtom = atom((get) => {
-  const onboard = get(onboardAtom);
-  if (onboard && JSON.stringify(onboard) !== '{}') {
-    return onboard?.getState();
-  }
-  return null;
-});
-
-const illegal = new RegExp('[\\("\\?@#\\$\\%\\^\\&\\*\\-=;:<>,.+\\[\\{\\]\\}\\)\\/\\\\]');
 export default function SwapForm({ web3 }) {
+  const illegal = new RegExp('[\\("\\?@#\\$\\%\\^\\&\\*\\-=;:<>,.+\\[\\{\\]\\}\\)\\/\\\\]');
   const { register, handleSubmit, watch, setValue, errors, control } = useForm();
   const [isLoading, setIsLoading] = useState();
   const [sellAmount, setSellAmount] = useState();

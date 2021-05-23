@@ -22,9 +22,11 @@ import {
   useColorMode,
   useDisclosure,
 } from '@chakra-ui/react';
-import { useAtom } from 'jotai';
+
+import web3Utils from 'web3-utils';
 import React from 'react';
-import { addressAtom, onboardAtom, web3Atom, balanceAtom } from '../../utils/atoms';
+import { useAtom } from 'jotai';
+import { addressAtom, onboardAtom, balanceAtom } from '../../utils/atoms';
 import AccountModal from '../AccountModal';
 import NavItems from '../../constants/navbar';
 
@@ -34,7 +36,6 @@ export default function Navbar() {
   const [address] = useAtom(addressAtom);
   const [onboard] = useAtom(onboardAtom);
   const [balance] = useAtom(balanceAtom);
-  const [web3] = useAtom(web3Atom);
 
   return (
     <Box>
@@ -82,7 +83,7 @@ export default function Navbar() {
                   color={colorMode === 'light' ? 'gray.600' : 'gray.200'}
                   size="sm"
                 >
-                  {parseFloat(web3.utils.fromWei(balance, 'ether')).toPrecision(6)}
+                  {parseFloat(web3Utils.fromWei(balance, 'ether')).toPrecision(6)}
                 </Text>
               ) : (
                 <Spinner size="xs" />
