@@ -13,6 +13,7 @@ export default function SwapButton({
     <Button
       w="100%"
       h="60px"
+      bgGradient="linear(to-l, #FF0080,#7928CA)"
       _hover={{ backgroundColor: '#194BB6' }}
       backgroundColor="#205FEC"
       color="white"

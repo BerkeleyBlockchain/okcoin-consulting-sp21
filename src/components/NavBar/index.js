@@ -16,6 +16,7 @@ import {
   Popover,
   PopoverContent,
   PopoverTrigger,
+  Image,
   Spinner,
   Stack,
   Text,
@@ -60,7 +61,7 @@ export default function Navbar({ address, balance, onboard, web3 }) {
   return (
     <Box>
       <Flex
-        bg={useColorModeValue('white', 'gray.800')}
+        bg={useColorModeValue('white', '#222222')}
         color={useColorModeValue('gray.600', 'white')}
         minH="60px"
         py={{ base: 2 }}
@@ -130,6 +131,7 @@ export default function Navbar({ address, balance, onboard, web3 }) {
 const DesktopNav = () => {
   return (
     <Stack direction="row" spacing={4} alignItems="center">
+      <Image src="/static/newlogoBlack.jpg" alt="okcoinlogo" style={{ height: 50, width: 50 }} />
       {NAV_ITEMS.map((navItem) => (
         <Box key={navItem.label}>
           <Popover trigger="hover" placement="bottom-start">
@@ -142,7 +144,7 @@ const DesktopNav = () => {
                 color={useColorModeValue('gray.600', 'gray.200')}
                 _hover={{
                   textDecoration: 'none',
-                  color: useColorModeValue('gray.800', 'white'),
+                  color: useColorModeValue('#222222', 'white'),
                 }}
               >
                 {navItem.label}
@@ -153,7 +155,7 @@ const DesktopNav = () => {
               <PopoverContent
                 border={0}
                 boxShadow="xl"
-                bg={useColorModeValue('white', 'gray.800')}
+                bg={useColorModeValue('white', '#222222')}
                 p={4}
                 rounded="xl"
                 minW="sm"
@@ -207,7 +209,7 @@ const DesktopSubNav = ({ label, href, subLabel }) => {
 
 const MobileNav = () => {
   return (
-    <Stack bg={useColorModeValue('white', 'gray.800')} p={4} display={{ md: 'none' }}>
+    <Stack bg={useColorModeValue('white', '#222222')} p={4} display={{ md: 'none' }}>
       {NAV_ITEMS.map((navItem) => (
         <MobileNavItem key={navItem.label} {...navItem} />
       ))}

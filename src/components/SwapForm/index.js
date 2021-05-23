@@ -128,17 +128,17 @@ export default function SwapForm({ onboardState, web3, onboard }) {
       px={8}
       pb={0}
       boxShadow="lg"
-      bgColor={useColorModeValue('white', 'gray.700')}
+      bgColor={useColorModeValue('white', '#222222')}
       borderRadius={30}
     >
-      <Heading fontWeight="700" color={useColorModeValue('gray.700', 'white')} mb={10}>
+      <Heading fontWeight="700" color={useColorModeValue('#222222', 'white')} mb={10}>
         Swap
       </Heading>
       <form onSubmit={handleSubmit(onSubmit)}>
         <Text opacity={0.7} mb={2} ml={0.5}>
           PAY
         </Text>
-        <Box borderWidth="1px" borderRadius="lg" bg={useColorModeValue('white', 'gray.800')} mb={6}>
+        <Box borderWidth="1px" borderRadius="lg" bg={useColorModeValue('white', '#222222')} mb={6}>
           <Flex>
             <Controller
               name="tokenIn"
@@ -189,7 +189,7 @@ export default function SwapForm({ onboardState, web3, onboard }) {
         <Text opacity={0.7} mb={2} ml={0.5}>
           RECEIVE
         </Text>
-        <Box borderWidth="1px" borderRadius="lg" bg={useColorModeValue('white', 'gray.800')} mb={6}>
+        <Box borderWidth="1px" borderRadius="lg" bg={useColorModeValue('white', '#222222')} mb={6}>
           <Flex>
             <Controller
               name="tokenOut"
@@ -253,7 +253,11 @@ export default function SwapForm({ onboardState, web3, onboard }) {
               }
             />
           ) : (
-            <SwapButton onClick={readyToTransact} buttonText="Connect Wallet" />
+            <SwapButton
+              onClick={readyToTransact}
+              buttonText="Connect Wallet"
+              bgGradient="linear(to-l, #7928CA,#FF0080)"
+            />
           )}
         </Center>
       </form>
