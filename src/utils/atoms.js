@@ -1,4 +1,8 @@
+// eslint-disable import/prefer-default-export
 import { atom } from 'jotai';
 
-// eslint-disable-next-line import/prefer-default-export
 export const tabIndexAtom = atom(0);
+export const web3Atom = atom(null);
+export const onboardAtom = atom(null);
+export const balanceAtom = atom(0);
+export const addressAtom = atom('');

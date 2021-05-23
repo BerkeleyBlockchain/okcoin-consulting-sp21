@@ -24,7 +24,9 @@ import {
   useDisclosure,
 } from '@chakra-ui/react';
 import React from 'react';
+import { useAtom } from 'jotai';
 import AccountModal from '../AccountModal';
+import { onboardAtom, addressAtom } from '../../utils/atoms';
 
 const NAV_ITEMS = [
   {
@@ -53,9 +55,11 @@ const NAV_ITEMS = [
   },
 ];
 
-export default function Navbar({ address, balance, onboard, web3 }) {
+export default function Navbar({ balance, web3 }) {
   const { isOpen, onToggle } = useDisclosure();
   const { toggleColorMode } = useColorMode();
+  const [address] = useAtom(addressAtom);
+  const [onboard] = useAtom(onboardAtom);
 
   return (
     <Box>

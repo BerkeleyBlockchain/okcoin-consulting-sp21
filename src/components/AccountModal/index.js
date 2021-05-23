@@ -1,24 +1,28 @@
+import { CopyIcon } from '@chakra-ui/icons';
 import {
   Box,
   Button,
   Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalFooter,
   ModalBody,
   ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
+  Text,
   useClipboard,
   useDisclosure,
-  Text,
 } from '@chakra-ui/react';
-import { CopyIcon } from '@chakra-ui/icons';
+import { useAtom } from 'jotai';
 import React from 'react';
+import { addressAtom, onboardAtom } from '../../utils/atoms';
 
-export default function AccountModal({ address, onboard }) {
+export default function AccountModal() {
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const walletState = onboard.getState();
+  const [address] = useAtom(addressAtom);
+  const [onboard] = useAtom(onboardAtom);
   const { onCopy } = useClipboard(address);
+  const onboardState = onboard?.getState();
 
   return (
     <>
@@ -34,7 +38,7 @@ export default function AccountModal({ address, onboard }) {
           <ModalBody>
             <Box borderColor="grey.200" borderWidth={1} borderRadius={20} padding={6}>
               <Text fontSize="sm" fontWeight="500">
-                Connected Wallet: {`${walletState.wallet.name}`}
+                Connected Wallet: {`${onboardState?.wallet.name}`}
               </Text>
               <Text fontSize="1.6em" fontWeight="500">
                 {`${address?.substr(0, 8)}...${address?.substr(address.length - 6)}`}

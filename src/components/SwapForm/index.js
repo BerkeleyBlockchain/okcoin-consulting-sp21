@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable react/jsx-props-no-spreading */
 import { WarningIcon } from '@chakra-ui/icons';
 import {
@@ -12,6 +13,7 @@ import {
   useToast,
 } from '@chakra-ui/react';
 import debounce from 'debounce';
+import { atom, useAtom } from 'jotai';
 import React, { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import Select from 'react-select';
@@ -19,14 +21,23 @@ import Toasts from '../../constants/toasts';
 import Tokens from '../../constants/tokens';
 import use0xPrice from '../../hooks/use0xPrice';
 import use0xSwap from '../../hooks/use0xSwap';
+import { onboardAtom, web3Atom } from '../../utils/atoms';
 import { getTokenIconPNG32 } from '../../utils/getTokenIcon';
 import FullPageSpinner from '../FullPageSpinner';
 import SwapButton from './SwapButton';
 import SwapInfo from './SwapInfo';
 import { DropdownStyle, IconOption, ValueOption } from './TokenDropdown';
 
+const onboardStateAtom = atom((get) => {
+  const onboard = get(onboardAtom);
+  if (onboard && JSON.stringify(onboard) !== '{}') {
+    return onboard?.getState();
+  }
+  return null;
+});
+
 const illegal = new RegExp('[\\("\\?@#\\$\\%\\^\\&\\*\\-=;:<>,.+\\[\\{\\]\\}\\)\\/\\\\]');
-export default function SwapForm({ onboardState, web3, onboard }) {
+export default function SwapForm() {
   const { register, handleSubmit, watch, setValue, errors, control } = useForm();
   const [isLoading, setIsLoading] = useState();
   const [sellAmount, setSellAmount] = useState();
@@ -35,6 +46,10 @@ export default function SwapForm({ onboardState, web3, onboard }) {
   const watchTokenIn = watch('tokenIn', '');
   const watchTokenOut = watch('tokenOut', '');
   const watchAmountIn = watch('amountIn', 0);
+
+  const [onboard] = useAtom(onboardAtom);
+  const onboardState = onboard?.getState();
+  const [web3] = useAtom(web3Atom);
 
   // Token dropdown values
   const tokenArray = Tokens.tokens.map((symbol) => ({
@@ -65,7 +80,7 @@ export default function SwapForm({ onboardState, web3, onboard }) {
 
   // Connect wallet function
   async function readyToTransact() {
-    if (!onboardState.address) {
+    if (!onboardState?.address) {
       const walletSelected = await onboard.walletSelect();
       if (!walletSelected) return false;
     }
@@ -135,9 +150,14 @@ export default function SwapForm({ onboardState, web3, onboard }) {
         Swap
       </Heading>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <Text opacity={0.7} mb={2} ml={0.5}>
-          PAY
-        </Text>
+        <Flex align="center" justify="space-between">
+          <Text opacity={0.7} mb={2} ml={0.5}>
+            PAY
+          </Text>
+          <Text opacity={0.7} mb={2} ml={0.5}>
+            1 ETH available
+          </Text>
+        </Flex>
         <Box borderWidth="1px" borderRadius="lg" bg={useColorModeValue('white', 'gray.800')} mb={6}>
           <Flex>
             <Controller
@@ -165,6 +185,7 @@ export default function SwapForm({ onboardState, web3, onboard }) {
               placeholder="0.0"
               name="amountIn"
               type="number"
+              step="0.000000000000000001"
               min="0"
               pattern="\d*\.?\d+"
               size="lg"
@@ -237,7 +258,7 @@ export default function SwapForm({ onboardState, web3, onboard }) {
           />
         ) : null}
         <Center>
-          {onboardState.address ? (
+          {onboardState?.address ? (
             <SwapButton
               type="submit"
               buttonText={getButtonText()}

@@ -1,19 +1,29 @@
+/* eslint-disable no-unused-vars */
 import { Box, Container } from '@chakra-ui/react';
 import Web3 from 'web3';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
+import { useAtom } from 'jotai';
 import NavBar from '../components/NavBar';
 import SwapForm from '../components/SwapForm';
 import initOnboard from '../utils/initOnboard';
+import { web3Atom, onboardAtom, balanceAtom, addressAtom } from '../utils/atoms';
 
 export default function DashboardView() {
-  const [address, setAddress] = useState(null);
-  const [balance, setBalance] = useState(null);
+  const [address, setAddress] = useAtom(addressAtom);
+  const [balance, setBalance] = useAtom(balanceAtom);
   const [, setNetwork] = useState(null);
 
   const [wallet, setWallet] = useState({});
-  const [onboard, setOnboard] = useState(null);
+  const [onboard, setOnboard] = useAtom(onboardAtom);
+
+  const [, setWeb3] = useAtom(web3Atom);
 
   const web3 = new Web3(wallet.provider);
+
+  useCallback(() => {
+    setWeb3(web3);
+  }, [web3]);
+
   useEffect(() => {
     const ob = initOnboard({
       address: setAddress,
@@ -43,12 +53,7 @@ export default function DashboardView() {
     <Box height="100vh" width="100%">
       <NavBar address={address} balance={balance} onboard={onboard} web3={web3} />
       <Container mt="10vh">
-        <SwapForm
-          onboardState={onboard ? onboard.getState() : null}
-          web3={web3}
-          wallet={wallet}
-          onboard={onboard}
-        />
+        <SwapForm />
       </Container>
     </Box>
   );
