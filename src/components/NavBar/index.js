@@ -23,10 +23,10 @@ import {
   useColorModeValue,
   useDisclosure,
 } from '@chakra-ui/react';
-import React from 'react';
 import { useAtom } from 'jotai';
+import React from 'react';
+import { addressAtom, onboardAtom, web3Atom, balanceAtom } from '../../utils/atoms';
 import AccountModal from '../AccountModal';
-import { onboardAtom, addressAtom } from '../../utils/atoms';
 
 const NAV_ITEMS = [
   {
@@ -55,11 +55,13 @@ const NAV_ITEMS = [
   },
 ];
 
-export default function Navbar({ balance, web3 }) {
+export default function Navbar() {
   const { isOpen, onToggle } = useDisclosure();
   const { toggleColorMode } = useColorMode();
   const [address] = useAtom(addressAtom);
   const [onboard] = useAtom(onboardAtom);
+  const [balance] = useAtom(balanceAtom);
+  const [web3] = useAtom(web3Atom);
 
   return (
     <Box>
@@ -103,7 +105,7 @@ export default function Navbar({ balance, web3 }) {
             <>
               {typeof balance === 'string' ? (
                 <Text fontWeight="600" color={useColorModeValue('gray.600', 'gray.200')} size="sm">
-                  {parseFloat(web3.utils.fromWei(balance, 'ether')).toPrecision(6)}
+                  {parseFloat(web3?.utils.fromWei(balance, 'ether')).toPrecision(6)}
                 </Text>
               ) : (
                 <Spinner size="xs" />

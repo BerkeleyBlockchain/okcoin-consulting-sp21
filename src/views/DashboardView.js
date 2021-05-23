@@ -1,12 +1,12 @@
 /* eslint-disable no-unused-vars */
 import { Box, Container } from '@chakra-ui/react';
-import Web3 from 'web3';
-import React, { useEffect, useState, useCallback } from 'react';
 import { useAtom } from 'jotai';
+import React, { useEffect, useState } from 'react';
+import Web3 from 'web3';
 import NavBar from '../components/NavBar';
 import SwapForm from '../components/SwapForm';
+import { addressAtom, balanceAtom, onboardAtom } from '../utils/atoms';
 import initOnboard from '../utils/initOnboard';
-import { web3Atom, onboardAtom, balanceAtom, addressAtom } from '../utils/atoms';
 
 export default function DashboardView() {
   const [address, setAddress] = useAtom(addressAtom);
@@ -16,13 +16,7 @@ export default function DashboardView() {
   const [wallet, setWallet] = useState({});
   const [onboard, setOnboard] = useAtom(onboardAtom);
 
-  const [, setWeb3] = useAtom(web3Atom);
-
   const web3 = new Web3(wallet.provider);
-
-  useCallback(() => {
-    setWeb3(web3);
-  }, [web3]);
 
   useEffect(() => {
     const ob = initOnboard({
@@ -51,9 +45,9 @@ export default function DashboardView() {
 
   return (
     <Box height="100vh" width="100%">
-      <NavBar address={address} balance={balance} onboard={onboard} web3={web3} />
+      <NavBar web3={web3} />
       <Container mt="10vh">
-        <SwapForm />
+        <SwapForm web3={web3} />
       </Container>
     </Box>
   );

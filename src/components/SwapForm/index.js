@@ -37,7 +37,7 @@ const onboardStateAtom = atom((get) => {
 });
 
 const illegal = new RegExp('[\\("\\?@#\\$\\%\\^\\&\\*\\-=;:<>,.+\\[\\{\\]\\}\\)\\/\\\\]');
-export default function SwapForm() {
+export default function SwapForm({ web3 }) {
   const { register, handleSubmit, watch, setValue, errors, control } = useForm();
   const [isLoading, setIsLoading] = useState();
   const [sellAmount, setSellAmount] = useState();
@@ -49,7 +49,6 @@ export default function SwapForm() {
 
   const [onboard] = useAtom(onboardAtom);
   const onboardState = onboard?.getState();
-  const [web3] = useAtom(web3Atom);
 
   // Token dropdown values
   const tokenArray = Tokens.tokens.map((symbol) => ({
