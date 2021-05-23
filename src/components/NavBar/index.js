@@ -20,44 +20,17 @@ import {
   Stack,
   Text,
   useColorMode,
-  useColorModeValue,
   useDisclosure,
 } from '@chakra-ui/react';
 import { useAtom } from 'jotai';
 import React from 'react';
 import { addressAtom, onboardAtom, web3Atom, balanceAtom } from '../../utils/atoms';
 import AccountModal from '../AccountModal';
-
-const NAV_ITEMS = [
-  {
-    label: 'Home',
-    href: 'https://okcoin-landing.vercel.app',
-  },
-  {
-    label: 'Apps',
-    children: [
-      {
-        label: 'Node Finance',
-        subLabel: 'Track all of your DeFi assets over time, all in one platform',
-        href: 'https://node.finance',
-      },
-      {
-        label: 'Earn',
-        subLabel: 'Grow your crypto holdings with a variety of yield generating offers',
-        href: 'https://www.okcoin.com/earn',
-      },
-      {
-        label: 'Swap',
-        subLabel: 'Execute swaps between your favorite ERC20 tokens',
-        href: '/',
-      },
-    ],
-  },
-];
+import NavItems from '../../constants/navbar';
 
 export default function Navbar() {
   const { isOpen, onToggle } = useDisclosure();
-  const { toggleColorMode } = useColorMode();
+  const { colorMode, toggleColorMode } = useColorMode();
   const [address] = useAtom(addressAtom);
   const [onboard] = useAtom(onboardAtom);
   const [balance] = useAtom(balanceAtom);
@@ -66,14 +39,14 @@ export default function Navbar() {
   return (
     <Box>
       <Flex
-        bg={useColorModeValue('white', 'gray.800')}
-        color={useColorModeValue('gray.600', 'white')}
+        bg={colorMode === 'light' ? 'white' : 'gray.800'}
+        color={colorMode === 'light' ? 'gray.600' : 'white'}
         minH="60px"
         py={{ base: 2 }}
         px={{ base: 4 }}
         borderBottom={1}
         borderStyle="solid"
-        borderColor={useColorModeValue('gray.200', 'gray.900')}
+        borderColor={colorMode === 'light' ? 'gray.200' : 'gray.900'}
         align="center"
       >
         <Flex
@@ -104,8 +77,12 @@ export default function Navbar() {
           >
             <>
               {typeof balance === 'string' ? (
-                <Text fontWeight="600" color={useColorModeValue('gray.600', 'gray.200')} size="sm">
-                  {parseFloat(web3?.utils.fromWei(balance, 'ether')).toPrecision(6)}
+                <Text
+                  fontWeight="600"
+                  color={colorMode === 'light' ? 'gray.600' : 'gray.200'}
+                  size="sm"
+                >
+                  {parseFloat(web3.utils.fromWei(balance, 'ether')).toPrecision(6)}
                 </Text>
               ) : (
                 <Spinner size="xs" />
@@ -113,7 +90,7 @@ export default function Navbar() {
 
               <Text
                 fontWeight="700"
-                color={useColorModeValue('gray.600', 'gray.200')}
+                color={colorMode === 'light' ? 'gray.600' : 'gray.200'}
                 size="sm"
                 ml={1}
               >
@@ -134,9 +111,11 @@ export default function Navbar() {
 }
 
 const DesktopNav = () => {
+  const { colorMode } = useColorMode();
+
   return (
     <Stack direction="row" spacing={4} alignItems="center">
-      {NAV_ITEMS.map((navItem) => (
+      {NavItems.map((navItem) => (
         <Box key={navItem.label}>
           <Popover trigger="hover" placement="bottom-start">
             <PopoverTrigger>
@@ -145,10 +124,10 @@ const DesktopNav = () => {
                 href={navItem.href ?? '#'}
                 fontSize="md"
                 fontWeight={500}
-                color={useColorModeValue('gray.600', 'gray.200')}
+                color={colorMode === 'light' ? 'gray.600' : 'gray.200'}
                 _hover={{
                   textDecoration: 'none',
-                  color: useColorModeValue('gray.800', 'white'),
+                  color: colorMode === 'light' ? 'gray.800' : 'white',
                 }}
               >
                 {navItem.label}
@@ -159,7 +138,7 @@ const DesktopNav = () => {
               <PopoverContent
                 border={0}
                 boxShadow="xl"
-                bg={useColorModeValue('white', 'gray.800')}
+                bg={colorMode === 'light' ? 'white' : 'gray.800'}
                 p={4}
                 rounded="xl"
                 minW="sm"
@@ -179,6 +158,8 @@ const DesktopNav = () => {
 };
 
 const DesktopSubNav = ({ label, href, subLabel }) => {
+  const { colorMode } = useColorMode();
+
   return (
     <Link
       href={href}
@@ -186,7 +167,7 @@ const DesktopSubNav = ({ label, href, subLabel }) => {
       display="block"
       p={2}
       rounded="md"
-      _hover={{ bg: useColorModeValue('pink.50', 'gray.900') }}
+      _hover={{ bg: colorMode === 'light' ? 'pink.50' : 'gray.900' }}
     >
       <Stack direction="row" align="center">
         <Box>
@@ -212,9 +193,11 @@ const DesktopSubNav = ({ label, href, subLabel }) => {
 };
 
 const MobileNav = () => {
+  const { colorMode } = useColorMode();
+
   return (
-    <Stack bg={useColorModeValue('white', 'gray.800')} p={4} display={{ md: 'none' }}>
-      {NAV_ITEMS.map((navItem) => (
+    <Stack bg={colorMode === 'light' ? 'white' : 'gray.800'} p={4} display={{ md: 'none' }}>
+      {NavItems.map((navItem) => (
         <MobileNavItem key={navItem.label} {...navItem} />
       ))}
     </Stack>
@@ -222,6 +205,7 @@ const MobileNav = () => {
 };
 
 const MobileNavItem = ({ label, children, href }) => {
+  const { colorMode } = useColorMode();
   const { isOpen, onToggle } = useDisclosure();
 
   return (
@@ -236,7 +220,7 @@ const MobileNavItem = ({ label, children, href }) => {
           textDecoration: 'none',
         }}
       >
-        <Text fontWeight={600} color={useColorModeValue('gray.600', 'gray.200')}>
+        <Text fontWeight={600} color={colorMode === 'light' ? 'gray.600' : 'gray.200'}>
           {label}
         </Text>
         {children && (
@@ -256,7 +240,7 @@ const MobileNavItem = ({ label, children, href }) => {
           pl={4}
           borderLeft={1}
           borderStyle="solid"
-          borderColor={useColorModeValue('gray.200', 'gray.700')}
+          borderColor={colorMode === 'light' ? 'gray.200' : 'gray.700'}
           align="start"
         >
           {children &&

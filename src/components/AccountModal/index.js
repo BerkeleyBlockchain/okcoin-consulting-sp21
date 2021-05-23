@@ -27,7 +27,7 @@ export default function AccountModal() {
   return (
     <>
       <Button size="md" colorScheme="blue" variant="solid" onClick={onOpen}>
-        {`${address?.substr(0, 6)}...${address?.substr(address.length - 4)}`}
+        {address?.substr(0, 6)}...{address?.substr(address.length - 4)}
       </Button>
 
       <Modal onClose={onClose} isOpen={isOpen} isCentered>
@@ -41,7 +41,7 @@ export default function AccountModal() {
                 Connected Wallet: {`${onboardState?.wallet.name}`}
               </Text>
               <Text fontSize="1.6em" fontWeight="500">
-                {`${address?.substr(0, 8)}...${address?.substr(address.length - 6)}`}
+                {address?.substr(0, 8)}...{address?.substr(address.length - 6)}
               </Text>
               <Button fontSize="sm" variant="link" onClick={onCopy}>
                 <CopyIcon mr={1} /> Copy Address

@@ -9,7 +9,7 @@ import {
   Input,
   Spinner,
   Text,
-  useColorModeValue,
+  useColorMode,
   useToast,
 } from '@chakra-ui/react';
 import debounce from 'debounce';
@@ -41,6 +41,7 @@ export default function SwapForm({ web3 }) {
   const { register, handleSubmit, watch, setValue, errors, control } = useForm();
   const [isLoading, setIsLoading] = useState();
   const [sellAmount, setSellAmount] = useState();
+  const { colorMode } = useColorMode();
   const toast = useToast();
 
   const watchTokenIn = watch('tokenIn', '');
@@ -142,10 +143,10 @@ export default function SwapForm({ web3 }) {
       px={8}
       pb={0}
       boxShadow="lg"
-      bgColor={useColorModeValue('white', 'gray.700')}
+      bgColor={colorMode === 'light' ? 'white' : 'gray.700'}
       borderRadius={30}
     >
-      <Heading fontWeight="700" color={useColorModeValue('gray.700', 'white')} mb={10}>
+      <Heading fontWeight="700" color={colorMode === 'light' ? 'gray.700' : 'white'} mb={10}>
         Swap
       </Heading>
       <form onSubmit={handleSubmit(onSubmit)}>
@@ -157,7 +158,12 @@ export default function SwapForm({ web3 }) {
             1 ETH available
           </Text>
         </Flex>
-        <Box borderWidth="1px" borderRadius="lg" bg={useColorModeValue('white', 'gray.800')} mb={6}>
+        <Box
+          borderWidth="1px"
+          borderRadius="lg"
+          bg={colorMode === 'light' ? 'white' : 'gray.800'}
+          mb={6}
+        >
           <Flex>
             <Controller
               name="tokenIn"
@@ -209,7 +215,12 @@ export default function SwapForm({ web3 }) {
         <Text opacity={0.7} mb={2} ml={0.5}>
           RECEIVE
         </Text>
-        <Box borderWidth="1px" borderRadius="lg" bg={useColorModeValue('white', 'gray.800')} mb={6}>
+        <Box
+          borderWidth="1px"
+          borderRadius="lg"
+          bg={colorMode === 'light' ? 'white' : 'gray.800'}
+          mb={6}
+        >
           <Flex>
             <Controller
               name="tokenOut"
