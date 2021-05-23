@@ -1,7 +1,7 @@
 import { Box, Container } from '@chakra-ui/react';
 import { useAtom } from 'jotai';
 import React, { useEffect, useState } from 'react';
-import Web3 from 'web3';
+import Eth from 'web3-eth';
 import NavBar from '../components/NavBar';
 import SwapForm from '../components/SwapForm';
 import { addressAtom, balanceAtom, networkAtom, onboardAtom } from '../utils/atoms';
@@ -44,7 +44,7 @@ export default function DashboardView() {
     <Box height="100vh" width="100%">
       <NavBar />
       <Container mt="10vh">
-        <SwapForm web3={new Web3(wallet.provider)} />
+        <SwapForm web3={new Eth(wallet.provider)} />
       </Container>
     </Box>
   );
