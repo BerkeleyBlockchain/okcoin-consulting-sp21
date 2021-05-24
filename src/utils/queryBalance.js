@@ -64,56 +64,35 @@ function checkTokenBalance({ tokenAddress, minimumBalance, tokenName }) {
   };
 }
 
-const getTokenBalance = (token) => {
+const getTokenBalance = async (token, web3, userBalance, onboardState) => {
   const tokenAddress = Tokens.data[token].address.toLowerCase();
   let ethersProvider;
   let tokenContract;
 
-  return async (stateAndHelpers) => {
-    const {
-      wallet: { provider },
-      address,
-      BigNumber,
-      ethAmount,
-    } = stateAndHelpers;
+  const balance = userBalance || 0;
+  const { provider } = onboardState.wallet;
+  const { address } = onboardState;
+  const ethAmount = web3.utils.fromWei(balance.toString(), 'ether');
 
-    if (!tokenContract) {
-      ethersProvider = new ethers.providers.Web3Provider(provider);
-      tokenContract = new ethers.Contract(tokenAddress, erc20, ethersProvider);
-    }
-
-    const tokenDecimals = Tokens.data[token].decimals;
-    const divideBy = new BigNumber(10).pow(tokenDecimals);
-    let tokenBalance;
-    if (token === 'ETH') {
-      tokenBalance = new BigNumber(ethAmount);
-    } else {
-      const tokenBalanceResult = await tokenContract
-        .balanceOf(address)
-        .catch((error) => console.log(error))
-        .then((res) => res.toString());
-      tokenBalance = new BigNumber(tokenBalanceResult).div(divideBy);
-    }
-    return tokenBalance;
-  };
-};
-
-async function handleDropdownSelect(token, web3, userBalance, onboardState) {
-  let tokenBal;
-  if (onboardState) {
-    const balance = userBalance ?? 0;
-    const balanceData = {
-      wallet: {
-        provider: onboardState.wallet.provider,
-      },
-      address: onboardState.address,
-      BigNumber,
-      ethAmount: web3.utils.fromWei(balance.toString(), 'ether'),
-    };
-    tokenBal = await getTokenBalance(token)(balanceData);
+  if (!tokenContract) {
+    ethersProvider = new ethers.providers.Web3Provider(provider);
+    tokenContract = new ethers.Contract(tokenAddress, erc20, ethersProvider);
   }
-  return tokenBal;
-}
+
+  const tokenDecimals = Tokens.data[token].decimals;
+  const divideBy = new BigNumber(10).pow(tokenDecimals);
+  let tokenBalance;
+  if (token === 'ETH') {
+    tokenBalance = new BigNumber(ethAmount);
+  } else {
+    const tokenBalanceResult = await tokenContract
+      .balanceOf(address)
+      .catch((error) => console.log(error))
+      .then((res) => res.toString());
+    tokenBalance = new BigNumber(tokenBalanceResult).div(divideBy);
+  }
+  return tokenBalance;
+};
 
 // go through tokens.js for this or match their requested token
 // get minimum balance to be the amount they entered
@@ -124,4 +103,4 @@ const tokenBalanceCheck = (tokenChoice, requestAmount) =>
     minimumBalance: requestAmount,
   });
 
-export { tokenBalanceCheck, getTokenBalance, handleDropdownSelect };
+export { tokenBalanceCheck, getTokenBalance };

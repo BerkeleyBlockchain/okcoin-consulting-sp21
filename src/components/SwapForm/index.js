@@ -27,7 +27,7 @@ import FullPageSpinner from '../FullPageSpinner';
 import SwapButton from './SwapButton';
 import SwapInfo from './SwapInfo';
 import { DropdownStyle, IconOption, ValueOption } from './TokenDropdown';
-import { handleDropdownSelect } from '../../utils/queryBalance';
+import { getTokenBalance } from '../../utils/queryBalance';
 
 export default function SwapForm({ web3 }) {
   const illegal = new RegExp('[\\("\\?@#\\$\\%\\^\\&\\*\\-=;:<>,.+\\[\\{\\]\\}\\)\\/\\\\]');
@@ -53,7 +53,7 @@ export default function SwapForm({ web3 }) {
       const dexNet = process.env.REACT_APP_ENV === 'production' ? 1 : 42;
       if (onboardState?.address) {
         if (onboardState?.network === dexNet) {
-          const tb = await handleDropdownSelect(
+          const tb = await getTokenBalance(
             watchTokenIn.value,
             web3,
             onboardState.balance,
