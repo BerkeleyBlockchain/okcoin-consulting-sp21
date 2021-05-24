@@ -28,6 +28,7 @@ import SwapButton from './SwapButton';
 import SwapInfo from './SwapInfo';
 import { DropdownStyle, IconOption, ValueOption } from './TokenDropdown';
 import { getTokenBalance } from '../../utils/queryBalance';
+import useTokenBalance from '../../hooks/useTokenBalance';
 
 export default function SwapForm({ web3 }) {
   const illegal = new RegExp('[\\("\\?@#\\$\\%\\^\\&\\*\\-=;:<>,.+\\[\\{\\]\\}\\)\\/\\\\]');
@@ -44,32 +45,12 @@ export default function SwapForm({ web3 }) {
   const [onboard] = useAtom(onboardAtom);
   const onboardState = onboard?.getState();
 
-  const [tokenBalance, setTokenBalance] = useState();
-
-  useEffect(() => {
-    // Create an scoped async function in the hook
-    async function calcTokenBalance() {
-      console.log(process.env.REACT_APP_ENV);
-      const dexNet = process.env.REACT_APP_ENV === 'production' ? 1 : 42;
-      if (onboardState?.address) {
-        if (onboardState?.network === dexNet) {
-          const tb = await getTokenBalance(
-            watchTokenIn.value,
-            web3,
-            onboardState.balance,
-            onboardState
-          ).then((res) => {
-            return res;
-          });
-          setTokenBalance(tb);
-        } else {
-          toast(Toasts.networkMismatch);
-        }
-      }
-    }
-    // Execute the created function directly
-    calcTokenBalance();
-  }, [watchTokenIn]);
+  const { balance: tokenBalance } = useTokenBalance(
+    watchTokenIn.value,
+    web3,
+    onboardState?.balance,
+    onboardState
+  );
 
   // Token dropdown values
   const tokenArray = Tokens.tokens.map((symbol) => ({

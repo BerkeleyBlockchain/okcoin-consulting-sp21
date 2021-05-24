@@ -64,6 +64,15 @@ function checkTokenBalance({ tokenAddress, minimumBalance, tokenName }) {
   };
 }
 
+// go through tokens.js for this or match their requested token
+// get minimum balance to be the amount they entered
+const tokenBalanceCheck = (tokenChoice, requestAmount) =>
+  checkTokenBalance({
+    tokenAddress: Tokens.data[tokenChoice].address,
+    tokenName: tokenChoice,
+    minimumBalance: requestAmount,
+  });
+
 const getTokenBalance = async (token, web3, userBalance, onboardState) => {
   const tokenAddress = Tokens.data[token].address.toLowerCase();
   let ethersProvider;
@@ -93,14 +102,5 @@ const getTokenBalance = async (token, web3, userBalance, onboardState) => {
   }
   return tokenBalance;
 };
-
-// go through tokens.js for this or match their requested token
-// get minimum balance to be the amount they entered
-const tokenBalanceCheck = (tokenChoice, requestAmount) =>
-  checkTokenBalance({
-    tokenAddress: Tokens.data[tokenChoice].address,
-    tokenName: tokenChoice,
-    minimumBalance: requestAmount,
-  });
 
 export { tokenBalanceCheck, getTokenBalance };
