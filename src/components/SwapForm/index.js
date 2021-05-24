@@ -13,7 +13,7 @@ import {
   useToast,
 } from '@chakra-ui/react';
 import debounce from 'debounce';
-import { atom, useAtom } from 'jotai';
+import { useAtom } from 'jotai';
 import React, { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import Select from 'react-select';
@@ -21,14 +21,13 @@ import Toasts from '../../constants/toasts';
 import Tokens from '../../constants/tokens';
 import use0xPrice from '../../hooks/use0xPrice';
 import use0xSwap from '../../hooks/use0xSwap';
+import useTokenBalance from '../../hooks/useTokenBalance';
 import { onboardAtom } from '../../utils/atoms';
 import { getTokenIconPNG32 } from '../../utils/getTokenIcon';
 import FullPageSpinner from '../FullPageSpinner';
 import SwapButton from './SwapButton';
 import SwapInfo from './SwapInfo';
 import { DropdownStyle, IconOption, ValueOption } from './TokenDropdown';
-import { getTokenBalance } from '../../utils/queryBalance';
-import useTokenBalance from '../../hooks/useTokenBalance';
 
 export default function SwapForm({ web3 }) {
   const illegal = new RegExp('[\\("\\?@#\\$\\%\\^\\&\\*\\-=;:<>,.+\\[\\{\\]\\}\\)\\/\\\\]');
@@ -155,9 +154,11 @@ export default function SwapForm({ web3 }) {
           <Text opacity={0.7} mb={2} ml={0.5}>
             PAY
           </Text>
-          <Text opacity={0.7} mb={2} ml={0.5}>
-            {`${tokenBalance} ${watchTokenIn.value} available`}
-          </Text>
+          {tokenBalance && watchTokenIn ? (
+            <Text opacity={0.7} mb={2} ml={0.5}>
+              {`${tokenBalance.toFixed(6)} ${watchTokenIn.value} available`}
+            </Text>
+          ) : null}
         </Flex>
         <Box
           borderWidth="1px"

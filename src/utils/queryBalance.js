@@ -1,7 +1,6 @@
 /* eslint-disable no-shadow */
 /* eslint-disable no-console */
 import { ethers } from 'ethers';
-import BigNumber from 'bignumber.js';
 import Tokens from '../constants/tokens';
 
 const erc20 = [
@@ -73,34 +72,4 @@ const tokenBalanceCheck = (tokenChoice, requestAmount) =>
     minimumBalance: requestAmount,
   });
 
-const getTokenBalance = async (token, web3, userBalance, onboardState) => {
-  const tokenAddress = Tokens.data[token].address.toLowerCase();
-  let ethersProvider;
-  let tokenContract;
-
-  const balance = userBalance || 0;
-  const { provider } = onboardState.wallet;
-  const { address } = onboardState;
-  const ethAmount = web3.utils.fromWei(balance.toString(), 'ether');
-
-  if (!tokenContract) {
-    ethersProvider = new ethers.providers.Web3Provider(provider);
-    tokenContract = new ethers.Contract(tokenAddress, erc20, ethersProvider);
-  }
-
-  const tokenDecimals = Tokens.data[token].decimals;
-  const divideBy = new BigNumber(10).pow(tokenDecimals);
-  let tokenBalance;
-  if (token === 'ETH') {
-    tokenBalance = new BigNumber(ethAmount);
-  } else {
-    const tokenBalanceResult = await tokenContract
-      .balanceOf(address)
-      .catch((error) => console.log(error))
-      .then((res) => res.toString());
-    tokenBalance = new BigNumber(tokenBalanceResult).div(divideBy);
-  }
-  return tokenBalance;
-};
-
-export { tokenBalanceCheck, getTokenBalance };
+export default tokenBalanceCheck;
