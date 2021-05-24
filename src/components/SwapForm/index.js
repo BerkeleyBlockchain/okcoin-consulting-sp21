@@ -27,6 +27,7 @@ import FullPageSpinner from '../FullPageSpinner';
 import SwapButton from './SwapButton';
 import SwapInfo from './SwapInfo';
 import { DropdownStyle, IconOption, ValueOption } from './TokenDropdown';
+import { handleDropdownSelect } from '../../utils/queryBalance';
 
 export default function SwapForm({ web3 }) {
   const illegal = new RegExp('[\\("\\?@#\\$\\%\\^\\&\\*\\-=;:<>,.+\\[\\{\\]\\}\\)\\/\\\\]');
@@ -42,6 +43,33 @@ export default function SwapForm({ web3 }) {
 
   const [onboard] = useAtom(onboardAtom);
   const onboardState = onboard?.getState();
+
+  const [tokenBalance, setTokenBalance] = useState();
+
+  useEffect(() => {
+    // Create an scoped async function in the hook
+    async function calcTokenBalance() {
+      console.log(process.env.REACT_APP_ENV);
+      const dexNet = process.env.REACT_APP_ENV === 'production' ? 1 : 42;
+      if (onboardState?.address) {
+        if (onboardState?.network === dexNet) {
+          const tb = await handleDropdownSelect(
+            watchTokenIn.value,
+            web3,
+            onboardState.balance,
+            onboardState
+          ).then((res) => {
+            return res;
+          });
+          setTokenBalance(tb);
+        } else {
+          toast(Toasts.networkMismatch);
+        }
+      }
+    }
+    // Execute the created function directly
+    calcTokenBalance();
+  }, [watchTokenIn]);
 
   // Token dropdown values
   const tokenArray = Tokens.tokens.map((symbol) => ({
@@ -147,7 +175,7 @@ export default function SwapForm({ web3 }) {
             PAY
           </Text>
           <Text opacity={0.7} mb={2} ml={0.5}>
-            1 ETH available
+            {`${tokenBalance} ${watchTokenIn.value} available`}
           </Text>
         </Flex>
         <Box
