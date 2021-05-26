@@ -15,26 +15,38 @@ import debounce from 'debounce';
 import React, { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import Select from 'react-select';
+import BigNumber from 'bignumber.js';
+import { useAtom } from 'jotai';
+import { IconOptionIn, IconOptionOut, ValueOption, DropdownStyle } from './TokenDropdown';
 import Toasts from '../../constants/toasts';
 import Tokens from '../../constants/tokens';
 import use0xPrice from '../../hooks/use0xPrice';
+import { tokenBalanceCheck } from '../../utils/queryBalance';
+import { balanceAtom, userOnboardAtom, tokenBalanceAtom, web3Atom } from '../../utils/atoms';
 import use0xSwap from '../../hooks/use0xSwap';
 import { getTokenIconPNG32 } from '../../utils/getTokenIcon';
 import FullPageSpinner from '../FullPageSpinner';
 import SwapButton from './SwapButton';
 import SwapInfo from './SwapInfo';
-import { DropdownStyle, IconOption, ValueOption } from './TokenDropdown';
 
 const illegal = new RegExp('[\\("\\?@#\\$\\%\\^\\&\\*\\-=;:<>,.+\\[\\{\\]\\}\\)\\/\\\\]');
-export default function SwapForm({ onboardState, web3, onboard }) {
+export default function SwapForm({ onboardState, web3, onboard, balance }) {
   const { register, handleSubmit, watch, setValue, errors, control } = useForm();
   const [isLoading, setIsLoading] = useState();
   const [sellAmount, setSellAmount] = useState();
+  const [, setUserBalance] = useAtom(balanceAtom);
+  const [, setUserOnboard] = useAtom(userOnboardAtom);
+  const [tokenBalance] = useAtom(tokenBalanceAtom);
+  const [, setWeb3] = useAtom(web3Atom);
   const toast = useToast();
 
   const watchTokenIn = watch('tokenIn', '');
   const watchTokenOut = watch('tokenOut', '');
   const watchAmountIn = watch('amountIn', 0);
+
+  setUserOnboard(onboardState);
+  setWeb3(web3);
+  setUserBalance(balance);
 
   // Token dropdown values
   const tokenArray = Tokens.tokens.map((symbol) => ({
@@ -109,6 +121,28 @@ export default function SwapForm({ onboardState, web3, onboard }) {
     if (!ready) return;
 
     const { amountIn, tokenIn, tokenOut } = data;
+    console.log(onboard);
+    console.log(onboardState);
+    const balanceData = {
+      wallet: {
+        provider: onboardState.wallet.provider,
+      },
+      address: onboardState.address,
+      BigNumber,
+      ethAmount: new BigNumber(web3.utils.fromWei(balance, 'ether')),
+    };
+    const walletBalanceResult = await tokenBalanceCheck(
+      watchTokenIn.value,
+      watchAmountIn
+    )(balanceData).then((res) => {
+      return res;
+    });
+    console.log(walletBalanceResult);
+    if (walletBalanceResult.result === false) {
+      console.log('false');
+      toast(walletBalanceResult.balanceFailure);
+      return;
+    }
     setIsLoading(true);
 
     use0xSwap(Tokens.data[tokenIn.value], Tokens.data[tokenOut.value], amountIn, web3)
@@ -147,7 +181,7 @@ export default function SwapForm({ onboardState, web3, onboard }) {
                 <Select
                   styles={DropdownStyle}
                   options={tokenArray.filter((item) => item.value !== watchTokenOut.value)}
-                  components={{ Option: IconOption, SingleValue: ValueOption }}
+                  components={{ Option: IconOptionIn, SingleValue: ValueOption }}
                   inputRef={ref}
                   value={value}
                   name={name}
@@ -171,6 +205,7 @@ export default function SwapForm({ onboardState, web3, onboard }) {
               ref={register({ required: true })}
               textAlign="end"
               variant="unstyled"
+              step={0.000000000000000001}
               mr={6}
               isReadOnly={isLoading}
               onKeyDown={(e) => {
@@ -198,7 +233,7 @@ export default function SwapForm({ onboardState, web3, onboard }) {
                 <Select
                   styles={DropdownStyle}
                   options={tokenArray.filter((item) => item.value !== watchTokenIn.value)}
-                  components={{ Option: IconOption, SingleValue: ValueOption }}
+                  components={{ Option: IconOptionOut, SingleValue: ValueOption }}
                   inputRef={ref}
                   value={value}
                   name={name}
@@ -218,6 +253,7 @@ export default function SwapForm({ onboardState, web3, onboard }) {
               name="amountOut"
               type="number"
               size="lg"
+              step={0.000000000000000001}
               ref={register}
               variant="unstyled"
               textAlign="end"
