@@ -9,7 +9,6 @@ import {
   ModalBody,
   ModalCloseButton,
   useClipboard,
-  useColorModeValue,
   useDisclosure,
   Text,
 } from '@chakra-ui/react';
@@ -23,12 +22,7 @@ export default function AccountModal({ address, onboard }) {
 
   return (
     <>
-      <Button
-        size="md"
-        colorScheme={useColorModeValue('blue', 'gray')}
-        variant="solid"
-        onClick={onOpen}
-      >
+      <Button size="md" colorScheme="blue" variant="solid" onClick={onOpen}>
         {`${address?.substr(0, 6)}...${address?.substr(address.length - 4)}`}
       </Button>
 
@@ -52,7 +46,7 @@ export default function AccountModal({ address, onboard }) {
           </ModalBody>
           <ModalFooter>
             <Button
-              colorScheme={useColorModeValue('blue', 'gray')}
+              colorScheme="blue"
               onClick={() => {
                 onClose();
                 onboard.walletSelect();
