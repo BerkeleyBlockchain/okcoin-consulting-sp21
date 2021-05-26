@@ -88,7 +88,7 @@ export const IconOptionOut = (props) => {
     <Option {...props}>
       <HStack>
         <Image src={data.icon} alt={data.label} />
-        <Text color="gray.800">{data.label}</Text>
+        <Text color={useColorModeValue('#222222', 'gray.200')}>{data.label}</Text>
       </HStack>
     </Option>
   );
@@ -100,7 +100,7 @@ export const ValueOption = (props) => {
     <SingleValue {...props}>
       <HStack>
         <Image src={data.icon} alt={data.label} />
-        <Text color={useColorModeValue('gray.900', 'gray.200')}>{data.label}</Text>
+        <Text color={useColorModeValue('#222222', 'gray.200')}>{data.label}</Text>
       </HStack>
     </SingleValue>
   );
@@ -113,11 +113,19 @@ export const DropdownStyle = {
     margin: 0,
     fontFamily: 'Poppins',
     fontWeight: '600',
+    background: useColorModeValue('gray.200', '#222222'),
   }),
 
   dropdownIndicator: (provided) => ({
     ...provided,
-    color: '#A0AEBF',
+    color: useColorModeValue('#222222', 'gray.200'),
+  }),
+
+  option: (provider) => ({
+    ...provider,
+    '&:hover': {
+      background: useColorModeValue('#DEEBFF', '#333333'),
+    },
   }),
 
   control: () => ({
@@ -126,14 +134,14 @@ export const DropdownStyle = {
     display: 'flex',
     flexDirection: 'row',
     marginLeft: 4,
-    color: '#A0AEBF',
+    color: useColorModeValue('#222222', 'gray.200'),
     fontFamily: 'Poppins',
     fontWeight: '600',
   }),
 
   placeholder: (provided) => ({
     ...provided,
-    color: '#A0AEBF',
+    color: useColorModeValue('#222222', 'gray.200'),
     fontSize: 19,
     marginTop: 1,
     fontWeight: '400',
@@ -141,7 +149,7 @@ export const DropdownStyle = {
 
   singleValue: (provided, state) => {
     const opacity = state.isDisabled ? 0.5 : 1;
-    const transition = 'opacity 300ms';
+    const transition = 'opacity 500ms';
 
     return { ...provided, opacity, transition };
   },

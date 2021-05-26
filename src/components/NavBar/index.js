@@ -16,6 +16,7 @@ import {
   Popover,
   PopoverContent,
   PopoverTrigger,
+  Image,
   Spinner,
   Stack,
   Text,
@@ -55,12 +56,12 @@ const NAV_ITEMS = [
 
 export default function Navbar({ address, balance, onboard, web3 }) {
   const { isOpen, onToggle } = useDisclosure();
-  const { toggleColorMode } = useColorMode();
+  const { colorMode, toggleColorMode } = useColorMode();
 
   return (
     <Box>
       <Flex
-        bg={useColorModeValue('white', 'gray.800')}
+        bg={useColorModeValue('white', '#222222')}
         color={useColorModeValue('gray.600', 'white')}
         minH="60px"
         py={{ base: 2 }}
@@ -84,7 +85,7 @@ export default function Navbar({ address, balance, onboard, web3 }) {
         </Flex>
         <Flex flex={{ base: 1 }} justify={{ base: 'center', md: 'start' }}>
           <Flex display={{ base: 'none', md: 'flex' }} ml={6}>
-            <DesktopNav />
+            <DesktopNav colorMode={colorMode} />
           </Flex>
         </Flex>
 
@@ -127,9 +128,23 @@ export default function Navbar({ address, balance, onboard, web3 }) {
   );
 }
 
-const DesktopNav = () => {
+const DesktopNav = ({ colorMode }) => {
   return (
     <Stack direction="row" spacing={4} alignItems="center">
+      {colorMode === 'light' ? (
+        <Image src="/static/logo_black.png" style={{ height: 40, width: 40 }} />
+      ) : (
+        <Image src="/static/logo_white.png" style={{ height: 40, width: 40 }} />
+      )}
+      <Text
+        color="#111111"
+        bgGradient="linear(to-l, #FF0080,  #7928CA)"
+        fontWeight="extrabold"
+        bgClip="text"
+        fontSize={22}
+      >
+        OKDex
+      </Text>
       {NAV_ITEMS.map((navItem) => (
         <Box key={navItem.label}>
           <Popover trigger="hover" placement="bottom-start">
@@ -142,7 +157,7 @@ const DesktopNav = () => {
                 color={useColorModeValue('gray.600', 'gray.200')}
                 _hover={{
                   textDecoration: 'none',
-                  color: useColorModeValue('gray.800', 'white'),
+                  color: useColorModeValue('#222222', 'white'),
                 }}
               >
                 {navItem.label}
@@ -153,7 +168,7 @@ const DesktopNav = () => {
               <PopoverContent
                 border={0}
                 boxShadow="xl"
-                bg={useColorModeValue('white', 'gray.800')}
+                bg={useColorModeValue('white', '#222222')}
                 p={4}
                 rounded="xl"
                 minW="sm"
@@ -207,7 +222,7 @@ const DesktopSubNav = ({ label, href, subLabel }) => {
 
 const MobileNav = () => {
   return (
-    <Stack bg={useColorModeValue('white', 'gray.800')} p={4} display={{ md: 'none' }}>
+    <Stack bg={useColorModeValue('white', '#222222')} p={4} display={{ md: 'none' }}>
       {NAV_ITEMS.map((navItem) => (
         <MobileNavItem key={navItem.label} {...navItem} />
       ))}

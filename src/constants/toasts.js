@@ -9,7 +9,7 @@ export default {
   },
   error: {
     title: 'Swap Error',
-    description: 'There was an error while executing your swap, check the console',
+    description: 'There was an error while executing your swap. Please try again',
     status: 'error',
     position: 'bottom-left',
     duration: 9000,
