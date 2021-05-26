@@ -56,7 +56,7 @@ const NAV_ITEMS = [
 
 export default function Navbar({ address, balance, onboard, web3 }) {
   const { isOpen, onToggle } = useDisclosure();
-  const { toggleColorMode } = useColorMode();
+  const { colorMode, toggleColorMode } = useColorMode();
 
   return (
     <Box>
@@ -85,7 +85,7 @@ export default function Navbar({ address, balance, onboard, web3 }) {
         </Flex>
         <Flex flex={{ base: 1 }} justify={{ base: 'center', md: 'start' }}>
           <Flex display={{ base: 'none', md: 'flex' }} ml={6}>
-            <DesktopNav />
+            <DesktopNav colorMode={colorMode} />
           </Flex>
         </Flex>
 
@@ -128,10 +128,23 @@ export default function Navbar({ address, balance, onboard, web3 }) {
   );
 }
 
-const DesktopNav = () => {
+const DesktopNav = ({ colorMode }) => {
   return (
     <Stack direction="row" spacing={4} alignItems="center">
-      <Image src="/static/newlogoBlack.jpg" alt="okcoinlogo" style={{ height: 50, width: 50 }} />
+      {colorMode === 'light' ? (
+        <Image src="/static/logo_black.png" style={{ height: 40, width: 40 }} />
+      ) : (
+        <Image src="/static/logo_white.png" style={{ height: 40, width: 40 }} />
+      )}
+      <Text
+        color="#111111"
+        bgGradient="linear(to-l, #FF0080,  #7928CA)"
+        fontWeight="extrabold"
+        bgClip="text"
+        fontSize={22}
+      >
+        OKDex
+      </Text>
       {NAV_ITEMS.map((navItem) => (
         <Box key={navItem.label}>
           <Popover trigger="hover" placement="bottom-start">
