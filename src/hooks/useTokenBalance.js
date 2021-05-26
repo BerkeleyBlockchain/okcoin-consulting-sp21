@@ -1,6 +1,7 @@
 import BigNumber from 'bignumber.js';
 import { ethers } from 'ethers';
 import { useEffect, useState } from 'react';
+import web3Utils from 'web3-utils';
 import Tokens from '../constants/tokens';
 
 const erc20 = [
@@ -18,7 +19,7 @@ const erc20 = [
 
 const useTokenBalance = (token, web3, userBalance, onboardState) => {
   const [status, setStatus] = useState('idle');
-  const [balance, setBalance] = useState([]);
+  const [balance, setBalance] = useState(0);
 
   useEffect(() => {
     if (!token || !web3 || !userBalance || !onboardState) return;
@@ -30,7 +31,7 @@ const useTokenBalance = (token, web3, userBalance, onboardState) => {
       const bal = userBalance || 0;
       const { provider } = onboardState.wallet;
       const { address } = onboardState;
-      const ethAmount = web3.utils.fromWei(bal.toString(), 'ether');
+      const ethAmount = web3Utils.fromWei(bal.toString(), 'ether');
 
       if (!tokenContract) {
         ethersProvider = new ethers.providers.Web3Provider(provider);

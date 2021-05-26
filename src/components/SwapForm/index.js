@@ -50,6 +50,8 @@ export default function SwapForm({ web3 }) {
     onboardState?.balance,
     onboardState
   );
+  console.log('🚀 ~ file: index.js ~ line 48 ~ SwapForm ~ tokenBalance', typeof tokenBalance);
+  console.log('🚀 ~ file: index.js ~ line 57 ~ SwapForm ~ tokenBalance', tokenBalance);
 
   // Token dropdown values
   const tokenArray = Tokens.tokens.map((symbol) => ({
@@ -156,7 +158,9 @@ export default function SwapForm({ web3 }) {
           </Text>
           {tokenBalance && watchTokenIn ? (
             <Text opacity={0.7} mb={2} ml={0.5}>
-              {`${tokenBalance.toFixed(6)} ${watchTokenIn.value} available`}
+              {`${tokenBalance.isZero() ? 0 : tokenBalance.toFixed(6)} ${
+                watchTokenIn.value
+              } available`}
             </Text>
           ) : null}
         </Flex>
