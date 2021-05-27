@@ -13,6 +13,7 @@ import {
   Icon,
   IconButton,
   Link,
+  Image,
   Popover,
   PopoverContent,
   PopoverTrigger,
@@ -40,8 +41,8 @@ export default function Navbar() {
   return (
     <Box>
       <Flex
-        bg={colorMode === 'light' ? 'white' : 'gray.800'}
-        color={colorMode === 'light' ? 'gray.600' : 'white'}
+        bg={colorMode === 'light' ? 'white' : '#222222'}
+        color={colorMode === 'light' ? '#222222' : 'white'}
         minH="60px"
         py={{ base: 2 }}
         px={{ base: 4 }}
@@ -123,6 +124,20 @@ const DesktopNav = () => {
 
   return (
     <Stack direction="row" spacing={4} alignItems="center">
+      {colorMode === 'light' ? (
+        <Image src="/static/logo_black.png" style={{ height: 40, width: 40 }} />
+      ) : (
+        <Image src="/static/logo_white.png" style={{ height: 40, width: 40 }} />
+      )}
+      <Text
+        color="#111111"
+        bgGradient="linear(to-l, #FF0080,  #7928CA)"
+        fontWeight="extrabold"
+        bgClip="text"
+        fontSize={22}
+      >
+        OKDex
+      </Text>
       {NavItems.map((navItem) => (
         <Box key={navItem.label}>
           <Popover trigger="hover" placement="bottom-start">
@@ -132,10 +147,10 @@ const DesktopNav = () => {
                 href={navItem.href ?? '#'}
                 fontSize="md"
                 fontWeight={500}
-                color={colorMode === 'light' ? 'gray.600' : 'gray.200'}
+                color={colorMode === 'light' ? '#222222' : 'gray.200'}
                 _hover={{
                   textDecoration: 'none',
-                  color: colorMode === 'light' ? 'gray.800' : 'white',
+                  color: colorMode === 'light' ? '#222222' : 'white',
                 }}
               >
                 {navItem.label}
@@ -146,7 +161,7 @@ const DesktopNav = () => {
               <PopoverContent
                 border={0}
                 boxShadow="xl"
-                bg={colorMode === 'light' ? 'white' : 'gray.800'}
+                bg={colorMode === 'light' ? 'white' : '#222222'}
                 p={4}
                 rounded="xl"
                 minW="sm"
@@ -204,7 +219,7 @@ const MobileNav = () => {
   const { colorMode } = useColorMode();
 
   return (
-    <Stack bg={colorMode === 'light' ? 'white' : 'gray.800'} p={4} display={{ md: 'none' }}>
+    <Stack bg={colorMode === 'light' ? 'white' : '#222222'} p={4} display={{ md: 'none' }}>
       {NavItems.map((navItem) => (
         <MobileNavItem key={navItem.label} {...navItem} />
       ))}

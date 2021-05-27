@@ -11,7 +11,7 @@ export const IconOption = (props) => {
     <Option {...props}>
       <HStack>
         <Image src={data.icon} alt={data.label} />
-        <Text color={useColorModeValue('gray.900', 'gray.200')}>{data.label}</Text>
+        <Text color={useColorModeValue('#222222', 'gray.200')}>{data.label}</Text>
       </HStack>
     </Option>
   );
@@ -23,7 +23,7 @@ export const ValueOption = (props) => {
     <SingleValue {...props}>
       <HStack>
         <Image src={data.icon} alt={data.label} />
-        <Text color={useColorModeValue('gray.900', 'gray.200')}>{data.label}</Text>
+        <Text color={useColorModeValue('#222222', 'gray.200')}>{data.label}</Text>
       </HStack>
     </SingleValue>
   );
@@ -39,7 +39,7 @@ export const DropdownStyle = {
       margin: 0,
       fontFamily: 'Poppins',
       fontWeight: '600',
-      backgroundColor: colorMode === 'light' ? 'white' : '#191F2D',
+      backgroundColor: colorMode === 'light' ? 'white' : '#222222',
     };
   },
 
@@ -66,12 +66,12 @@ export const DropdownStyle = {
     if (isDisabled) {
       bgColor = null;
     } else if (isSelected) {
-      bgColor = colorMode === 'light' ? '#ADD2FF' : '#24437A';
+      bgColor = colorMode === 'light' ? '#ADD2FF' : '#333333';
     } else if (isFocused) {
-      bgColor = colorMode === 'light' ? '#D4E6FF' : '#24437A';
+      bgColor = colorMode === 'light' ? '#D4E6FF' : '#333333';
     }
 
-    const highlightColor = colorMode === 'light' ? '#C4DDFC' : '#426093';
+    const highlightColor = colorMode === 'light' ? '#C4DDFC' : '#333333';
 
     return {
       ...styles,

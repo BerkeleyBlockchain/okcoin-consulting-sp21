@@ -10,6 +10,7 @@ import {
   ModalHeader,
   ModalOverlay,
   Text,
+  useColorModeValue,
   useClipboard,
   useDisclosure,
 } from '@chakra-ui/react';
@@ -28,17 +29,22 @@ export default function AccountModal() {
 
   return (
     <>
-      <Button size="md" colorScheme="blue" variant="solid" onClick={onOpen}>
+      <Button
+        size="md"
+        colorScheme={useColorModeValue('blue', 'gray')}
+        variant="solid"
+        onClick={onOpen}
+      >
         {address?.substr(0, 6)}...{address?.substr(address.length - 4)}
       </Button>
 
       <Modal onClose={onClose} isOpen={isOpen} isCentered>
         <ModalOverlay />
-        <ModalContent borderRadius={20}>
+        <ModalContent borderRadius={20} bg={useColorModeValue('#eee', '#333333')}>
           <ModalHeader fontWeight="700">Account Details</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <Box borderColor="grey.200" borderWidth={1} borderRadius={20} padding={6}>
+            <Box borderColor="black" borderWidth={1} borderRadius={20} padding={6}>
               <Text fontSize="sm" fontWeight="500">
                 Connected Wallet: {`${walletName}`}
               </Text>
@@ -52,7 +58,8 @@ export default function AccountModal() {
           </ModalBody>
           <ModalFooter>
             <Button
-              colorScheme="blue"
+              bgGradient="linear(to-l, #FF0080,#7928CA)"
+              colorScheme={useColorModeValue('blue', 'gray')}
               onClick={() => {
                 onClose();
                 onboard.walletSelect();

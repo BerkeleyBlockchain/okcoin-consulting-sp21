@@ -93,7 +93,7 @@ export default function SwapForm({ web3 }) {
 
   // SwapButton text function
   const getButtonText = () => {
-    if (!watchAmountIn || watchAmountIn <= 0) return 'Enter amount in';
+    if (!watchAmountIn || watchAmountIn <= 0) return 'Enter amount in to swap';
     if (!watchTokenIn || !watchTokenOut) return 'Select tokens';
     if (apiError) {
       return (
@@ -145,10 +145,10 @@ export default function SwapForm({ web3 }) {
       px={8}
       pb={0}
       boxShadow="lg"
-      bgColor={colorMode === 'light' ? 'white' : 'gray.700'}
+      bgColor={colorMode === 'light' ? 'white' : '#222222'}
       borderRadius={30}
     >
-      <Heading fontWeight="700" color={colorMode === 'light' ? 'gray.700' : 'white'} mb={10}>
+      <Heading fontWeight="700" color={colorMode === 'light' ? '#222222' : 'white'} mb={10}>
         Swap
       </Heading>
       <form onSubmit={handleSubmit(onSubmit)}>
@@ -167,7 +167,7 @@ export default function SwapForm({ web3 }) {
         <Box
           borderWidth="1px"
           borderRadius="lg"
-          bg={colorMode === 'light' ? 'white' : 'gray.800'}
+          bg={colorMode === 'light' ? 'white' : '#222222'}
           mb={6}
         >
           <Flex>
@@ -224,7 +224,7 @@ export default function SwapForm({ web3 }) {
         <Box
           borderWidth="1px"
           borderRadius="lg"
-          bg={colorMode === 'light' ? 'white' : 'gray.800'}
+          bg={colorMode === 'light' ? 'white' : '#222222'}
           mb={6}
         >
           <Flex>
@@ -290,7 +290,11 @@ export default function SwapForm({ web3 }) {
               }
             />
           ) : (
-            <SwapButton onClick={readyToTransact} buttonText="Connect Wallet" />
+            <SwapButton
+              onClick={readyToTransact}
+              buttonText="Connect Wallet"
+              bgGradient="linear(to-l, #7928CA,#FF0080)"
+            />
           )}
         </Center>
       </form>
