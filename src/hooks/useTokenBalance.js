@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import BigNumber from 'bignumber.js';
 import { ethers } from 'ethers';
 import { useEffect, useState } from 'react';
