@@ -95,6 +95,7 @@ export default function SwapForm({ web3 }) {
   const getButtonText = () => {
     if (!watchAmountIn || watchAmountIn <= 0) return 'Enter amount in to swap';
     if (!watchTokenIn || !watchTokenOut) return 'Select tokens';
+    if (Number(watchAmountIn) > Number(tokenBalance.toFixed(6))) return 'Insufficient balance';
     if (apiError) {
       return (
         <>
@@ -282,6 +283,7 @@ export default function SwapForm({ web3 }) {
               disabled={
                 Object.keys(errors).length !== 0 ||
                 isLoading ||
+                Number(watchAmountIn) > Number(tokenBalance.toFixed(6)) ||
                 watchAmountIn <= 0 ||
                 !watchTokenIn ||
                 !watchTokenOut ||
