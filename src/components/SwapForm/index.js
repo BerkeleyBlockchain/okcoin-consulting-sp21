@@ -50,8 +50,8 @@ export default function SwapForm({ web3 }) {
     onboardState?.balance,
     onboardState
   );
-  console.log('🚀 ~ file: index.js ~ line 48 ~ SwapForm ~ tokenBalance', typeof tokenBalance);
-  console.log('🚀 ~ file: index.js ~ line 57 ~ SwapForm ~ tokenBalance', tokenBalance);
+  // console.log('🚀 ~ file: index.js ~ line 48 ~ SwapForm ~ tokenBalance', typeof tokenBalance);
+  // console.log('🚀 ~ file: index.js ~ line 57 ~ SwapForm ~ tokenBalance', tokenBalance);
 
   // Token dropdown values
   const tokenArray = Tokens.tokens.map((symbol) => ({
@@ -127,13 +127,12 @@ export default function SwapForm({ web3 }) {
 
     const { amountIn, tokenIn, tokenOut } = data;
     setIsLoading(true);
-
     use0xSwap(Tokens.data[tokenIn.value], Tokens.data[tokenOut.value], amountIn, web3)
       .then(() => {
         setIsLoading(false);
         toast(Toasts.success);
       })
-      .catch(() => {
+      .catch((err) => {
         setIsLoading(false);
         toast(Toasts.error);
       });
