@@ -1,19 +1,20 @@
 import { Box, Container } from '@chakra-ui/react';
-import Web3 from 'web3';
+import { useAtom } from 'jotai';
 import React, { useEffect, useState } from 'react';
+import Eth from 'web3-eth';
 import NavBar from '../components/NavBar';
 import SwapForm from '../components/SwapForm';
+import { addressAtom, balanceAtom, networkAtom, onboardAtom } from '../utils/atoms';
 import initOnboard from '../utils/initOnboard';
 
 export default function DashboardView() {
-  const [address, setAddress] = useState(null);
-  const [balance, setBalance] = useState(null);
-  const [, setNetwork] = useState(null);
+  const [, setAddress] = useAtom(addressAtom);
+  const [, setBalance] = useAtom(balanceAtom);
+  const [, setNetwork] = useAtom(networkAtom);
 
   const [wallet, setWallet] = useState({});
-  const [onboard, setOnboard] = useState(null);
+  const [onboard, setOnboard] = useAtom(onboardAtom);
 
-  const web3 = new Web3(wallet.provider);
   useEffect(() => {
     const ob = initOnboard({
       address: setAddress,
@@ -41,14 +42,9 @@ export default function DashboardView() {
 
   return (
     <Box height="100vh" width="100%">
-      <NavBar address={address} balance={balance} onboard={onboard} web3={web3} />
+      <NavBar />
       <Container mt="10vh">
-        <SwapForm
-          onboardState={onboard ? onboard.getState() : null}
-          web3={web3}
-          wallet={wallet}
-          onboard={onboard}
-        />
+        <SwapForm web3={new Eth(wallet.provider)} />
       </Container>
     </Box>
   );

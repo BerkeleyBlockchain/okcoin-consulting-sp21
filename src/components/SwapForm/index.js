@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable react/jsx-props-no-spreading */
 import { WarningIcon } from '@chakra-ui/icons';
 import {
@@ -8,10 +9,11 @@ import {
   Input,
   Spinner,
   Text,
-  useColorModeValue,
+  useColorMode,
   useToast,
 } from '@chakra-ui/react';
 import debounce from 'debounce';
+import { useAtom } from 'jotai';
 import React, { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import Select from 'react-select';
@@ -19,22 +21,37 @@ import Toasts from '../../constants/toasts';
 import Tokens from '../../constants/tokens';
 import use0xPrice from '../../hooks/use0xPrice';
 import use0xSwap from '../../hooks/use0xSwap';
+import useTokenBalance from '../../hooks/useTokenBalance';
+import { onboardAtom } from '../../utils/atoms';
 import { getTokenIconPNG32 } from '../../utils/getTokenIcon';
 import FullPageSpinner from '../FullPageSpinner';
 import SwapButton from './SwapButton';
 import SwapInfo from './SwapInfo';
 import { DropdownStyle, IconOption, ValueOption } from './TokenDropdown';
 
-const illegal = new RegExp('[\\("\\?@#\\$\\%\\^\\&\\*\\-=;:<>,.+\\[\\{\\]\\}\\)\\/\\\\]');
-export default function SwapForm({ onboardState, web3, onboard }) {
+export default function SwapForm({ web3 }) {
+  const illegal = new RegExp('[\\("\\?@#\\$\\%\\^\\&\\*\\-=;:<>,.+\\[\\{\\]\\}\\)\\/\\\\]');
   const { register, handleSubmit, watch, setValue, errors, control } = useForm();
   const [isLoading, setIsLoading] = useState();
   const [sellAmount, setSellAmount] = useState();
+  const { colorMode } = useColorMode();
   const toast = useToast();
 
   const watchTokenIn = watch('tokenIn', '');
   const watchTokenOut = watch('tokenOut', '');
   const watchAmountIn = watch('amountIn', 0);
+
+  const [onboard] = useAtom(onboardAtom);
+  const onboardState = onboard?.getState();
+
+  const { balance: tokenBalance } = useTokenBalance(
+    watchTokenIn.value,
+    web3,
+    onboardState?.balance,
+    onboardState
+  );
+  // console.log('🚀 ~ file: index.js ~ line 48 ~ SwapForm ~ tokenBalance', typeof tokenBalance);
+  // console.log('🚀 ~ file: index.js ~ line 57 ~ SwapForm ~ tokenBalance', tokenBalance);
 
   // Token dropdown values
   const tokenArray = Tokens.tokens.map((symbol) => ({
@@ -65,7 +82,7 @@ export default function SwapForm({ onboardState, web3, onboard }) {
 
   // Connect wallet function
   async function readyToTransact() {
-    if (!onboardState.address) {
+    if (!onboardState?.address) {
       const walletSelected = await onboard.walletSelect();
       if (!walletSelected) return false;
     }
@@ -76,8 +93,9 @@ export default function SwapForm({ onboardState, web3, onboard }) {
 
   // SwapButton text function
   const getButtonText = () => {
-    if (!watchAmountIn || watchAmountIn <= 0) return 'Enter amount in';
+    if (!watchAmountIn || watchAmountIn <= 0) return 'Enter amount in to swap';
     if (!watchTokenIn || !watchTokenOut) return 'Select tokens';
+    if (Number(watchAmountIn) > Number(tokenBalance.toFixed(6))) return 'Insufficient balance';
     if (apiError) {
       return (
         <>
@@ -110,13 +128,12 @@ export default function SwapForm({ onboardState, web3, onboard }) {
 
     const { amountIn, tokenIn, tokenOut } = data;
     setIsLoading(true);
-
     use0xSwap(Tokens.data[tokenIn.value], Tokens.data[tokenOut.value], amountIn, web3)
       .then(() => {
         setIsLoading(false);
         toast(Toasts.success);
       })
-      .catch(() => {
+      .catch((err) => {
         setIsLoading(false);
         toast(Toasts.error);
       });
@@ -128,17 +145,31 @@ export default function SwapForm({ onboardState, web3, onboard }) {
       px={8}
       pb={0}
       boxShadow="lg"
-      bgColor={useColorModeValue('white', 'gray.700')}
+      bgColor={colorMode === 'light' ? 'white' : '#222222'}
       borderRadius={30}
     >
-      <Heading fontWeight="700" color={useColorModeValue('gray.700', 'white')} mb={10}>
+      <Heading fontWeight="700" color={colorMode === 'light' ? '#222222' : 'white'} mb={10}>
         Swap
       </Heading>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <Text opacity={0.7} mb={2} ml={0.5}>
-          PAY
-        </Text>
-        <Box borderWidth="1px" borderRadius="lg" bg={useColorModeValue('white', 'gray.800')} mb={6}>
+        <Flex align="center" justify="space-between">
+          <Text opacity={0.7} mb={2} ml={0.5}>
+            PAY
+          </Text>
+          {tokenBalance && watchTokenIn ? (
+            <Text opacity={0.7} mb={2} ml={0.5}>
+              {`${tokenBalance.isZero() ? 0 : tokenBalance.toFixed(6)} ${
+                watchTokenIn.value
+              } available`}
+            </Text>
+          ) : null}
+        </Flex>
+        <Box
+          borderWidth="1px"
+          borderRadius="lg"
+          bg={colorMode === 'light' ? 'white' : '#222222'}
+          mb={6}
+        >
           <Flex>
             <Controller
               name="tokenIn"
@@ -165,6 +196,7 @@ export default function SwapForm({ onboardState, web3, onboard }) {
               placeholder="0.0"
               name="amountIn"
               type="number"
+              step="0.000000000000000001"
               min="0"
               pattern="\d*\.?\d+"
               size="lg"
@@ -189,7 +221,12 @@ export default function SwapForm({ onboardState, web3, onboard }) {
         <Text opacity={0.7} mb={2} ml={0.5}>
           RECEIVE
         </Text>
-        <Box borderWidth="1px" borderRadius="lg" bg={useColorModeValue('white', 'gray.800')} mb={6}>
+        <Box
+          borderWidth="1px"
+          borderRadius="lg"
+          bg={colorMode === 'light' ? 'white' : '#222222'}
+          mb={6}
+        >
           <Flex>
             <Controller
               name="tokenOut"
@@ -237,7 +274,7 @@ export default function SwapForm({ onboardState, web3, onboard }) {
           />
         ) : null}
         <Center>
-          {onboardState.address ? (
+          {onboardState?.address ? (
             <SwapButton
               type="submit"
               buttonText={getButtonText()}
@@ -246,6 +283,7 @@ export default function SwapForm({ onboardState, web3, onboard }) {
               disabled={
                 Object.keys(errors).length !== 0 ||
                 isLoading ||
+                Number(watchAmountIn) > Number(tokenBalance.toFixed(6)) ||
                 watchAmountIn <= 0 ||
                 !watchTokenIn ||
                 !watchTokenOut ||
@@ -253,7 +291,11 @@ export default function SwapForm({ onboardState, web3, onboard }) {
               }
             />
           ) : (
-            <SwapButton onClick={readyToTransact} buttonText="Connect Wallet" />
+            <SwapButton
+              onClick={readyToTransact}
+              buttonText="Connect Wallet"
+              bgGradient="linear(to-l, #7928CA,#FF0080)"
+            />
           )}
         </Center>
       </form>

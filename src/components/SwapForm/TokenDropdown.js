@@ -1,5 +1,5 @@
 /* eslint-disable react/jsx-props-no-spreading */
-import { HStack, Image, Text, useColorModeValue } from '@chakra-ui/react';
+import { HStack, Image, Text, useColorMode, useColorModeValue } from '@chakra-ui/react';
 import React from 'react';
 import { components } from 'react-select';
 
@@ -11,7 +11,7 @@ export const IconOption = (props) => {
     <Option {...props}>
       <HStack>
         <Image src={data.icon} alt={data.label} />
-        <Text color="gray.800">{data.label}</Text>
+        <Text color={useColorModeValue('#222222', 'gray.200')}>{data.label}</Text>
       </HStack>
     </Option>
   );
@@ -23,20 +23,25 @@ export const ValueOption = (props) => {
     <SingleValue {...props}>
       <HStack>
         <Image src={data.icon} alt={data.label} />
-        <Text color={useColorModeValue('gray.900', 'gray.200')}>{data.label}</Text>
+        <Text color={useColorModeValue('#222222', 'gray.200')}>{data.label}</Text>
       </HStack>
     </SingleValue>
   );
 };
 
 export const DropdownStyle = {
-  menu: (provided) => ({
-    ...provided,
-    width: 150,
-    margin: 0,
-    fontFamily: 'Poppins',
-    fontWeight: '600',
-  }),
+  menu: (provided) => {
+    const { colorMode } = useColorMode();
+
+    return {
+      ...provided,
+      width: 150,
+      margin: 0,
+      fontFamily: 'Poppins',
+      fontWeight: '600',
+      backgroundColor: colorMode === 'light' ? 'white' : '#222222',
+    };
+  },
 
   dropdownIndicator: (provided) => ({
     ...provided,
@@ -54,6 +59,31 @@ export const DropdownStyle = {
     fontWeight: '600',
   }),
 
+  option: (styles, { isDisabled, isFocused, isSelected }) => {
+    const { colorMode } = useColorMode();
+    let bgColor = null;
+
+    if (isDisabled) {
+      bgColor = null;
+    } else if (isSelected) {
+      bgColor = colorMode === 'light' ? '#ADD2FF' : '#333333';
+    } else if (isFocused) {
+      bgColor = colorMode === 'light' ? '#D4E6FF' : '#333333';
+    }
+
+    const highlightColor = colorMode === 'light' ? '#C4DDFC' : '#333333';
+
+    return {
+      ...styles,
+      backgroundColor: bgColor,
+      color: colorMode === 'light' ? 'black' : 'white',
+      ':active': {
+        ...styles[':active'],
+        backgroundColor: !isDisabled && highlightColor,
+      },
+    };
+  },
+
   placeholder: (provided) => ({
     ...provided,
     color: '#A0AEBF',
@@ -61,11 +91,4 @@ export const DropdownStyle = {
     marginTop: 1,
     fontWeight: '400',
   }),
-
-  singleValue: (provided, state) => {
-    const opacity = state.isDisabled ? 0.5 : 1;
-    const transition = 'opacity 300ms';
-
-    return { ...provided, opacity, transition };
-  },
 };

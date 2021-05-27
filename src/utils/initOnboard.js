@@ -8,11 +8,12 @@ const networkId =
 const dappId = process.env.REACT_APP_ONBOARD_DAPPID;
 
 export default function initOnboard(subscriptions) {
+  const colorMode = window.localStorage.getItem('chakra-ui-color-mode');
   return Onboard({
     dappId,
     hideBranding: true,
     networkId,
-    // darkMode: true,
+    darkMode: colorMode === 'dark',
     subscriptions,
   });
 }

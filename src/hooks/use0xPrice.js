@@ -1,7 +1,7 @@
 import { useQuery } from 'react-query';
 import axios from 'axios';
 import BD from 'js-big-decimal';
-import Web3 from 'web3';
+import web3Utils from 'web3-utils';
 
 function handleError(err) {
   // Default message
@@ -52,7 +52,7 @@ async function getPrice(tokenIn, tokenOut, sellAmount) {
       sources: sources.filter((source) => source.proportion !== '0'),
       price,
       inverse: inverse.getValue(),
-      gasPrice: Web3.utils.fromWei(gasPrice, 'Gwei'),
+      gasPrice: web3Utils.fromWei(gasPrice, 'Gwei'),
       estimatedGas: new BD(estimatedGas).getPrettyValue(),
     };
   } catch (err) {

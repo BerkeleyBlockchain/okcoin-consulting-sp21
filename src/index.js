@@ -12,8 +12,6 @@ import App from './App';
 import FullPageErrorFallback from './components/FullPageErrorFallback';
 import Theme from './theme';
 
-console.log('🚀 ~ file: index.js ~ line 14 ~ Theme', Theme);
-
 const queryClient = new QueryClient();
 
 ReactDOM.render(
