@@ -10,7 +10,7 @@ export const IconOption = (props) => {
   return (
     <Option {...props}>
       <HStack>
-        <Image src={data.icon} alt={data.label} />
+        <Image src={data.icon} />
         <Text color={useColorModeValue('#222222', 'gray.200')}>{data.label}</Text>
       </HStack>
     </Option>
@@ -22,7 +22,7 @@ export const ValueOption = (props) => {
   return (
     <SingleValue {...props}>
       <HStack>
-        <Image src={data.icon} alt={data.label} />
+        <Image src={data.icon} />
         <Text color={useColorModeValue('#222222', 'gray.200')}>{data.label}</Text>
       </HStack>
     </SingleValue>
@@ -32,7 +32,6 @@ export const ValueOption = (props) => {
 export const DropdownStyle = {
   menu: (provided) => {
     const { colorMode } = useColorMode();
-
     return {
       ...provided,
       width: 150,
@@ -40,6 +39,7 @@ export const DropdownStyle = {
       fontFamily: 'Poppins',
       fontWeight: '600',
       backgroundColor: colorMode === 'light' ? 'white' : '#222222',
+      color: 'red',
     };
   },
 
@@ -47,6 +47,13 @@ export const DropdownStyle = {
     ...provided,
     color: '#A0AEBF',
   }),
+
+  input: () => {
+    const { colorMode } = useColorMode();
+    return {
+      color: colorMode === 'light' ? 'black' : 'white',
+    };
+  },
 
   control: () => ({
     width: 160,
@@ -86,7 +93,7 @@ export const DropdownStyle = {
 
   placeholder: (provided) => ({
     ...provided,
-    color: '#A0AEBF',
+    color: 'gray',
     fontSize: 19,
     marginTop: 1,
     fontWeight: '400',

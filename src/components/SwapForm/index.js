@@ -198,6 +198,7 @@ export default function SwapForm() {
                   components={{ Option: IconOption, SingleValue: ValueOption }}
                   inputRef={ref}
                   value={value}
+                  isDisabled={isLoading}
                   name={name}
                   onChange={onChange}
                   onKeyDown={(e) => {
@@ -255,6 +256,7 @@ export default function SwapForm() {
                   components={{ Option: IconOption, SingleValue: ValueOption }}
                   inputRef={ref}
                   value={value}
+                  isDisabled={isLoading}
                   name={name}
                   onChange={onChange}
                   onKeyDown={(e) => {

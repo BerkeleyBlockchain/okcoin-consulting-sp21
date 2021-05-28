@@ -10,6 +10,7 @@ import {
   ModalHeader,
   ModalOverlay,
   Text,
+  useColorMode,
   useColorModeValue,
   useClipboard,
   useDisclosure,
@@ -25,6 +26,7 @@ export default function AccountModal() {
   const walletName = onboardState?.wallet.name;
 
   const { onCopy } = useClipboard(address);
+  const { colorMode } = useColorMode();
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   return (
@@ -44,7 +46,12 @@ export default function AccountModal() {
           <ModalHeader fontWeight="700">Account Details</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <Box borderColor="black" borderWidth={1} borderRadius={20} padding={6}>
+            <Box
+              borderColor={colorMode === 'light' ? '#bbb' : '#444444'}
+              borderWidth={1}
+              borderRadius={20}
+              padding={6}
+            >
               <Text fontSize="sm" fontWeight="500">
                 Connected Wallet: {`${walletName}`}
               </Text>
