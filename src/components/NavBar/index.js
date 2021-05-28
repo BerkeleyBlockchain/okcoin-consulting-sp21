@@ -26,6 +26,7 @@ import {
 
 import web3Utils from 'web3-utils';
 import React from 'react';
+import BigNumber from 'bignumber.js';
 import { useAtom } from 'jotai';
 import { addressAtom, onboardAtom, balanceAtom } from '../../utils/atoms';
 import AccountModal from '../AccountModal';
@@ -84,7 +85,7 @@ export default function Navbar() {
                   color={colorMode === 'light' ? 'gray.600' : 'gray.200'}
                   size="sm"
                 >
-                  {parseFloat(web3Utils.fromWei(balance, 'ether')).toPrecision(6)}
+                  {new BigNumber(web3Utils.fromWei(balance, 'ether')).toPrecision(6)}
                 </Text>
               ) : (
                 <Spinner size="xs" />

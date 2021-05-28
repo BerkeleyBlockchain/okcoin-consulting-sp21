@@ -14,7 +14,7 @@ export default function SwapButton({
       w="100%"
       h="60px"
       bgGradient="linear(to-l, #FF0080,#7928CA)"
-      _hover={{ backgroundColor: '#194BB6' }}
+      _hover={{ backgroundColor: '#7928CA' }}
       backgroundColor="gray"
       color="white"
       size="lg"

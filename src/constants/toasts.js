@@ -3,7 +3,7 @@ export default {
     title: 'Swap Success',
     description: 'Your swap was successfully executed.',
     status: 'success',
-    position: 'bottom-left',
+    position: 'top',
     duration: 9000,
     isClosable: true,
   },
