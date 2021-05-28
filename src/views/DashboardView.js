@@ -1,18 +1,18 @@
 import { Box, Container } from '@chakra-ui/react';
 import { useAtom } from 'jotai';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import Eth from 'web3-eth';
 import NavBar from '../components/NavBar';
 import SwapForm from '../components/SwapForm';
-import { addressAtom, balanceAtom, networkAtom, onboardAtom } from '../utils/atoms';
+import { addressAtom, balanceAtom, ethAtom, networkAtom, onboardAtom } from '../utils/atoms';
 import initOnboard from '../utils/initOnboard';
 
 export default function DashboardView() {
   const [, setAddress] = useAtom(addressAtom);
   const [, setBalance] = useAtom(balanceAtom);
   const [, setNetwork] = useAtom(networkAtom);
+  const [, setEth] = useAtom(ethAtom);
 
-  const [wallet, setWallet] = useState({});
   const [onboard, setOnboard] = useAtom(onboardAtom);
 
   useEffect(() => {
@@ -22,10 +22,10 @@ export default function DashboardView() {
       balance: setBalance,
       wallet: (w) => {
         if (w.provider) {
-          setWallet(w);
+          setEth(new Eth(w.provider));
           window.localStorage.setItem('selectedWallet', w.name);
         } else {
-          setWallet({});
+          setEth({});
         }
       },
     });
@@ -44,7 +44,7 @@ export default function DashboardView() {
     <Box height="100vh" width="100%">
       <NavBar />
       <Container mt="10vh">
-        <SwapForm web3={new Eth(wallet.provider)} />
+        <SwapForm />
       </Container>
     </Box>
   );

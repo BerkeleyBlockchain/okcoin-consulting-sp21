@@ -1,6 +1,6 @@
 import { useQuery } from 'react-query';
 import axios from 'axios';
-import BD from 'js-big-decimal';
+import BigNumber from 'bignumber.js';
 import web3Utils from 'web3-utils';
 
 function handleError(err) {
@@ -27,13 +27,13 @@ async function getPrice(tokenIn, tokenOut, sellAmount) {
   }
 
   try {
-    const conversionRate = new BD(`1.0e${tokenIn.decimals}`);
-    const converted = new BD(sellAmount).multiply(conversionRate);
+    const conversionRate = new BigNumber(`1.0e${tokenIn.decimals}`);
+    const converted = new BigNumber(sellAmount).times(conversionRate);
 
     const params = new URLSearchParams({
       sellToken: tokenIn.symbol,
       buyToken: tokenOut.symbol,
-      sellAmount: converted.getValue(),
+      sellAmount: converted.toFixed(),
     });
 
     const { data } = await axios.get(
@@ -45,15 +45,15 @@ async function getPrice(tokenIn, tokenOut, sellAmount) {
     );
     const { price, gasPrice, estimatedGas, sources } = data;
     const getDex = data.sources.filter((item) => item.proportion !== '0');
-    const inverse = new BD(1).divide(new BD(data.price));
+    const inverse = new BigNumber(1).div(new BigNumber(data.price));
 
     return {
       exchanges: getDex,
       sources: sources.filter((source) => source.proportion !== '0'),
       price,
-      inverse: inverse.getValue(),
+      inverse: inverse.toFixed(),
       gasPrice: web3Utils.fromWei(gasPrice, 'Gwei'),
-      estimatedGas: new BD(estimatedGas).getPrettyValue(),
+      estimatedGas: new BigNumber(estimatedGas).toFormat(),
     };
   } catch (err) {
     return { apiError: handleError(err) };

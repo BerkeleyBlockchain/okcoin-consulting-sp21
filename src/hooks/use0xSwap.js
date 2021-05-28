@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-import BD from 'js-big-decimal';
+import BigNumber from 'bignumber.js';
 import erc20Abi from '../constants/abis/erc20.json';
 
 const API_ENDPOINT =
@@ -7,15 +7,15 @@ const API_ENDPOINT =
     ? process.env.REACT_APP_ZEROEX_PROD
     : process.env.REACT_APP_ZEROEX_DEV;
 
-export default async function swapTokens(tokenIn, tokenOut, sellAmount, web3) {
+export default async function swapTokens(tokenIn, tokenOut, sellAmount, eth) {
   // Convert sell amount to smallest units of input token
-  const conversionRate = new BD(`1.0e${tokenIn.decimals}`);
-  const converted = new BD(sellAmount).multiply(conversionRate);
+  const conversionRate = new BigNumber(`1.0e${tokenIn.decimals}`);
+  const converted = new BigNumber(sellAmount).times(conversionRate);
 
   const params = {
     sellToken: tokenIn.symbol,
     buyToken: tokenOut.symbol,
-    sellAmount: converted.getValue(),
+    sellAmount: converted.toFixed(),
   };
 
   // Get quote from 0x API
@@ -24,12 +24,12 @@ export default async function swapTokens(tokenIn, tokenOut, sellAmount, web3) {
   );
 
   const quote = await response.json();
-  const accounts = await web3.getAccounts();
+  const accounts = await eth.getAccounts();
   const accountAddress = accounts[0];
 
   // Approve ERC20 token allowance
   if (tokenIn.symbol !== 'ETH') {
-    const tokenContract = new web3.Contract(erc20Abi, tokenIn.address);
+    const tokenContract = new eth.Contract(erc20Abi, tokenIn.address);
     const estimatedGas = await tokenContract.methods
       .approve(quote.allowanceTarget, quote.sellAmount)
       .estimateGas();
@@ -43,7 +43,7 @@ export default async function swapTokens(tokenIn, tokenOut, sellAmount, web3) {
       data: tokenContract.methods.approve(quote.allowanceTarget, quote.sellAmount).encodeABI(),
     };
 
-    const approvalReceipt = await web3.sendTransaction(approvalRawTx);
+    const approvalReceipt = await eth.sendTransaction(approvalRawTx);
     console.log(approvalReceipt);
   }
 
@@ -57,6 +57,6 @@ export default async function swapTokens(tokenIn, tokenOut, sellAmount, web3) {
     data: quote.data,
   };
 
-  const swapReceipt = await web3.sendTransaction(swapRawTx);
+  const swapReceipt = await eth.sendTransaction(swapRawTx);
   console.log(swapReceipt);
 }

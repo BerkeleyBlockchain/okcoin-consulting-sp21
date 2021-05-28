@@ -1,4 +1,3 @@
-// eslint-disable import/no-extraneous-dependencies
 import { ChakraProvider, ColorModeScript } from '@chakra-ui/react';
 import '@fontsource/poppins/400.css';
 import { Provider } from 'jotai';

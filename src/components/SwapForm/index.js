@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 /* eslint-disable react/jsx-props-no-spreading */
 import { WarningIcon } from '@chakra-ui/icons';
 import {
@@ -17,41 +16,45 @@ import { useAtom } from 'jotai';
 import React, { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import Select from 'react-select';
+import BigNumber from 'bignumber.js';
 import Toasts from '../../constants/toasts';
 import Tokens from '../../constants/tokens';
 import use0xPrice from '../../hooks/use0xPrice';
 import use0xSwap from '../../hooks/use0xSwap';
 import useTokenBalance from '../../hooks/useTokenBalance';
-import { onboardAtom } from '../../utils/atoms';
+import { ethAtom, networkAtom, onboardAtom } from '../../utils/atoms';
 import { getTokenIconPNG32 } from '../../utils/getTokenIcon';
 import FullPageSpinner from '../FullPageSpinner';
 import SwapButton from './SwapButton';
 import SwapInfo from './SwapInfo';
 import { DropdownStyle, IconOption, ValueOption } from './TokenDropdown';
 
-export default function SwapForm({ web3 }) {
-  const illegal = new RegExp('[\\("\\?@#\\$\\%\\^\\&\\*\\-=;:<>,.+\\[\\{\\]\\}\\)\\/\\\\]');
+export default function SwapForm() {
   const { register, handleSubmit, watch, setValue, errors, control } = useForm();
-  const [isLoading, setIsLoading] = useState();
-  const [sellAmount, setSellAmount] = useState();
-  const { colorMode } = useColorMode();
-  const toast = useToast();
 
   const watchTokenIn = watch('tokenIn', '');
   const watchTokenOut = watch('tokenOut', '');
   const watchAmountIn = watch('amountIn', 0);
 
   const [onboard] = useAtom(onboardAtom);
-  const onboardState = onboard?.getState();
+  const [eth] = useAtom(ethAtom);
+  const [networkId] = useAtom(networkAtom);
 
-  const { balance: tokenBalance } = useTokenBalance(
-    watchTokenIn.value,
-    web3,
-    onboardState?.balance,
-    onboardState
-  );
-  // console.log('🚀 ~ file: index.js ~ line 48 ~ SwapForm ~ tokenBalance', typeof tokenBalance);
-  // console.log('🚀 ~ file: index.js ~ line 57 ~ SwapForm ~ tokenBalance', tokenBalance);
+  const expectedNetworkId =
+    process.env.REACT_APP_ENV === 'production'
+      ? parseInt(process.env.REACT_APP_ONBOARD_NETWORKID_PROD, 10)
+      : parseInt(process.env.REACT_APP_ONBOARD_NETWORKID_DEV, 10);
+
+  const networkMismatch = expectedNetworkId !== networkId;
+  const onboardState = onboard?.getState();
+  const tokenBalance = useTokenBalance(watchTokenIn.value, eth, onboard, networkMismatch);
+
+  const [isLoading, setIsLoading] = useState();
+  const [sellAmount, setSellAmount] = useState();
+  const { colorMode } = useColorMode();
+  const toast = useToast();
+
+  const illegal = new RegExp('[\\("\\?@#\\$\\%\\^\\&\\*\\-=;:<>,.+\\[\\{\\]\\}\\)\\/\\\\]');
 
   // Token dropdown values
   const tokenArray = Tokens.tokens.map((symbol) => ({
@@ -77,6 +80,7 @@ export default function SwapForm({ web3 }) {
   };
 
   // Set quote values
+  // eslint-disable-next-line prefer-const
   const { price, gasPrice, estimatedGas, exchanges, apiError } =
     zeroExQuote === undefined ? defaults : zeroExQuote;
 
@@ -93,9 +97,10 @@ export default function SwapForm({ web3 }) {
 
   // SwapButton text function
   const getButtonText = () => {
-    if (!watchAmountIn || watchAmountIn <= 0) return 'Enter amount in to swap';
+    if (networkMismatch) return 'Incorrect Network';
+    if (!watchAmountIn || Number(watchAmountIn) <= 0) return 'Enter amount in to swap';
     if (!watchTokenIn || !watchTokenOut) return 'Select tokens';
-    if (Number(watchAmountIn) > Number(tokenBalance.toFixed(6))) return 'Insufficient balance';
+    if (new BigNumber(watchAmountIn).gt(new BigNumber(tokenBalance))) return 'Insufficient balance';
     if (apiError) {
       return (
         <>
@@ -104,13 +109,14 @@ export default function SwapForm({ web3 }) {
         </>
       );
     }
+
     return 'Swap Tokens';
   };
 
   // Set amount out
   useEffect(() => {
     if (watchAmountIn > 0 && watchTokenIn && watchTokenOut && price !== defaults.price) {
-      const n = watchAmountIn * price;
+      const n = new BigNumber(watchAmountIn).times(new BigNumber(price));
       setValue('amountOut', n.toFixed(6).replace(/(0+)$/, '').replace(/\.$/, ''));
     }
     if (!watchAmountIn || watchAmountIn <= 0 || apiError) {
@@ -128,12 +134,14 @@ export default function SwapForm({ web3 }) {
 
     const { amountIn, tokenIn, tokenOut } = data;
     setIsLoading(true);
-    use0xSwap(Tokens.data[tokenIn.value], Tokens.data[tokenOut.value], amountIn, web3)
+    use0xSwap(Tokens.data[tokenIn.value], Tokens.data[tokenOut.value], amountIn, eth)
       .then(() => {
         setIsLoading(false);
         toast(Toasts.success);
       })
       .catch((err) => {
+        // eslint-disable-next-line no-console
+        console.log(err);
         setIsLoading(false);
         toast(Toasts.error);
       });
@@ -156,7 +164,7 @@ export default function SwapForm({ web3 }) {
           <Text opacity={0.7} mb={2} ml={0.5}>
             PAY
           </Text>
-          {tokenBalance && watchTokenIn ? (
+          {tokenBalance && watchTokenIn && onboardState?.address ? (
             <Text opacity={0.7} mb={2} ml={0.5}>
               {`${tokenBalance.isZero() ? 0 : tokenBalance.toFixed(6)} ${
                 watchTokenIn.value
@@ -283,11 +291,12 @@ export default function SwapForm({ web3 }) {
               disabled={
                 Object.keys(errors).length !== 0 ||
                 isLoading ||
-                Number(watchAmountIn) > Number(tokenBalance.toFixed(6)) ||
+                new BigNumber(watchAmountIn).gt(tokenBalance) ||
                 watchAmountIn <= 0 ||
                 !watchTokenIn ||
                 !watchTokenOut ||
-                apiError
+                apiError ||
+                networkMismatch
               }
             />
           ) : (
