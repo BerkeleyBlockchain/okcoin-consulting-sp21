@@ -14,6 +14,7 @@ export default function SwapInfo({
   gasPrice,
   estimatedGas,
 }) {
+  // Checks which exchanges swap is going to
   const checkSource = () => {
     if (exchanges.length === 1) {
       return Exchanges.data[exchanges[0]?.name]?.name;
