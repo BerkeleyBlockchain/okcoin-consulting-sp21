@@ -31,7 +31,7 @@ import { DropdownStyle, IconOption, ValueOption } from './TokenDropdown';
 
 export default function SwapForm() {
   const { register, handleSubmit, watch, setValue, errors, control } = useForm();
-
+  const [isSwapping, setIsSwapping] = useState(false);
   const watchTokenIn = watch('tokenIn', '');
   const watchTokenOut = watch('tokenOut', '');
   const watchAmountIn = watch('amountIn', 0);
@@ -134,14 +134,17 @@ export default function SwapForm() {
 
     const { amountIn, tokenIn, tokenOut } = data;
     setIsLoading(true);
+    setIsSwapping(true);
     use0xSwap(Tokens.data[tokenIn.value], Tokens.data[tokenOut.value], amountIn, eth)
       .then(() => {
         setIsLoading(false);
         toast(Toasts.success);
+        setIsSwapping(false);
       })
       .catch((err) => {
         // eslint-disable-next-line no-console
         console.log(err);
+        setIsSwapping(false);
         setIsLoading(false);
         toast(Toasts.error);
       });
@@ -189,6 +192,7 @@ export default function SwapForm() {
                   components={{ Option: IconOption, SingleValue: ValueOption }}
                   inputRef={ref}
                   value={value}
+                  isDisabled={isSwapping}
                   name={name}
                   onChange={onChange}
                   onKeyDown={(e) => {
@@ -246,6 +250,7 @@ export default function SwapForm() {
                   components={{ Option: IconOption, SingleValue: ValueOption }}
                   inputRef={ref}
                   value={value}
+                  isDisabled={isSwapping}
                   name={name}
                   onChange={onChange}
                   onKeyDown={(e) => {

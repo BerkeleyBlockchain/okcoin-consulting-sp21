@@ -10,7 +10,7 @@ export const IconOption = (props) => {
   return (
     <Option {...props}>
       <HStack>
-        <Image src={data.icon} alt={data.label} />
+        <Image src={data.icon} />
         <Text color={useColorModeValue('#222222', 'gray.200')}>{data.label}</Text>
       </HStack>
     </Option>
@@ -22,7 +22,7 @@ export const ValueOption = (props) => {
   return (
     <SingleValue {...props}>
       <HStack>
-        <Image src={data.icon} alt={data.label} />
+        <Image src={data.icon} />
         <Text color={useColorModeValue('#222222', 'gray.200')}>{data.label}</Text>
       </HStack>
     </SingleValue>
@@ -86,7 +86,7 @@ export const DropdownStyle = {
 
   placeholder: (provided) => ({
     ...provided,
-    color: '#A0AEBF',
+    color: 'gray',
     fontSize: 19,
     marginTop: 1,
     fontWeight: '400',
