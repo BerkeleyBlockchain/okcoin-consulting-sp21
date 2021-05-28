@@ -47,7 +47,12 @@ export default function SwapForm() {
 
   const networkMismatch = expectedNetworkId !== networkId;
   const onboardState = onboard?.getState();
-  const tokenBalance = useTokenBalance(watchTokenIn.value, eth, onboard, networkMismatch);
+  const { balance: tokenBalance, setBalance: setTokenBalance } = useTokenBalance(
+    watchTokenIn.value,
+    eth,
+    onboard,
+    networkMismatch
+  );
 
   const [isLoading, setIsLoading] = useState();
   const [sellAmount, setSellAmount] = useState();
@@ -137,6 +142,10 @@ export default function SwapForm() {
     setIsSwapping(true);
     use0xSwap(Tokens.data[tokenIn.value], Tokens.data[tokenOut.value], amountIn, eth)
       .then(() => {
+        if (tokenIn.value !== 'ETH') {
+          setTokenBalance(tokenBalance.minus(new BigNumber(amountIn)));
+        }
+
         setIsLoading(false);
         toast(Toasts.success);
         setIsSwapping(false);

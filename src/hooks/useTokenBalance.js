@@ -1,12 +1,15 @@
 /* eslint-disable no-console */
 import BigNumber from 'bignumber.js';
 import { useEffect, useState } from 'react';
+import { useAtom } from 'jotai';
 import web3Utils from 'web3-utils';
+import { balanceAtom } from '../utils/atoms';
 import Tokens from '../constants/tokens';
 import erc20Abi from '../constants/abis/erc20.json';
 
 const useTokenBalance = (token, eth, onboard, networkMismatch) => {
   const [balance, setBalance] = useState(null);
+  const [ethBalance] = useAtom(balanceAtom);
 
   const getTokenBalance = async () => {
     const onboardState = onboard?.getState();
@@ -38,9 +41,9 @@ const useTokenBalance = (token, eth, onboard, networkMismatch) => {
     } else {
       setBalance(null);
     }
-  }, [token, eth, onboard, networkMismatch]);
+  }, [token, eth, onboard, networkMismatch, ethBalance]);
 
-  return balance;
+  return { balance, setBalance };
 };
 
 export default useTokenBalance;
