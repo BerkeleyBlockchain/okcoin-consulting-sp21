@@ -1,6 +1,6 @@
 # OKCoin DEX Aggregator Developer Docs
 
-Authors (Github): @sehyunc, @yuzhoumo @sishirg
+Authors (Github): @sehyunc, @yuzhoumo @stackman27 @emmaguo13 @VadneyK
 
 ## Setup Instructions
 
